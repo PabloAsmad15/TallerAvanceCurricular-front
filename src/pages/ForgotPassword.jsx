@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, ArrowLeft } from 'lucide-react';
+import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { authAPI } from '../services/api';
+import authService from '../services/authService';
 
 export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
-  const [sent, setSent] = useState(false);
-  const [resetUrl, setResetUrl] = useState('');
+  const [emailSent, setEmailSent] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,64 +20,42 @@ export default function ForgotPassword() {
     setLoading(true);
     
     try {
-      const response = await authAPI.forgotPassword(email);
-      setSent(true);
-      
-      // Si el backend devuelve un token (modo desarrollo), guardarlo
-      if (response.data.token) {
-        setResetUrl(response.data.reset_url);
-        toast.success('Token generado (modo desarrollo)');
-      } else {
-        toast.success('Revisa tu correo para restablecer tu contraseña');
-      }
+      await authService.resetPassword(email);
+      setEmailSent(true);
+      toast.success('Correo de recuperación enviado');
     } catch (error) {
-      toast.error('Error al enviar el correo');
+      const message = error.message || 'Error al enviar correo de recuperación';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
   };
 
-  if (sent) {
+  if (emailSent) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Mail className="w-8 h-8 text-green-600" />
-          </div>
+          <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            {resetUrl ? '¡Token Generado!' : '¡Correo Enviado!'}
+            ¡Correo Enviado!
           </h2>
-          
-          {resetUrl ? (
-            <>
-              <p className="text-gray-600 mb-4">
-                El email no está configurado. Usa este enlace para restablecer tu contraseña:
-              </p>
-              <div className="bg-gray-50 p-4 rounded-lg mb-6 break-all text-sm">
-                <a 
-                  href={resetUrl} 
-                  className="text-primary-600 hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {resetUrl}
-                </a>
-              </div>
-              <a 
-                href={resetUrl} 
-                className="btn btn-primary inline-block mb-3"
-              >
-                Ir a Restablecer Contraseña
-              </a>
-            </>
-          ) : (
-            <p className="text-gray-600 mb-6">
-              Hemos enviado un enlace de recuperación a <strong>{email}</strong>.
-              Por favor revisa tu bandeja de entrada y spam.
+          <p className="text-gray-600 mb-6">
+            Hemos enviado un enlace de recuperación a <strong>{email}</strong>.
+            Por favor revisa tu bandeja de entrada y spam.
+          </p>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <p className="text-sm text-blue-800">
+              <strong>Nota:</strong> Si no recibes el correo en los próximos minutos, 
+              revisa tu carpeta de spam o correo no deseado.
             </p>
-          )}
-          
-          <Link to="/login" className="btn btn-secondary inline-block">
+          </div>
+          <button
+            onClick={() => setEmailSent(false)}
+            className="btn btn-secondary mb-3"
+          >
+            Enviar nuevamente
+          </button>
+          <Link to="/login" className="block text-primary-600 hover:text-primary-700">
             Volver al Login
           </Link>
         </div>

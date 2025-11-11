@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { authAPI } from '../services/api';
+import authService from '../services/authService';
 import { useAuthStore } from '../store/authStore';
 
 export default function Login() {
@@ -26,22 +26,25 @@ export default function Login() {
     setLoading(true);
     
     try {
-      const response = await authAPI.login(formData);
-      const { access_token, user } = response.data;
+      // Login con Firebase
+      const userData = await authService.login(formData.email, formData.password);
       
-      // Guardar autenticación con los datos que vienen del backend
-      setAuth(user, access_token);
+      // Obtener token de Firebase para el store
+      const token = localStorage.getItem('token');
       
-      toast.success(`¡Bienvenido ${user.nombre}!`);
+      // Guardar autenticación
+      setAuth(userData, token);
+      
+      toast.success(`¡Bienvenido ${userData.nombre}!`);
       
       // Redirigir según el tipo de usuario
-      if (user.is_admin) {
+      if (userData.is_admin) {
         navigate('/admin');
       } else {
         navigate('/');
       }
     } catch (error) {
-      const message = error.response?.data?.detail || 'Error al iniciar sesión';
+      const message = error.message || 'Error al iniciar sesión';
       toast.error(message);
     } finally {
       setLoading(false);
