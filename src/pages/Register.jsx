@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Lock, User } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { authAPI } from '../services/api';
+import authService from '../services/authService';
+import { useAuthStore } from '../store/authStore';
 
 export default function Register() {
   const navigate = useNavigate();
+  const setAuth = useAuthStore((state) => state.setAuth);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -24,8 +26,8 @@ export default function Register() {
       return;
     }
     
-    if (formData.password.length < 8) {
-      toast.error('La contraseña debe tener al menos 8 caracteres');
+    if (formData.password.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres');
       return;
     }
     
@@ -37,17 +39,30 @@ export default function Register() {
     setLoading(true);
     
     try {
-      await authAPI.register({
-        email: formData.email,
-        password: formData.password,
-        nombre: formData.nombre,
-        apellido: formData.apellido,
-      });
+      // Registrar con Firebase y sincronizar con backend
+      const userData = await authService.register(
+        formData.email,
+        formData.password,
+        formData.nombre,
+        formData.apellido
+      );
       
-      toast.success('¡Registro exitoso! Inicia sesión para continuar');
-      navigate('/login');
+      // Obtener token de Firebase
+      const token = localStorage.getItem('token');
+      
+      // Guardar autenticación
+      setAuth(userData, token);
+      
+      toast.success(`¡Bienvenido ${userData.nombre}!`);
+      
+      // Redirigir según el tipo de usuario
+      if (userData.is_admin) {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
-      const message = error.response?.data?.detail || 'Error al registrarse';
+      const message = error.message || 'Error al registrarse';
       toast.error(message);
     } finally {
       setLoading(false);
@@ -137,7 +152,7 @@ export default function Register() {
                   type="password"
                   required
                   className="input pl-10"
-                  placeholder="Mínimo 8 caracteres"
+                  placeholder="Mínimo 6 caracteres"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
