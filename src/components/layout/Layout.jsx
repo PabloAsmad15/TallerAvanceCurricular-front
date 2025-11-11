@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { LogOut, Home, BookOpen, History, Sparkles, Shield, Menu, X } from 'lucide-react';
+import { LogOut, Home, BookOpen, History, Sparkles, Shield, Menu, X, Brain } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Layout() {
@@ -12,6 +12,7 @@ export default function Layout() {
     { name: 'Inicio', href: '/', icon: Home },
     { name: 'Seleccionar Cursos', href: '/select-courses', icon: BookOpen },
     { name: 'Recomendaciones', href: '/recommendations', icon: Sparkles },
+    { name: 'Algoritmos Avanzados', href: '/advanced-recommendations', icon: Brain },
     { name: 'Historial', href: '/history', icon: History },
   ];
 
