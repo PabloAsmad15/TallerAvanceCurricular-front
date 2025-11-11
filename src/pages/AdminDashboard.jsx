@@ -108,66 +108,66 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard de Administración</h1>
-        <p className="text-gray-600">Estadísticas y métricas del sistema</p>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Dashboard de Administración</h1>
+        <p className="text-sm sm:text-base text-gray-600">Estadísticas y métricas del sistema</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {/* Total Usuarios */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-blue-100 text-blue-600">
-              <Users className="w-6 h-6" />
+            <div className="p-2 sm:p-3 rounded-full bg-blue-100 text-blue-600">
+              <Users className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Usuarios</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.usuarios.total}</p>
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Usuarios</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.usuarios.total}</p>
               <p className="text-xs text-gray-500">{stats.usuarios.activos} activos</p>
             </div>
           </div>
         </div>
 
         {/* Total Recomendaciones */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-green-100 text-green-600">
-              <TrendingUp className="w-6 h-6" />
+            <div className="p-2 sm:p-3 rounded-full bg-green-100 text-green-600">
+              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Recomendaciones</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.recomendaciones.total}</p>
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Recomendaciones</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.recomendaciones.total}</p>
               <p className="text-xs text-gray-500">{stats.recomendaciones.ultimos_7_dias} últimos 7 días</p>
             </div>
           </div>
         </div>
 
         {/* Cursos */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-purple-100 text-purple-600">
-              <BookOpen className="w-6 h-6" />
+            <div className="p-2 sm:p-3 rounded-full bg-purple-100 text-purple-600">
+              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Cursos</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.datos_academicos.total_cursos}</p>
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Cursos</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.datos_academicos.total_cursos}</p>
               <p className="text-xs text-gray-500">{stats.datos_academicos.total_mallas} mallas</p>
             </div>
           </div>
         </div>
 
         {/* Promedio */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-orange-100 text-orange-600">
-              <BarChart3 className="w-6 h-6" />
+            <div className="p-2 sm:p-3 rounded-full bg-orange-100 text-orange-600">
+              <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Promedio Cursos</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.recomendaciones.promedio_cursos_por_recomendacion}</p>
+            <div className="ml-3 sm:ml-4 flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Promedio Cursos</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.recomendaciones.promedio_cursos_por_recomendacion}</p>
               <p className="text-xs text-gray-500">por recomendación</p>
             </div>
           </div>
@@ -175,11 +175,11 @@ export default function AdminDashboard() {
       </div>
 
       {/* Algoritmos Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {/* Gráfico de Algoritmos - Pie Chart */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Distribución de Algoritmos</h2>
-          <ResponsiveContainer width="100%" height={300}>
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Distribución de Algoritmos</h2>
+          <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
                 data={algoritmosData}
@@ -187,7 +187,7 @@ export default function AdminDashboard() {
                 cy="50%"
                 labelLine={false}
                 label={({ nombre, porcentaje }) => `${nombre}: ${porcentaje}%`}
-                outerRadius={100}
+                outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -200,10 +200,10 @@ export default function AdminDashboard() {
           </ResponsiveContainer>
           <div className="mt-4 space-y-2">
             {algoritmosData.map((alg, index) => (
-              <div key={index} className="flex items-center justify-between text-sm">
+              <div key={index} className="flex items-center justify-between text-xs sm:text-sm">
                 <div className="flex items-center">
                   <div 
-                    className="w-4 h-4 rounded-full mr-2" 
+                    className="w-3 h-3 sm:w-4 sm:h-4 rounded-full mr-2" 
                     style={{ backgroundColor: COLORS[index] }}
                   ></div>
                   <span className="text-gray-700">{alg.nombre}</span>
@@ -215,9 +215,9 @@ export default function AdminDashboard() {
         </div>
 
         {/* Gráfico de Usuarios Activos vs Inactivos */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Estado de Usuarios</h2>
-          <ResponsiveContainer width="100%" height={300}>
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Estado de Usuarios</h2>
+          <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
                 data={usuariosData}
@@ -225,7 +225,7 @@ export default function AdminDashboard() {
                 cy="50%"
                 labelLine={false}
                 label={({ nombre, value }) => `${nombre}: ${value}`}
-                outerRadius={100}
+                outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -236,16 +236,16 @@ export default function AdminDashboard() {
             </PieChart>
           </ResponsiveContainer>
           <div className="mt-4 space-y-2">
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-xs sm:text-sm">
               <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full mr-2 bg-green-500"></div>
+                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full mr-2 bg-green-500"></div>
                 <span className="text-gray-700">Activos</span>
               </div>
               <span className="font-semibold text-gray-900">{stats.usuarios.activos}</span>
             </div>
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-xs sm:text-sm">
               <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full mr-2 bg-red-500"></div>
+                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full mr-2 bg-red-500"></div>
                 <span className="text-gray-700">Inactivos</span>
               </div>
               <span className="font-semibold text-gray-900">{stats.usuarios.inactivos}</span>
@@ -255,12 +255,12 @@ export default function AdminDashboard() {
       </div>
 
       {/* Gráficos de Barras */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {/* Top Usuarios Más Activos */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Top 5 Usuarios Más Activos</h2>
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Top 5 Usuarios Más Activos</h2>
           {topUsuariosData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250}>
               <BarChart data={topUsuariosData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="nombre" />
@@ -275,10 +275,10 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recomendaciones por Malla */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recomendaciones por Malla</h2>
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Recomendaciones por Malla</h2>
           {mallasData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250}>
               <BarChart data={mallasData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="nombre" />
@@ -295,9 +295,9 @@ export default function AdminDashboard() {
 
       {/* Gráfico de Línea - Tendencia de Recomendaciones */}
       {recomendacionesStats?.recomendaciones_diarias && recomendacionesStats.recomendaciones_diarias.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Tendencia de Recomendaciones (Últimos 30 días)</h2>
-          <ResponsiveContainer width="100%" height={300}>
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6 sm:mb-8">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Tendencia de Recomendaciones (Últimos 30 días)</h2>
+          <ResponsiveContainer width="100%" height={250}>
             <LineChart data={recomendacionesStats.recomendaciones_diarias}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
@@ -328,35 +328,35 @@ export default function AdminDashboard() {
       )}
 
       {/* Recomendaciones Recientes */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Recomendaciones Recientes</h2>
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900">Recomendaciones Recientes</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usuario</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Malla</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Algoritmo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cursos</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tiempo</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usuario</th>
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Malla</th>
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Algoritmo</th>
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cursos</th>
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Tiempo</th>
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">Fecha</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {recomendacionesRecientes.map((rec) => (
                 <tr key={rec.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{rec.usuario.nombre}</div>
-                      <div className="text-sm text-gray-500">{rec.usuario.email}</div>
+                      <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">{rec.usuario.nombre}</div>
+                      <div className="text-xs text-gray-500 truncate max-w-[120px] sm:max-w-none">{rec.usuario.email}</div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">Malla {rec.malla.anio}</div>
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                    <div className="text-xs sm:text-sm text-gray-900">Malla {rec.malla.anio}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                       rec.algoritmo === 'constraint_programming' 
                         ? 'bg-primary-100 text-primary-800' 
@@ -365,16 +365,16 @@ export default function AdminDashboard() {
                       {rec.algoritmo === 'constraint_programming' ? 'CP' : 'BT'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
                     {rec.total_cursos_recomendados}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Clock className="w-4 h-4 mr-1" />
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                    <div className="flex items-center text-xs sm:text-sm text-gray-500">
+                      <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                       {rec.tiempo_ejecucion?.toFixed(2)}s
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500 hidden lg:table-cell">
                     {new Date(rec.created_at).toLocaleDateString('es-ES')}
                   </td>
                 </tr>
