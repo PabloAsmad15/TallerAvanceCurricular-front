@@ -109,7 +109,8 @@ export default function SelectCourses() {
       toggleCourse(cursoId);
     } else {
       // Seleccionar el curso y auto-marcar prerequisitos
-      const nuevosSeleccionados = autoMarcarPrerequisitos(cursoId, [...selectedCourses]);
+      const prerequisitosNecesarios = autoMarcarPrerequisitos(cursoId, [...selectedCourses]);
+      const nuevosSeleccionados = [...prerequisitosNecesarios, cursoId]; // Agregar el curso actual también
       const prerequisitosAgregados = nuevosSeleccionados.filter(c => !selectedCourses.includes(c) && c !== cursoId);
       
       useRecommendationStore.setState({ selectedCourses: nuevosSeleccionados });
