@@ -78,10 +78,10 @@ export default function SelectCourses() {
       }
     } catch (error) {
       console.error('Error al cargar prerequisitos:', error);
-      // Si falla, usar validación solo en backend
+      // Si falla, usar validación solo en backend (silencioso - no mostrar error al usuario)
       setPrerequisitosMap({});
       setConvalidacionesMap({});
-      toast('⚠️ Validación se hará en el servidor', { icon: 'ℹ️', duration: 3000 });
+      // No mostrar toast - el backend validará de todas formas
     }
   };
 
