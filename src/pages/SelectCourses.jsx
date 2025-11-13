@@ -103,18 +103,35 @@ export default function SelectCourses() {
 
   // Función para manejar la selección/deselección de cursos
   const handleToggleCourse = (cursoId) => {
+    console.log('🔍 handleToggleCourse llamado con:', cursoId);
+    console.log('📋 selectedCourses actual:', selectedCourses);
+    
     const isCurrentlySelected = selectedCourses.includes(cursoId);
+    console.log('✓ ¿Está seleccionado?', isCurrentlySelected);
     
     if (isCurrentlySelected) {
       // Deseleccionar el curso
+      console.log('❌ Deseleccionando...');
       toggleCourse(cursoId);
     } else {
       // Seleccionar el curso y auto-marcar prerequisitos
+      console.log('✅ Seleccionando...');
       const prerequisitosNecesarios = autoMarcarPrerequisitos(cursoId, [...selectedCourses]);
+      console.log('📚 Prerequisitos necesarios:', prerequisitosNecesarios);
+      
       const nuevosSeleccionados = [...prerequisitosNecesarios, cursoId]; // Agregar el curso actual también
+      console.log('🆕 Nuevos seleccionados:', nuevosSeleccionados);
+      
       const prerequisitosAgregados = nuevosSeleccionados.filter(c => !selectedCourses.includes(c) && c !== cursoId);
       
       setSelectedCourses(nuevosSeleccionados);
+      console.log('💾 setSelectedCourses llamado con:', nuevosSeleccionados);
+      
+      // Verificar que el estado se actualizó
+      setTimeout(() => {
+        const estadoDespues = useRecommendationStore.getState().selectedCourses;
+        console.log('🔄 Estado después de actualizar:', estadoDespues);
+      }, 100);
       
       // Mostrar notificación si se auto-marcaron prerequisitos
       if (prerequisitosAgregados.length > 0) {
@@ -320,6 +337,12 @@ export default function SelectCourses() {
                   <div className="px-4 pb-4 space-y-2">
                     {cursos.map(curso => {
                       const isSelected = selectedCourses.includes(curso.id);
+                      console.log(`🎨 Renderizando curso ${curso.id}:`, {
+                        'curso.id': curso.id,
+                        'selectedCourses': selectedCourses,
+                        'isSelected': isSelected,
+                        'includes': selectedCourses.includes(curso.id)
+                      });
                       
                       return (
                         <button
