@@ -42,6 +42,20 @@ export default function SelectCourses() {
     if (!selectedMalla) return;
     
     try {
+      // Intentar cargar desde caché primero (performance)
+      const cacheKey = `prerequisitos_malla_${selectedMalla.id}`;
+      const cached = localStorage.getItem(cacheKey);
+      const cacheTime = localStorage.getItem(`${cacheKey}_time`);
+      
+      // Usar caché si tiene menos de 1 hora
+      if (cached && cacheTime && (Date.now() - parseInt(cacheTime)) < 3600000) {
+        const cachedData = JSON.parse(cached);
+        setPrerequisitosMap(cachedData.prerequisitos);
+        setConvalidacionesMap(cachedData.convalidaciones);
+        console.log('✅ Prerequisitos cargados desde caché');
+        return;
+      }
+      
       // Cargar prerequisitos REALES desde el backend
       const response = await cursosAPI.getPrerequisitos(selectedMalla.id);
       
@@ -73,15 +87,22 @@ export default function SelectCourses() {
         setPrerequisitosMap(prerequisitosMap);
         setConvalidacionesMap(convalidacionesMap);
         
-        console.log(`✅ Cargados ${Object.keys(prerequisitosMap).length} cursos con prerequisitos`);
-        console.log(`✅ Cargadas ${response.data.convalidaciones.length} convalidaciones`);
+        // Guardar en caché para futuras cargas
+        localStorage.setItem(cacheKey, JSON.stringify({
+          prerequisitos: prerequisitosMap,
+          convalidaciones: convalidacionesMap
+        }));
+        localStorage.setItem(`${cacheKey}_time`, Date.now().toString());
+        
+        console.log(`✅ Prerequisitos cargados: ${Object.keys(prerequisitosMap).length} cursos`);
+        console.log(`✅ Convalidaciones: ${response.data.convalidaciones.length} relaciones`);
       }
     } catch (error) {
-      console.error('Error al cargar prerequisitos:', error);
-      // Si falla, usar validación solo en backend (silencioso - no mostrar error al usuario)
+      console.warn('⚠️ No se pudieron cargar prerequisitos, validación será en backend:', error);
+      // Si falla, usar validación solo en backend (silencioso)
       setPrerequisitosMap({});
       setConvalidacionesMap({});
-      // No mostrar toast - el backend validará de todas formas
+      // Backend validará - no hay problema
     }
   };
 
@@ -121,6 +142,36 @@ export default function SelectCourses() {
     );
   };
 
+  // Función para validar prerequisitos de un curso
+  const validarPrerequisitos = (cursoId) => {
+    const prerequisitos = prerequisitosMap[cursoId] || [];
+    if (prerequisitos.length === 0) return { valido: true, faltantes: [] };
+    
+    const prerequisitosFaltantes = [];
+    
+    for (const prereqCodigo of prerequisitos) {
+      // Verificar si el prerequisito está aprobado directamente
+      let prereqCumplido = selectedCourses.includes(prereqCodigo);
+      
+      // Si no está aprobado, verificar convalidaciones
+      if (!prereqCumplido) {
+        const convalidados = convalidacionesMap[prereqCodigo] || [];
+        prereqCumplido = convalidados.some(convCodigo => 
+          selectedCourses.includes(convCodigo)
+        );
+      }
+      
+      if (!prereqCumplido) {
+        prerequisitosFaltantes.push(prereqCodigo);
+      }
+    }
+    
+    return {
+      valido: prerequisitosFaltantes.length === 0,
+      faltantes: prerequisitosFaltantes
+    };
+  };
+
   // Función para manejar la selección/deselección de cursos
   const handleToggleCourse = (cursoId) => {
     const isCurrentlySelected = selectedCourses.includes(cursoId);
@@ -130,36 +181,25 @@ export default function SelectCourses() {
       toggleCourse(cursoId);
     } else {
       // Validar prerequisitos con convalidaciones
-      const prerequisitos = prerequisitosMap[cursoId] || [];
+      const validacion = validarPrerequisitos(cursoId);
       
-      if (prerequisitos.length > 0) {
-        const prerequisitosFaltantes = [];
-        
-        for (const prereqCodigo of prerequisitos) {
-          // Verificar si el prerequisito está aprobado directamente
-          let prereqCumplido = selectedCourses.includes(prereqCodigo);
-          
-          // Si no está aprobado, verificar convalidaciones
-          if (!prereqCumplido) {
-            const convalidados = convalidacionesMap[prereqCodigo] || [];
-            prereqCumplido = convalidados.some(convCodigo => 
-              selectedCourses.includes(convCodigo)
-            );
+      if (!validacion.valido && validacion.faltantes.length > 0) {
+        // Advertencia suave con sugerencia
+        toast(
+          `💡 Sugerencia: Considera marcar primero ${validacion.faltantes.join(', ')}`,
+          { 
+            duration: 4000, 
+            icon: '💡',
+            style: {
+              background: '#FEF3C7',
+              color: '#92400E',
+              border: '1px solid #FCD34D'
+            }
           }
-          
-          if (!prereqCumplido) {
-            prerequisitosFaltantes.push(prereqCodigo);
-          }
-        }
-        
-        if (prerequisitosFaltantes.length > 0) {
-          toast(`⚠️ Prerequisito(s) faltante(s): ${prerequisitosFaltantes.join(', ')}`, 
-            { duration: 4000, icon: '💡' }
-          );
-        }
+        );
       }
       
-      // SIEMPRE MARCA - permite libertad al usuario
+      // SIEMPRE MARCA - libertad del usuario, backend valida
       toggleCourse(cursoId);
     }
   };
@@ -382,8 +422,21 @@ export default function SelectCourses() {
                             <Circle className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
                           )}
                           <div className="flex-1 text-left">
-                            <div className="font-medium text-gray-900">
-                              {curso.codigo}
+                            <div className="flex items-center justify-between">
+                              <div className="font-medium text-gray-900">
+                                {curso.codigo}
+                              </div>
+                              {/* Indicador visual de prerequisitos */}
+                              {!isSelected && prerequisitosMap[curso.id]?.length > 0 && (() => {
+                                const validacion = validarPrerequisitos(curso.id);
+                                if (!validacion.valido) {
+                                  return (
+                                    <span className="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-700 font-medium">
+                                      ⚠️ {validacion.faltantes.length} prereq
+                                    </span>
+                                  );
+                                }
+                              })()}
                             </div>
                             <div className="text-sm text-gray-600">
                               {curso.nombre}
