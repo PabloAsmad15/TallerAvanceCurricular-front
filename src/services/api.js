@@ -27,12 +27,41 @@ api.interceptors.request.use(
 // Interceptor para manejar errores de autenticación
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+  async (error) => {
+    const originalRequest = error.config;
+    
+    // Si es 401 y no hemos intentado refrescar el token
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      
+      try {
+        // Intentar refrescar el token de Firebase
+        const { auth } = await import('../config/firebase');
+        const user = auth.currentUser;
+        
+        if (user) {
+          // Obtener nuevo token
+          const newToken = await user.getIdToken(true); // true = forzar refresh
+          localStorage.setItem('token', newToken);
+          
+          // Reintentar la petición original con el nuevo token
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return api(originalRequest);
+        } else {
+          // No hay usuario autenticado, redirigir a login
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+        }
+      } catch (refreshError) {
+        // Error al refrescar token, cerrar sesión
+        console.error('Error al refrescar token:', refreshError);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
+    
     return Promise.reject(error);
   }
 );

@@ -23,7 +23,12 @@ export default function History() {
       const response = await recomendacionesAPI.getHistory();
       setHistory(response.data);
     } catch (error) {
-      toast.error('Error al cargar historial');
+      console.error('Error al cargar historial:', error);
+      
+      // Solo mostrar error si no es 401 (porque eso redirige automáticamente)
+      if (error.response?.status !== 401) {
+        toast.error('Error al cargar el historial. Intenta nuevamente.');
+      }
     } finally {
       setLoading(false);
     }
