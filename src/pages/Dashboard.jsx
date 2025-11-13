@@ -72,7 +72,7 @@ export default function Dashboard() {
             <p className="text-gray-700 mb-4">
               Nuestro sistema utiliza un <strong>agente de inteligencia artificial</strong> 
               que analiza tu situación académica y decide automáticamente el mejor algoritmo 
-              de recomendación para ti:
+              de recomendación para ti entre <strong>4 algoritmos especializados</strong>:
             </p>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
               <div className="bg-white p-4 rounded-lg">
@@ -91,6 +91,24 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-600">
                   Algoritmo eficiente para búsquedas directas cuando estás 
                   cerca de graduarte
+                </p>
+              </div>
+              <div className="bg-white p-4 rounded-lg">
+                <h4 className="font-semibold text-green-700 mb-2">
+                  📚 Prolog
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Lógica declarativa que garantiza el cumplimiento de todas 
+                  las reglas académicas
+                </p>
+              </div>
+              <div className="bg-white p-4 rounded-lg">
+                <h4 className="font-semibold text-orange-700 mb-2">
+                  🎯 Association Rules
+                </h4>
+                <p className="text-sm text-gray-600">
+                  Aprende de patrones históricos para recomendar combinaciones 
+                  exitosas de cursos
                 </p>
               </div>
             </div>

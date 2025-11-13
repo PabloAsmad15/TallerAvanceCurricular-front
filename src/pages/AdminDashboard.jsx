@@ -68,15 +68,25 @@ export default function AdminDashboard() {
   const algoritmosData = [
     { 
       nombre: 'Prog. Restricciones', 
-      value: stats.algoritmos.constraint_programming.total,
-      porcentaje: stats.algoritmos.constraint_programming.porcentaje
+      value: stats.algoritmos.constraint_programming?.total || 0,
+      porcentaje: stats.algoritmos.constraint_programming?.porcentaje || 0
     },
     { 
       nombre: 'Backtracking', 
-      value: stats.algoritmos.backtracking.total,
-      porcentaje: stats.algoritmos.backtracking.porcentaje
+      value: stats.algoritmos.backtracking?.total || 0,
+      porcentaje: stats.algoritmos.backtracking?.porcentaje || 0
+    },
+    { 
+      nombre: 'Prolog', 
+      value: stats.algoritmos.prolog?.total || 0,
+      porcentaje: stats.algoritmos.prolog?.porcentaje || 0
+    },
+    { 
+      nombre: 'Association Rules', 
+      value: stats.algoritmos.association_rules?.total || 0,
+      porcentaje: stats.algoritmos.association_rules?.porcentaje || 0
     }
-  ];
+  ].filter(item => item.value > 0); // Filtrar algoritmos sin uso
 
   const usuariosData = [
     { nombre: 'Activos', value: stats.usuarios.activos },

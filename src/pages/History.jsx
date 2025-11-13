@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { History as HistoryIcon, Calendar, Clock, Brain, Zap, Sparkles } from 'lucide-react';
+import { History as HistoryIcon, Calendar, Clock, Brain, Zap, Sparkles, BookOpen, TrendingUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { recomendacionesAPI } from '../services/api';
 import { useRecommendationStore } from '../store/recommendationStore';
@@ -56,9 +56,21 @@ export default function History() {
         icon: Zap,
         color: 'text-purple-600',
         bgColor: 'bg-purple-100'
+      },
+      prolog: {
+        name: 'Prolog',
+        icon: BookOpen,
+        color: 'text-green-600',
+        bgColor: 'bg-green-100'
+      },
+      association_rules: {
+        name: 'Association Rules',
+        icon: TrendingUp,
+        color: 'text-orange-600',
+        bgColor: 'bg-orange-100'
       }
     };
-    return info[algoritmo] || info.backtracking;
+    return info[algoritmo] || info.constraint_programming;
   };
 
   const formatDate = (dateString) => {

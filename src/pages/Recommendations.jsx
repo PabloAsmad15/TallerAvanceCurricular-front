@@ -42,10 +42,22 @@ export default function Recommendations() {
       icon: Zap,
       color: 'purple',
       description: 'Búsqueda exhaustiva eficiente'
+    },
+    prolog: {
+      name: 'Prolog',
+      icon: BookOpen,
+      color: 'green',
+      description: 'Lógica declarativa con reglas académicas'
+    },
+    association_rules: {
+      name: 'Association Rules',
+      icon: TrendingUp,
+      color: 'orange',
+      description: 'Patrones de aprendizaje automático'
     }
   };
 
-  const info = algorithmInfo[algoritmo_usado] || algorithmInfo.backtracking;
+  const info = algorithmInfo[algoritmo_usado] || algorithmInfo.constraint_programming;
   const Icon = info.icon;
 
   const getPriorityBadge = (prioridad) => {
