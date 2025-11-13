@@ -99,82 +99,83 @@ export const cursosPorMalla = {
       { "codigo": "HUMA-1012", "nombre": "ACTIVIDAD FORMATIVA I: Inducción a la Vida Universitaria y Desarrollo Personal" }
     ],
     "2": [
-      { "codigo": "ICSI-402", "nombre": "FUNDAMENTOS DE PROGRAMACION II" },
-      { "codigo": "CIEN-597", "nombre": "ALGEBRA LINEAL Y GEOMETRIA DESCRIPTIVA" },
+      { "codigo": "ICSI-509", "nombre": "PROGRAMACIÓN ORIENTADO A OBJETOS" },
+      { "codigo": "CIEN-597", "nombre": "ALGEBRA LINEAL Y GEOMETRÍA DESCRIPTIVA" },
       { "codigo": "CIEN-539", "nombre": "FISICA I" },
       { "codigo": "CIEN-599", "nombre": "MATEMATICA II" },
-      { "codigo": "HUMA-1020", "nombre": "PSICOLOGIA GENERAL" },
+      { "codigo": "HUMA-1021", "nombre": "PSICOLOGIA Y DESARROLLO HUMANO" },
       { "codigo": "HUMA-901", "nombre": "LENGUAJE II" },
       { "codigo": "HUMA-641", "nombre": "ACTIVIDAD FORMATIVA II: Apreciación Musical" }
     ],
     "3": [
-      { "codigo": "ICSI-403", "nombre": "PROGRAMACION ORIENTADA A OBJETOS" },
-      { "codigo": "ICSI-404", "nombre": "FUNDAMENTOS DE SISTEMAS DE INFORMACION" },
-      { "codigo": "ICSI-405", "nombre": "FISICA APLICADA A LA COMPUTACION" },
-      { "codigo": "CIEN-600", "nombre": "MATEMATICA III" },
+      { "codigo": "ICSI-510", "nombre": "PATRONES DE DISEÑO DE SOFTWARE" },
+      { "codigo": "HUMA-1025", "nombre": "ETICA Y VALORES" },
+      { "codigo": "CIEN-648", "nombre": "FISICA II" },
+      { "codigo": "CIEN-649", "nombre": "MATEMÁTICA DISCRETA" },
       { "codigo": "HUMA-903", "nombre": "FILOSOFIA DE LA CIENCIA" },
+      { "codigo": "ICSI-512", "nombre": "ESTRUCTURA DE DATOS Y ALGORITMOS" },
       { "codigo": "HUMA-679", "nombre": "ACTIVIDAD FORMATIVA III: Apreciación Artística" }
     ],
     "4": [
-      { "codigo": "ICSI-406", "nombre": "ESTRUCTURAS DE DATOS E INFORMACION" },
-      { "codigo": "ICSI-407", "nombre": "MATEMATICA DISCRETA PARA LA COMPUTACION" },
-      { "codigo": "ICSI-408", "nombre": "ARQUITECTURA DE COMPUTADORAS" },
-      { "codigo": "HUMA-904", "nombre": "REALIDAD NACIONAL Y REGIONAL" },
-      { "codigo": "ICSI-409", "nombre": "ORGANIZACIÓN Y GESTION DE EMPRESAS" },
-      { "codigo": "HUMA-701", "nombre": "ACTIVIDAD FORMATIVA IV: Sem. Antenor Orrego" }
+      { "codigo": "HUMA-1024", "nombre": "REALIDAD NACIONAL Y REGIONAL" },
+      { "codigo": "ICSI-513", "nombre": "PARADIGMAS DE PROGRAMACIÓN" },
+      { "codigo": "ICSI-514", "nombre": "INGENIERÍA DE REQUISITOS" },
+      { "codigo": "ICSI-515", "nombre": "ARQUITECTURA DE COMPUTADORAS" },
+      { "codigo": "CIEN-651", "nombre": "ESTADÍSTICA DESCRIPTIVA" },
+      { "codigo": "ICSI-516", "nombre": "BASE DE DATOS" },
+      { "codigo": "HUMA-1027", "nombre": "ACTIVIDAD FORMATIVA IV: Vigencia y trascendencia del pensamiento de Antenor Orrego" }
     ],
     "5": [
-      { "codigo": "ICSI-410", "nombre": "BASE DE DATOS" },
-      { "codigo": "ICSI-411", "nombre": "AUTOMATAS Y COMPILADORES" },
-      { "codigo": "CIEN-598", "nombre": "ESTADISTICA Y PROBABILIDADES" },
-      { "codigo": "ICSI-412", "nombre": "INTERACCION HOMBRE MAQUINA" },
-      { "codigo": "INSO-135", "nombre": "INGENIERIA DE SOFTWARE I" },
-      { "codigo": "HUMA-905", "nombre": "METODOLOGIA DE LA INVESTIGACION CIENTIFICA" }
+      { "codigo": "ICSI-517", "nombre": "GESTIÓN DE PROCESOS DE NEGOCIOS" },
+      { "codigo": "ICSI-518", "nombre": "INTERACCION HOMBRE MAQUINA" },
+      { "codigo": "ICSI-519", "nombre": "INGENIERIA DE SOFTWARE I" },
+      { "codigo": "ICSI-520", "nombre": "SISTEMAS OPERATIVOS" },
+      { "codigo": "CIEN-655", "nombre": "ESTADÍSTICA INFERENCIAL" },
+      { "codigo": "HUMA-1038", "nombre": "CIUDADANIA Y DERECHOS HUMANOS" }
     ],
     "6": [
-      { "codigo": "ICSI-413", "nombre": "DESARROLLO DE APLICACIONES" },
-      { "codigo": "ICSI-414", "nombre": "SISTEMAS DE GESTION DE BASE DE DATOS" },
-      { "codigo": "ICSI-415", "nombre": "MODELADO DE PROCESOS DE NEGOCIOS I" },
-      { "codigo": "ICSI-416", "nombre": "SISTEMAS OPERATIVOS" },
-      { "codigo": "INSO-136", "nombre": "INGENIERIA DE SOFTWARE II" },
-      { "codigo": "ICSI-417", "nombre": "SISTEMAS DE CONTABILIDAD Y PRESUPUESTOS" }
+      { "codigo": "ICSI-521", "nombre": "SISTEMAS DE GESTION DE BASE DE DATOS" },
+      { "codigo": "ICSI-522", "nombre": "ORGANIZACIÓN Y GESTIÓN DE EMPRESAS" },
+      { "codigo": "ICSI-523", "nombre": "SISTEMAS DE INFORMACIÓN TRANSACCIONALES" },
+      { "codigo": "ICSI-524", "nombre": "INGENIERIA DE SOFTWARE II" },
+      { "codigo": "ICSI-525", "nombre": "ARQUITECTURA Y ADMINISTRACION DE REDES" },
+      { "codigo": "ICSI-526", "nombre": "MÉTODOS CUANTITATIVOS PARA LOS NEGOCIOS" }
     ],
     "7": [
-      { "codigo": "ICSI-418", "nombre": "SISTEMAS DE INFORMACION" },
-      { "codigo": "ICSI-419", "nombre": "MODELADO DE PROCESOS DE NEGOCIOS II" },
-      { "codigo": "ICSI-420", "nombre": "ARQUITECTURA DE REDES DE COMPUTADORAS" },
-      { "codigo": "ICSI-421", "nombre": "PLANEAMIENTO ESTRATEGICO DE TIC" },
-      { "codigo": "ICSI-422", "nombre": "INVESTIGACION DE OPERACIONES" },
-      { "codigo": "ICSI-423", "nombre": "MEDIO AMBIENTE Y DESARROLLO SOSTENIBLE" }
+      { "codigo": "ICSI-527", "nombre": "GESTIÓN DE SERVICIOS DE TI" },
+      { "codigo": "ICSI-528", "nombre": "INGENIERÍA DE DATOS" },
+      { "codigo": "ICSI-529", "nombre": "ARQUITECTURA DE SOFTWARE" },
+      { "codigo": "ICSI-530", "nombre": "FORMULACIÓN Y EVALUACIÓN DE PROYECTOS INFORMÁTICOS" },
+      { "codigo": "ICSI-531", "nombre": "COMPUTACIÓN EN LA NUBE" },
+      { "codigo": "HUMA-1043", "nombre": "METODOLOGÍA DE LA INVESTIGACIÓN CIENTÍFICA" }
     ],
     "8": [
-      { "codigo": "ICSI-424", "nombre": "ADMINISTRACION DE PROYECTOS DE SIST. DE INFORMACION" },
-      { "codigo": "ICSI-425", "nombre": "SISTEMAS DE SOPORTE DE DECISIONES" },
-      { "codigo": "ICSI-426", "nombre": "ADMINISTRACION DE REDES Y SEGURIDAD DE LA INFORMACION" },
-      { "codigo": "ICSI-427", "nombre": "GERENCIA DE TI" },
-      { "codigo": "ICSI-428", "nombre": "PROYECTO DE INVESTIGACION" },
-      { "codigo": "ICSI-429", "nombre": "INTELIGENCIA DE PROCESOS DE NEGOCIOS" },
-      { "codigo": "INSO-137", "nombre": "INGENIERIA DE SOFTWARE III" },
-      { "codigo": "ICSI-430", "nombre": "PROGRAMACION DE APLICACIONES WEB" }
+      { "codigo": "ICSI-532", "nombre": "GESTIÓN DE PROYECTOS DE SISTEMAS DE INFORMACIÓN" },
+      { "codigo": "ICSI-540", "nombre": "SISTEMAS DE SOPORTE DE DECISIONES" },
+      { "codigo": "CIEN-662", "nombre": "MEDIO AMBIENTE Y DESARROLLO SOSTENIBLE" },
+      { "codigo": "ICSI-541", "nombre": "INTEGRACION DE APLICACIONES EMPRESARIALES" },
+      { "codigo": "ICSI-543", "nombre": "CALIDAD DEL SOFTWARE" },
+      { "codigo": "ICSI-677", "nombre": "INTERNET DE LAS COSAS" }
     ],
     "9": [
-      { "codigo": "ICSI-431", "nombre": "AUDITORIA DE SISTEMAS DE INFORMACION" },
-      { "codigo": "ICSI-432", "nombre": "SISTEMAS DE INFORMACION ESTRATEGICA" },
-      { "codigo": "ICSI-433", "nombre": "ADMINISTRACION Y ARQUITECTURA DE MAINFRAMES" },
-      { "codigo": "HUMA-906", "nombre": "ETICA Y DEONTOLOGIA" },
-      { "codigo": "ICSI-434", "nombre": "TESIS I" },
-      { "codigo": "ICSI-435", "nombre": "SISTEMAS INTELIGENTES" },
-      { "codigo": "ICSI-436", "nombre": "DESARROLLO DE APLICACIONES PARA DISPOSITIVOS MOVILES" },
-      { "codigo": "ICSI-437", "nombre": "AUTOMATIZACION DE PROCESOS INDUSTRIALES" },
-      { "codigo": "ICSI-438", "nombre": "PRACTICAS PRE-PROFESIONALES" },
-      { "codigo": "ICSI-439", "nombre": "PROGRAMACION DE MAINFRAMES" }
+      { "codigo": "ICSI-544", "nombre": "TRABAJO DE INVESTIGACIÓN" },
+      { "codigo": "ICSI-548", "nombre": "INNOVACIÓN Y EMPRENDIMIENTO" },
+      { "codigo": "ICSI-546", "nombre": "DEONTOLOGIA PROFESIONAL" },
+      { "codigo": "ICSI-549", "nombre": "ARQUITECTURA EMPRESARIAL" },
+      { "codigo": "ICSI-553", "nombre": "AUDITORIA DE SISTEMAS DE INFORMACION" },
+      { "codigo": "ICSI-554", "nombre": "NEGOCIOS ELECTRÓNICOS" },
+      { "codigo": "ICSI-555", "nombre": "COMPUTACION VISUAL Y ACCESIBILIDAD AUMENTADA" },
+      { "codigo": "ICSI-556", "nombre": "DESARROLLO DE APLICACIONES PARA DISPOSITIVOS MOVILES" },
+      { "codigo": "ICSI-557", "nombre": "SISTEMAS INTELIGENTES" },
+      { "codigo": "ICSI-560", "nombre": "TESIS I" }
     ],
     "10": [
-      { "codigo": "ICSI-440", "nombre": "TESIS II" },
-      { "codigo": "ICSI-441", "nombre": "EMPRENDIMIENTO Y MODELAMIENTO DE NEGOCIOS" },
-      { "codigo": "ICSI-442", "nombre": "COMPUTACION VISUAL Y ACCESIBILIDAD AUMENTADA" },
-      { "codigo": "ICSI-443", "nombre": "INTEGRACION DE APLICACIONES EMPRESARIALES" },
-      { "codigo": "ICSI-444", "nombre": "DESARROLLO DE APLICACIONES PARA VIDEOJUEGOS" }
+      { "codigo": "ICSI-431", "nombre": "GOBIERNO DE TI" },
+      { "codigo": "ICSI-434", "nombre": "SISTEMAS GESTUALES Y CONVERSACIONALES" },
+      { "codigo": "ICSI-435", "nombre": "CIBERSEGURIDAD" },
+      { "codigo": "ICSI-436", "nombre": "BLOCKCHAIN" },
+      { "codigo": "ICSI-438", "nombre": "INTELIGENCIA DE PROCESOS DE NEGOCIOS" },
+      { "codigo": "ICSI-440", "nombre": "PRACTICAS PRE-PROFESIONALES" }
     ]
   },
   "2022": {
