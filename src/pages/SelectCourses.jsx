@@ -39,43 +39,198 @@ export default function SelectCourses() {
   }, [selectedMalla]);
 
   const loadPrerequisitos = async () => {
-    // Mapa de prerequisitos básico para Ingeniería de Sistemas
-    const prerequisitosBasicos = {
-      // Programación
-      'ICSI-401': [], // Fundamentos de Programación I
-      'ICSI-402': ['ICSI-401'], // Fundamentos de Programación II -> Prog I
-      'ICSI-501': ['ICSI-402'], // Estructura de Datos -> Prog II
-      'ICSI-601': ['ICSI-501'], // Algoritmos -> Estructura de Datos
-      
-      // Matemáticas
-      'FISI-100': [], // Matemática Básica
-      'FISI-101': ['FISI-100'], // Cálculo I -> Mat Básica
-      'FISI-102': ['FISI-101'], // Cálculo II -> Cálculo I
-      'FISI-103': ['FISI-102'], // Cálculo III -> Cálculo II
-      'FISI-200': ['FISI-101'], // Álgebra Lineal -> Cálculo I
-      'FISI-201': ['FISI-101'], // Matemática Discreta -> Cálculo I
-      'FISI-300': ['FISI-102'], // Estadística -> Cálculo II
-      
-      // Física
-      'FISI-400': [], // Física General
-      'FISI-401': ['FISI-400', 'FISI-101'], // Física I -> Física General, Cálculo I
-      'FISI-402': ['FISI-401', 'FISI-102'], // Física II -> Física I, Cálculo II
-      
-      // Bases de Datos
-      'ICSI-700': ['ICSI-501'], // Base de Datos I -> Estructura de Datos
-      'ICSI-701': ['ICSI-700'], // Base de Datos II -> BD I
-      
-      // Redes
-      'ICSI-800': [], // Redes I
-      'ICSI-801': ['ICSI-800'], // Redes II -> Redes I
-      
-      // Ingeniería de Software
-      'ICSI-900': ['ICSI-402'], // Ingeniería de Software I -> Prog II
-      'ICSI-901': ['ICSI-900'], // Ingeniería de Software II -> IS I
+    // Mapa COMPLETO de prerequisitos desde la base de datos
+    const prerequisitosCompletos = {
+      'CIEN-539': ['CIEN-538'],
+      'CIEN-597': ['ICSI-401', 'CIEN-397'],
+      'CIEN-598': ['CIEN-597'],
+      'CIEN-599': ['CIEN-397'],
+      'CIEN-600': ['CIEN-599'],
+      'CIEN-648': ['CIEN-539'],
+      'CIEN-649': ['CIEN-599'],
+      'CIEN-655': ['CIEN-651'],
+      'CIEN-747': ['ISIA-105'],
+      'CIEN-754': ['CIEN-753'],
+      'CIEN-755': ['CIEN-754'],
+      'CIEN-768': ['CIEN-752'],
+      'CIEN-769': ['CIEN-768'],
+      'HUMA-1020': ['HUMA-900'],
+      'HUMA-1043': ['HUMA-903'],
+      'HUMA-1180': ['HUMA-1179'],
+      'HUMA-1182': ['HUMA-1180'],
+      'HUMA-641': ['HUMA-640'],
+      'HUMA-679': ['HUMA-641'],
+      'HUMA-701': ['HUMA-679'],
+      'HUMA-901': ['HUMA-899'],
+      'HUMA-903': ['HUMA-1020', 'HUMA-901', 'HUMA-900'],
+      'HUMA-904': ['HUMA-903'],
+      'HUMA-905': ['HUMA-904'],
+      'HUMA-906': ['HUMA-701', 'ICSI-423'],
+      'ICSI': ['ICSI-509'],
+      'ICSI-402': ['ICSI-400'],
+      'ICSI-403': ['ICSI-402'],
+      'ICSI-404': ['ICSI-401'],
+      'ICSI-405': ['CIEN-539'],
+      'ICSI-406': ['ICSI-403'],
+      'ICSI-407': ['CIEN-600'],
+      'ICSI-408': ['ICSI-405'],
+      'ICSI-409': ['HUMA-901'],
+      'ICSI-410': ['ICSI-406'],
+      'ICSI-411': ['ICSI-407'],
+      'ICSI-412': ['ICSI-403'],
+      'ICSI-413': ['ICSI-410', 'ICSI-403'],
+      'ICSI-414': ['ICSI-410'],
+      'ICSI-415': ['INSO-135', 'ICSI-404'],
+      'ICSI-416': ['ICSI-408'],
+      'ICSI-417': ['ICSI-409'],
+      'ICSI-418': ['ICSI-404', 'ICSI-413'],
+      'ICSI-419': ['ICSI-415'],
+      'ICSI-420': ['ICSI-416'],
+      'ICSI-421': ['ICSI-415', 'ICSI-417'],
+      'ICSI-422': ['CIEN-597', 'CIEN-600', 'CIEN-598'],
+      'ICSI-423': ['HUMA-904'],
+      'ICSI-424': ['ICSI-421'],
+      'ICSI-425': ['ICSI-418', 'ICSI-422'],
+      'ICSI-426': ['ICSI-420'],
+      'ICSI-427': ['ICSI-421', 'ICSI-418'],
+      'ICSI-428': ['HUMA-905'],
+      'ICSI-431': ['ICSI-424', 'ICSI-427'],
+      'ICSI-432': ['ICSI-418'],
+      'ICSI-433': ['ICSI-426'],
+      'ICSI-434': ['ICSI-428', 'ICSI-543'],
+      'ICSI-438': ['ICSI-431', 'ICSI-432', 'ICSI-433', 'HUMA-906', 'ICSI-434', 'ICSI-528', 'ICSI-530', 'ICSI-531', 'ICSI-532'],
+      'ICSI-439': ['ICSI-433'],
+      'ICSI-440': ['ICSI-434'],
+      'ICSI-509': ['ICSI-506'],
+      'ICSI-510': ['ICSI-509'],
+      'ICSI-511': ['ICSI-509'],
+      'ICSI-512': ['ICSI-510'],
+      'ICSI-514': ['CIEN-648'],
+      'ICSI-518': ['ICSI-513'],
+      'ICSI-519': ['ICSI-514'],
+      'ICSI-520': ['ICSI-516'],
+      'ICSI-521': ['ICSI-515', 'ICSI-673'],
+      'ICSI-522': ['ICSI-516', 'ICSI-515', 'ICSI-517'],
+      'ICSI-523': ['ICSI-518'],
+      'ICSI-524': ['ICSI-519'],
+      'ICSI-525': ['CIEN-649', 'CIEN-655'],
+      'ICSI-526': ['ICSI-538'],
+      'ICSI-527': ['ICSI-521'],
+      'ICSI-528': ['ICSI-522'],
+      'ICSI-529': ['ICSI-523'],
+      'ICSI-530': ['ICSI-524'],
+      'ICSI-531': ['ICSI-526'],
+      'ICSI-532': ['ICSI-527'],
+      'ICSI-538': ['ICSI-516'],
+      'ICSI-539': ['CIEN-649', 'CIEN-655'],
+      'ICSI-540': ['ICSI-528'],
+      'ICSI-541': ['ICSI-523'],
+      'ICSI-543': ['HUMA-1043'],
+      'ICSI-544': ['ICSI-518', 'ICSI-522'],
+      'ICSI-545': ['ICSI-531'],
+      'ICSI-546': ['HUMA-1025'],
+      'ICSI-552': ['ICSI-543'],
+      'ICSI-553': ['ICSI-545'],
+      'ICSI-557': ['ICSI-531'],
+      'ICSI-558': ['ICSI-528', 'ICSI-530', 'ICSI-531', 'ICSI-532'],
+      'ICSI-559': ['ICSI-552'],
+      'ICSI-560': ['ICSI-540', 'ICSI-553', 'ICSI-551'],
+      'ICSI-671': ['ICSI-509'],
+      'ICSI-672': ['ADMI-779'],
+      'ICSI-673': ['ICSI-671'],
+      'ICSI-674': ['ICSI-672'],
+      'ICSI-675': ['ICSI-671'],
+      'ICSI-676': ['ISIA-106'],
+      'ICSI-677': ['ICSI-530', 'ISIA-107', 'ISIA-109'],
+      'ICSI-678': ['ISIA-112'],
+      'ICSI-679': ['ICSI-678'],
+      'INSO-135': ['ICSI-403'],
+      'INSO-136': ['INSO-135'],
+      'ISIA-101': ['CIEN-753'],
+      'ISIA-103': ['ICSI-672'],
+      'ISIA-104': ['ISIA-102'],
+      'ISIA-105': ['ICSI-674', 'ICSI-673', 'ISIA-103'],
+      'ISIA-106': ['ISIA-101'],
+      'ISIA-107': ['ISIA-104'],
+      'ISIA-108': ['ISIA-106'],
+      'ISIA-109': ['ISIA-105'],
+      'ISIA-110': ['ISIA-108', 'ICSI-676'],
+      'ISIA-111': ['ISIA-108'],
+      'ISIA-112': ['ISIA-109'],
+      'ISIA-113': ['CIEN-747'],
+      'ISIA-114': ['ICSI-672', 'ISIA-108'],
+      'ISIA-115': ['ISIA-110'],
+      'ISIA-116': ['ISIA-111', 'ICSI-676'],
+      'ISIA-117': ['HUMA-1185'],
+      'ISIA-118': ['ICSI-521'],
+      'ISIA-119': ['ISIA-115'],
+      'ISIA-120': ['ISIA-115'],
+      'ISIA-121': ['ICSI-678'],
+      'ISIA-125': ['ISIA-122'],
+      'ISIA-126': ['ISIA-123'],
     };
     
-    setPrerequisitosMap(prerequisitosBasicos);
-    setConvalidacionesMap({});
+    // Convalidaciones completas (cursos equivalentes entre mallas)
+    const convalidacionesCompletas = {
+      'ADMI-779': ['ICSI-409', 'ICSI-538'],
+      'CIEN-746': ['ICSI-423', 'CIEN-662'],
+      'CIEN-747': ['ICSI-441', 'ICSI-544'],
+      'CIEN-752': ['CIEN-597'],
+      'CIEN-753': ['CIEN-397'],
+      'CIEN-754': ['CIEN-599'],
+      'CIEN-755': ['CIEN-600', 'CIEN-649'],
+      'CIEN-768': ['ICSI-405', 'CIEN-539'],
+      'CIEN-769': ['ICSI-405', 'CIEN-648'],
+      'HUMA-1179': ['HUMA-899'],
+      'HUMA-1180': ['HUMA-901'],
+      'HUMA-1182': ['HUMA-904', 'HUMA-1024'],
+      'HUMA-1183': ['HUMA-701', 'HUMA-1027', 'HUMA-1012'],
+      'HUMA-1184': ['HUMA-1038'],
+      'HUMA-1185': ['HUMA-905', 'HUMA-1043'],
+      'ICSI-506': ['ICSI-402', 'ICSI-506'],
+      'ICSI-509': ['ICSI-403', 'ICSI-509'],
+      'ICSI-521': ['ICSI-414', 'ICSI-521'],
+      'ICSI-546': ['HUMA-906', 'ICSI-546'],
+      'ICSI-671': ['ICSI-406'],
+      'ICSI-672': ['ICSI-419', 'ICSI-516', 'ICSI-519'],
+      'ICSI-673': ['ICSI-410', 'ICSI-515'],
+      'ICSI-674': ['ICSI-513'],
+      'ICSI-675': ['ICSI-510'],
+      'ICSI-676': ['ICSI-422', 'ICSI-525', 'ICSI-539'],
+      'ICSI-677': ['ICSI-439'],
+      'ICSI-678': ['ICSI-424', 'ICSI-531'],
+      'ICSI-679': ['ICSI-443', 'ICSI-540'],
+      'ISIA-100': ['ICSI-401', 'ICSI-507'],
+      'ISIA-101': ['CIEN-598', 'CIEN-651', 'CIEN-655'],
+      'ISIA-102': ['ICSI-420', 'ICSI-524'],
+      'ISIA-103': ['ICSI-418', 'ICSI-522'],
+      'ISIA-104': ['ICSI-408', 'ICSI-514'],
+      'ISIA-105': ['INSO-135', 'ICSI-518'],
+      'ISIA-106': ['CIEN-655'],
+      'ISIA-107': ['ICSI-433', 'ICSI-530'],
+      'ISIA-109': ['INSO-136', 'ICSI-523'],
+      'ISIA-110': ['ICSI-435', 'ICSI-551'],
+      'ISIA-111': ['ICSI-432', 'ICSI-527'],
+      'ISIA-113': ['INSO-137', 'ICSI-541'],
+      'ISIA-116': ['ICSI-425', 'ICSI-532'],
+      'ISIA-117': ['ICSI-428', 'ICSI-543'],
+      'ISIA-118': ['ICSI-421', 'ICSI-526'],
+      'ISIA-121': ['ICSI-412', 'ICSI-517'],
+      'ISIA-122': ['ICSI-434', 'ICSI-552'],
+      'ISIA-123': ['ICSI-560'],
+      'ISIA-124': ['ICSI-438', 'ICSI-558'],
+      'ISIA-125': ['ICSI-440', 'ICSI-559'],
+      'ISIA-127': ['ICSI-436', 'ICSI-550'],
+      'ISIA-128': ['ICSI-431', 'ICSI-547'],
+      'ISIA-129': ['ICSI-444', 'ICSI-554', 'ICSI-546'],
+      'ISIA-130': ['ICSI-548', 'ICSI-545'],
+      'ISIA-131': ['ICSI-556'],
+      'ISIA-132': ['ICSI-427', 'ICSI-553'],
+      'ISIA-133': ['ICSI-426', 'ICSI-555'],
+    };
+    
+    setPrerequisitosMap(prerequisitosCompletos);
+    setConvalidacionesMap(convalidacionesCompletas);
   };
 
   const loadCursos = () => {
@@ -124,22 +279,29 @@ export default function SelectCourses() {
     } else {
       // Verificar prerequisitos antes de seleccionar
       const prerequisitos = prerequisitosMap[cursoId] || [];
-      const convalidaciones = convalidacionesMap[cursoId] || [];
-      const todosPrerequisitos = [...prerequisitos, ...convalidaciones];
       
-      const prerequisitosFaltantes = todosPrerequisitos.filter(
-        prereqCodigo => !selectedCourses.includes(prereqCodigo)
-      );
+      // Verificar cada prerequisito, pero también aceptar convalidaciones
+      const prerequisitosFaltantes = prerequisitos.filter(prereqCodigo => {
+        // El prerequisito está cumplido si:
+        // 1. El curso prerequisito ya está seleccionado
+        if (selectedCourses.includes(prereqCodigo)) return false;
+        
+        // 2. O algún curso equivalente (convalidación) del prerequisito está seleccionado
+        const cursosEquivalentes = convalidacionesMap[prereqCodigo] || [];
+        const tieneEquivalente = cursosEquivalentes.some(equiv => selectedCourses.includes(equiv));
+        
+        return !tieneEquivalente; // Falta si no tiene ni el prerequisito ni equivalente
+      });
       
       if (prerequisitosFaltantes.length > 0) {
-        // Mostrar error si faltan prerequisitos
+        // Mostrar error indicando qué prerequisitos faltan
         const curso = cursosPorCiclo.flatMap(c => c.cursos).find(c => c.id === cursoId || c.codigo === cursoId);
         toast.error(
-          `⚠️ No puedes seleccionar ${curso?.codigo || cursoId}. Primero debes marcar: ${prerequisitosFaltantes.join(', ')}`,
-          { duration: 4000 }
+          `⚠️ No puedes seleccionar ${curso?.codigo || cursoId}.\nFaltan prerequisitos: ${prerequisitosFaltantes.join(', ')}`,
+          { duration: 5000 }
         );
       } else {
-        // Si tiene todos los prerequisitos, marcar el curso
+        // Si tiene todos los prerequisitos (o sus equivalentes), marcar el curso
         toggleCourse(cursoId);
       }
     }
