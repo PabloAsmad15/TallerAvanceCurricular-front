@@ -58,6 +58,7 @@ export const cursosAPI = {
   getByMalla: (mallaId) => api.get(`/cursos/malla/${mallaId}`),
   getByCiclo: (mallaId) => api.get(`/cursos/malla/${mallaId}/por-ciclo`),
   getById: (id) => api.get(`/cursos/${id}`),
+  getPrerequisitos: (mallaId) => api.get(`/cursos/malla/${mallaId}/prerequisitos`),
 };
 
 // Recomendaciones API

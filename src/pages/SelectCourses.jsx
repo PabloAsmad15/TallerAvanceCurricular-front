@@ -26,13 +26,26 @@ export default function SelectCourses() {
   const [cursosPorCiclo, setCursosPorCiclo] = useState([]);
   const [generatingRecommendation, setGeneratingRecommendation] = useState(false);
   const [expandedCiclos, setExpandedCiclos] = useState([1, 2, 3]);
+  const [prerequisitosMap, setPrerequisitosMap] = useState({});
+  const [convalidacionesMap, setConvalidacionesMap] = useState({});
 
-  // Cargar cursos cuando cambia la malla
+  // Cargar cursos y prerequisitos cuando cambia la malla
   useEffect(() => {
     if (selectedMalla) {
       loadCursos();
+      loadPrerequisitos();
     }
   }, [selectedMalla]);
+
+  const loadPrerequisitos = async () => {
+    try {
+      const response = await cursosAPI.getPrerequisitos(selectedMalla.id);
+      setPrerequisitosMap(response.data.prerequisitos || {});
+      setConvalidacionesMap(response.data.convalidaciones || {});
+    } catch (error) {
+      console.error('Error al cargar prerequisitos:', error);
+    }
+  };
 
   const loadCursos = () => {
     const cursosData = cursosPorMalla[selectedMalla.anio.toString()];
@@ -70,6 +83,48 @@ export default function SelectCourses() {
     );
   };
 
+  // Auto-marcar prerequisitos de un curso
+  const autoMarcarPrerequisitos = (cursoCodigo, cursosSeleccionados) => {
+    const prerequisitos = prerequisitosMap[cursoCodigo] || [];
+    const convalidaciones = convalidacionesMap[cursoCodigo] || [];
+    const todosPrerequisitos = [...prerequisitos, ...convalidaciones];
+    
+    const prerequisitosFaltantes = [];
+    
+    for (const prereqCodigo of todosPrerequisitos) {
+      if (!cursosSeleccionados.includes(prereqCodigo)) {
+        prerequisitosFaltantes.push(prereqCodigo);
+      }
+    }
+    
+    return [...cursosSeleccionados, ...prerequisitosFaltantes];
+  };
+
+  // Función para manejar la selección/deselección de cursos
+  const handleToggleCourse = (cursoId) => {
+    const isCurrentlySelected = selectedCourses.includes(cursoId);
+    
+    if (isCurrentlySelected) {
+      // Deseleccionar el curso
+      toggleCourse(cursoId);
+    } else {
+      // Seleccionar el curso y auto-marcar prerequisitos
+      const nuevosSeleccionados = autoMarcarPrerequisitos(cursoId, [...selectedCourses]);
+      const prerequisitosAgregados = nuevosSeleccionados.filter(c => !selectedCourses.includes(c) && c !== cursoId);
+      
+      useRecommendationStore.setState({ selectedCourses: nuevosSeleccionados });
+      
+      // Mostrar notificación si se auto-marcaron prerequisitos
+      if (prerequisitosAgregados.length > 0) {
+        const curso = cursosPorCiclo.flatMap(c => c.cursos).find(c => c.id === cursoId || c.codigo === cursoId);
+        toast.success(
+          `✓ ${curso?.codigo || cursoId} marcado. También se marcaron ${prerequisitosAgregados.length} prerequisito(s) automáticamente.`,
+          { duration: 3000 }
+        );
+      }
+    }
+  };
+
   const toggleAllCursosInCiclo = (ciclo) => {
     const cursosDelCiclo = cursosPorCiclo.find(c => c.ciclo === ciclo);
     if (!cursosDelCiclo) return;
@@ -82,9 +137,14 @@ export default function SelectCourses() {
       const newSelected = selectedCourses.filter(id => !cursoIdsDelCiclo.includes(id));
       useRecommendationStore.setState({ selectedCourses: newSelected });
     } else {
-      // Seleccionar todos los cursos de este ciclo
-      const newSelected = [...new Set([...selectedCourses, ...cursoIdsDelCiclo])];
+      // Seleccionar todos los cursos de este ciclo con auto-marcado de prerequisitos
+      let newSelected = [...selectedCourses];
+      for (const cursoId of cursoIdsDelCiclo) {
+        newSelected = autoMarcarPrerequisitos(cursoId, newSelected);
+      }
+      newSelected = [...new Set(newSelected)]; // Eliminar duplicados
       useRecommendationStore.setState({ selectedCourses: newSelected });
+      toast.success(`Ciclo ${ciclo} marcado con sus prerequisitos`, { duration: 2000 });
     }
   };
 
@@ -242,7 +302,7 @@ export default function SelectCourses() {
                       return (
                         <button
                           key={curso.id}
-                          onClick={() => toggleCourse(curso.id)}
+                          onClick={() => handleToggleCourse(curso.id)}
                           className={`w-full flex items-start space-x-3 p-3 rounded-lg border-2 transition-all ${
                             isSelected
                               ? 'border-primary-500 bg-primary-50'
