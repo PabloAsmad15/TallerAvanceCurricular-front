@@ -39,13 +39,43 @@ export default function SelectCourses() {
   }, [selectedMalla]);
 
   const loadPrerequisitos = async () => {
-    try {
-      const response = await cursosAPI.getPrerequisitos(selectedMalla.id);
-      setPrerequisitosMap(response.data.prerequisitos || {});
-      setConvalidacionesMap(response.data.convalidaciones || {});
-    } catch (error) {
-      console.error('Error al cargar prerequisitos:', error);
-    }
+    // Mapa de prerequisitos básico para Ingeniería de Sistemas
+    const prerequisitosBasicos = {
+      // Programación
+      'ICSI-401': [], // Fundamentos de Programación I
+      'ICSI-402': ['ICSI-401'], // Fundamentos de Programación II -> Prog I
+      'ICSI-501': ['ICSI-402'], // Estructura de Datos -> Prog II
+      'ICSI-601': ['ICSI-501'], // Algoritmos -> Estructura de Datos
+      
+      // Matemáticas
+      'FISI-100': [], // Matemática Básica
+      'FISI-101': ['FISI-100'], // Cálculo I -> Mat Básica
+      'FISI-102': ['FISI-101'], // Cálculo II -> Cálculo I
+      'FISI-103': ['FISI-102'], // Cálculo III -> Cálculo II
+      'FISI-200': ['FISI-101'], // Álgebra Lineal -> Cálculo I
+      'FISI-201': ['FISI-101'], // Matemática Discreta -> Cálculo I
+      'FISI-300': ['FISI-102'], // Estadística -> Cálculo II
+      
+      // Física
+      'FISI-400': [], // Física General
+      'FISI-401': ['FISI-400', 'FISI-101'], // Física I -> Física General, Cálculo I
+      'FISI-402': ['FISI-401', 'FISI-102'], // Física II -> Física I, Cálculo II
+      
+      // Bases de Datos
+      'ICSI-700': ['ICSI-501'], // Base de Datos I -> Estructura de Datos
+      'ICSI-701': ['ICSI-700'], // Base de Datos II -> BD I
+      
+      // Redes
+      'ICSI-800': [], // Redes I
+      'ICSI-801': ['ICSI-800'], // Redes II -> Redes I
+      
+      // Ingeniería de Software
+      'ICSI-900': ['ICSI-402'], // Ingeniería de Software I -> Prog II
+      'ICSI-901': ['ICSI-900'], // Ingeniería de Software II -> IS I
+    };
+    
+    setPrerequisitosMap(prerequisitosBasicos);
+    setConvalidacionesMap({});
   };
 
   const loadCursos = () => {
@@ -84,62 +114,33 @@ export default function SelectCourses() {
     );
   };
 
-  // Auto-marcar prerequisitos de un curso
-  const autoMarcarPrerequisitos = (cursoCodigo, cursosSeleccionados) => {
-    const prerequisitos = prerequisitosMap[cursoCodigo] || [];
-    const convalidaciones = convalidacionesMap[cursoCodigo] || [];
-    const todosPrerequisitos = [...prerequisitos, ...convalidaciones];
-    
-    const prerequisitosFaltantes = [];
-    
-    for (const prereqCodigo of todosPrerequisitos) {
-      if (!cursosSeleccionados.includes(prereqCodigo)) {
-        prerequisitosFaltantes.push(prereqCodigo);
-      }
-    }
-    
-    return [...cursosSeleccionados, ...prerequisitosFaltantes];
-  };
-
   // Función para manejar la selección/deselección de cursos
   const handleToggleCourse = (cursoId) => {
-    console.log('🔍 handleToggleCourse llamado con:', cursoId);
-    console.log('📋 selectedCourses actual:', selectedCourses);
-    
     const isCurrentlySelected = selectedCourses.includes(cursoId);
-    console.log('✓ ¿Está seleccionado?', isCurrentlySelected);
     
     if (isCurrentlySelected) {
       // Deseleccionar el curso
-      console.log('❌ Deseleccionando...');
       toggleCourse(cursoId);
     } else {
-      // Seleccionar el curso y auto-marcar prerequisitos
-      console.log('✅ Seleccionando...');
-      const prerequisitosNecesarios = autoMarcarPrerequisitos(cursoId, [...selectedCourses]);
-      console.log('📚 Prerequisitos necesarios:', prerequisitosNecesarios);
+      // Verificar prerequisitos antes de seleccionar
+      const prerequisitos = prerequisitosMap[cursoId] || [];
+      const convalidaciones = convalidacionesMap[cursoId] || [];
+      const todosPrerequisitos = [...prerequisitos, ...convalidaciones];
       
-      const nuevosSeleccionados = [...prerequisitosNecesarios, cursoId]; // Agregar el curso actual también
-      console.log('🆕 Nuevos seleccionados:', nuevosSeleccionados);
+      const prerequisitosFaltantes = todosPrerequisitos.filter(
+        prereqCodigo => !selectedCourses.includes(prereqCodigo)
+      );
       
-      const prerequisitosAgregados = nuevosSeleccionados.filter(c => !selectedCourses.includes(c) && c !== cursoId);
-      
-      setSelectedCourses(nuevosSeleccionados);
-      console.log('💾 setSelectedCourses llamado con:', nuevosSeleccionados);
-      
-      // Verificar que el estado se actualizó
-      setTimeout(() => {
-        const estadoDespues = useRecommendationStore.getState().selectedCourses;
-        console.log('🔄 Estado después de actualizar:', estadoDespues);
-      }, 100);
-      
-      // Mostrar notificación si se auto-marcaron prerequisitos
-      if (prerequisitosAgregados.length > 0) {
+      if (prerequisitosFaltantes.length > 0) {
+        // Mostrar error si faltan prerequisitos
         const curso = cursosPorCiclo.flatMap(c => c.cursos).find(c => c.id === cursoId || c.codigo === cursoId);
-        toast.success(
-          `✓ ${curso?.codigo || cursoId} marcado. También se marcaron ${prerequisitosAgregados.length} prerequisito(s) automáticamente.`,
-          { duration: 3000 }
+        toast.error(
+          `⚠️ No puedes seleccionar ${curso?.codigo || cursoId}. Primero debes marcar: ${prerequisitosFaltantes.join(', ')}`,
+          { duration: 4000 }
         );
+      } else {
+        // Si tiene todos los prerequisitos, marcar el curso
+        toggleCourse(cursoId);
       }
     }
   };
@@ -337,12 +338,6 @@ export default function SelectCourses() {
                   <div className="px-4 pb-4 space-y-2">
                     {cursos.map(curso => {
                       const isSelected = selectedCourses.includes(curso.id);
-                      console.log(`🎨 Renderizando curso ${curso.id}:`, {
-                        'curso.id': curso.id,
-                        'selectedCourses': selectedCourses,
-                        'isSelected': isSelected,
-                        'includes': selectedCourses.includes(curso.id)
-                      });
                       
                       return (
                         <button
