@@ -257,14 +257,14 @@ export const cursosPorMalla = {
       { "codigo": "ICSI-549", "nombre": "COMPUTACION VISUAL Y ACCESIBILIDAD AUMENTADA" },
       { "codigo": "ICSI-550", "nombre": "DESARROLLO DE APLICACIONES PARA DISPOSITIVOS MOVILES" },
       { "codigo": "ICSI-551", "nombre": "SISTEMAS INTELIGENTES" },
-      { "codigo": "ICSI-552", "nombre": "TESIS I" }
-    ],
-    "10": [
+      { "codigo": "ICSI-552", "nombre": "TESIS I" },
       { "codigo": "ICSI-553", "nombre": "GOBIERNO DE TI" },
       { "codigo": "ICSI-554", "nombre": "SISTEMAS GESTUALES Y CONVERSACIONALES" },
       { "codigo": "ICSI-555", "nombre": "CIBERSEGURIDAD" },
       { "codigo": "ICSI-556", "nombre": "BLOCKCHAIN" },
-      { "codigo": "ICSI-557", "nombre": "INTELIGENCIA DE PROCESOS DE NEGOCIOS" },
+      { "codigo": "ICSI-557", "nombre": "INTELIGENCIA DE PROCESOS DE NEGOCIOS" }
+    ],
+    "10": [
       { "codigo": "ICSI-558", "nombre": "PRACTICAS PRE-PROFESIONALES" },
       { "codigo": "ICSI-559", "nombre": "TESIS II" },
       { "codigo": "ICSI-560", "nombre": "TALLER INTEGRADOR DE SISTEMAS Y TECNOLOGÍAS DE INFORMACIÓN" }
