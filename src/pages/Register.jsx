@@ -108,8 +108,21 @@ export default function Register() {
         navigate('/');
       }
     } catch (error) {
-      const message = error.message || 'Error al registrarse';
-      toast.error(message);
+      console.error('Error en registro:', error); // Solo para debugging en consola
+      
+      // Mensaje genérico y seguro para el usuario
+      let userMessage = 'Ocurrió un error al crear tu cuenta. Por favor, intenta nuevamente.';
+      
+      // Solo mostrar mensajes amigables específicos (no técnicos)
+      if (error.message && !error.message.includes('fetch') && !error.message.includes('network') && !error.message.includes('404')) {
+        userMessage = error.message;
+      } else if (error.message && error.message.includes('network')) {
+        userMessage = 'Error de conexión. Verifica tu internet e intenta nuevamente.';
+      } else if (error.message && error.message.includes('404')) {
+        userMessage = 'Servicio no disponible temporalmente. Intenta más tarde.';
+      }
+      
+      toast.error(userMessage);
     } finally {
       setLoading(false);
     }

@@ -171,8 +171,28 @@ export default function SelectCourses() {
       toast.success('¡Recomendación generada exitosamente!');
       navigate('/recommendations');
     } catch (error) {
-      const message = error.response?.data?.detail || 'Error al generar recomendación';
-      toast.error(message);
+      console.error('Error al generar recomendación:', error); // Solo para debugging en consola
+      
+      // Mensaje genérico y seguro para el usuario
+      let userMessage = 'Ocurrió un error al generar la recomendación. Por favor, intenta nuevamente.';
+      
+      // Mostrar mensaje del backend solo si es amigable (errores de validación de prerequisitos)
+      if (error.response?.data?.detail) {
+        const detail = error.response.data.detail;
+        // Si es un array (errores de validación), mostrarlo
+        if (Array.isArray(detail)) {
+          userMessage = detail.join('\n');
+        } 
+        // Si es un string que no contiene palabras técnicas, mostrarlo
+        else if (typeof detail === 'string' && 
+                 !detail.includes('Traceback') && 
+                 !detail.includes('Exception') && 
+                 !detail.toLowerCase().includes('internal')) {
+          userMessage = detail;
+        }
+      }
+      
+      toast.error(userMessage, { duration: 5000 });
     } finally {
       setGeneratingRecommendation(false);
     }
