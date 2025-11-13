@@ -39,42 +39,42 @@ api.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  register: (data) => api.post('/auth/register', data),
-  login: (data) => api.post('/auth/login-json', data),
-  getMe: () => api.get('/auth/me'),
-  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
+  register: (data) => api.post('/api/auth/register', data),
+  login: (data) => api.post('/api/auth/login-json', data),
+  getMe: () => api.get('/api/auth/me'),
+  forgotPassword: (email) => api.post('/api/auth/forgot-password', { email }),
   resetPassword: (token, newPassword) => 
-    api.post('/auth/reset-password', { token, new_password: newPassword }),
+    api.post('/api/auth/reset-password', { token, new_password: newPassword }),
 };
 
 // Mallas API
 export const mallasAPI = {
-  getAll: () => api.get('/mallas'),
-  getById: (id) => api.get(`/mallas/${id}`),
+  getAll: () => api.get('/api/mallas'),
+  getById: (id) => api.get(`/api/mallas/${id}`),
 };
 
 // Cursos API
 export const cursosAPI = {
-  getByMalla: (mallaId) => api.get(`/cursos/malla/${mallaId}`),
-  getByCiclo: (mallaId) => api.get(`/cursos/malla/${mallaId}/por-ciclo`),
-  getById: (id) => api.get(`/cursos/${id}`),
-  getPrerequisitos: (mallaId) => api.get(`/cursos/malla/${mallaId}/prerequisitos`),
+  getByMalla: (mallaId) => api.get(`/api/cursos/malla/${mallaId}`),
+  getByCiclo: (mallaId) => api.get(`/api/cursos/malla/${mallaId}/por-ciclo`),
+  getById: (id) => api.get(`/api/cursos/${id}`),
+  getPrerequisitos: (mallaId) => api.get(`/api/cursos/malla/${mallaId}/prerequisitos`),
 };
 
 // Recomendaciones API
 export const recomendacionesAPI = {
-  create: (data) => api.post('/recommendations/', data),
-  getHistory: () => api.get('/recommendations/history'),
-  getById: (id) => api.get(`/recommendations/${id}`),
-  getStats: () => api.get('/recommendations/stats/algorithms'),
+  create: (data) => api.post('/api/recommendations/', data),
+  getHistory: () => api.get('/api/recommendations/history'),
+  getById: (id) => api.get(`/api/recommendations/${id}`),
+  getStats: () => api.get('/api/recommendations/stats/algorithms'),
 };
 
 // Admin API
 export const adminAPI = {
-  getGeneralStats: () => api.get('/admin/stats/general'),
-  getRecomendacionesStats: () => api.get('/admin/stats/recomendaciones'),
-  getUsuarios: (skip = 0, limit = 50) => api.get(`/admin/usuarios?skip=${skip}&limit=${limit}`),
-  getRecomendacionesRecientes: (limit = 10) => api.get(`/admin/recomendaciones/recientes?limit=${limit}`),
+  getGeneralStats: () => api.get('/api/admin/stats/general'),
+  getRecomendacionesStats: () => api.get('/api/admin/stats/recomendaciones'),
+  getUsuarios: (skip = 0, limit = 50) => api.get(`/api/admin/usuarios?skip=${skip}&limit=${limit}`),
+  getRecomendacionesRecientes: (limit = 10) => api.get(`/api/admin/recomendaciones/recientes?limit=${limit}`),
 };
 
 export default api;
