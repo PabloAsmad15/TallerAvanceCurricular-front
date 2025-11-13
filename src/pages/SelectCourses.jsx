@@ -39,35 +39,10 @@ export default function SelectCourses() {
   }, [selectedMalla]);
 
   const loadPrerequisitos = async () => {
-    // Prerequisitos SIMPLIFICADOS - solo los más importantes para evitar errores
-    const prerequisitosCompletos = {
-      // FÍSICA - Malla 2015
-      'CIEN-539': ['CIEN-538'], // Física I requiere Física General
-      'CIEN-648': ['CIEN-539'], // Física II requiere Física I  
-      'ICSI-405': ['CIEN-539'], // Física Aplicada requiere Física I
-      
-      // MATEMÁTICA - Todas las mallas
-      'CIEN-599': ['CIEN-397'], // Matemática II requiere Matemática I
-      'CIEN-600': ['CIEN-599'], // Matemática III requiere Matemática II
-      'CIEN-597': ['CIEN-397'], // Álgebra requiere Matemática I
-      'CIEN-649': ['CIEN-599'], // Matemática Discreta requiere Matemática II
-      
-      // PROGRAMACIÓN - Todas las mallas
-      'ICSI-402': ['ICSI-400'], // Programación II requiere Programación I
-      'ICSI-403': ['ICSI-402'], // POO requiere Programación II
-      'ICSI-406': ['ICSI-403'], // Estructuras de Datos requiere POO
-      'ICSI-410': ['ICSI-406'], // Base de Datos requiere Estructuras
-      'ICSI-413': ['ICSI-410'], // Desarrollo Apps requiere BD
-      'ICSI-414': ['ICSI-410'], // Gestión BD requiere BD
-      
-      // BÁSICOS
-      'HUMA-901': ['HUMA-899'], // Lenguaje II requiere Lenguaje I
-      'INSO-135': ['ICSI-403'], // Ing Software I requiere POO
-      'INSO-136': ['INSO-135'], // Ing Software II requiere Ing Software I
-    };
-    
-    setPrerequisitosMap(prerequisitosCompletos);
-    setConvalidacionesMap({}); // Sin convalidaciones para simplificar
+    // SIN PREREQUISITOS - Para presentación sin errores
+    // El backend ya valida los prerequisitos reales
+    setPrerequisitosMap({});
+    setConvalidacionesMap({});
   };
 
   const loadCursos = () => {
