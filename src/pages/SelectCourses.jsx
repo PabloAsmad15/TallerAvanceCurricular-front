@@ -39,19 +39,50 @@ export default function SelectCourses() {
   }, [selectedMalla]);
 
   const loadPrerequisitos = async () => {
-    // PREREQUISITOS BÁSICOS SOLO PARA AYUDAR AL USUARIO
-    // El backend hace la validación robusta con la BD real
-    const prerequisitosBasicos = {
-      // Matemáticas (consistente en todas las mallas)
-      'CIEN-599': ['CIEN-397'], // Mat II requiere Mat I
-      
-      // Programación (ciclos tempranos)
-      'ICSI-402': ['ICSI-400'], // Solo malla 2015
-      'ICSI-506': ['CIEN-397'], // Algoritmia requiere Mat I en mallas nuevas
-    };
+    if (!selectedMalla) return;
     
-    setPrerequisitosMap(prerequisitosBasicos);
-    setConvalidacionesMap({}); // Backend maneja convalidaciones
+    try {
+      // Cargar prerequisitos REALES desde el backend
+      const response = await cursosAPI.getPrerequisitos(selectedMalla.id);
+      
+      if (response.data) {
+        // Crear mapa de prerequisitos: curso -> [prerequisitos]
+        const prerequisitosMap = {};
+        response.data.prerequisitos.forEach(prereq => {
+          if (!prerequisitosMap[prereq.curso_codigo]) {
+            prerequisitosMap[prereq.curso_codigo] = [];
+          }
+          prerequisitosMap[prereq.curso_codigo].push(prereq.prerequisito_codigo);
+        });
+        
+        // Crear mapa de convalidaciones: curso -> [cursos_equivalentes]
+        const convalidacionesMap = {};
+        response.data.convalidaciones.forEach(conv => {
+          // Bidireccional: ambos cursos se convalidan entre sí
+          if (!convalidacionesMap[conv.curso_destino_codigo]) {
+            convalidacionesMap[conv.curso_destino_codigo] = [];
+          }
+          convalidacionesMap[conv.curso_destino_codigo].push(conv.curso_origen_codigo);
+          
+          if (!convalidacionesMap[conv.curso_origen_codigo]) {
+            convalidacionesMap[conv.curso_origen_codigo] = [];
+          }
+          convalidacionesMap[conv.curso_origen_codigo].push(conv.curso_destino_codigo);
+        });
+        
+        setPrerequisitosMap(prerequisitosMap);
+        setConvalidacionesMap(convalidacionesMap);
+        
+        console.log(`✅ Cargados ${Object.keys(prerequisitosMap).length} cursos con prerequisitos`);
+        console.log(`✅ Cargadas ${response.data.convalidaciones.length} convalidaciones`);
+      }
+    } catch (error) {
+      console.error('Error al cargar prerequisitos:', error);
+      // Si falla, usar validación solo en backend
+      setPrerequisitosMap({});
+      setConvalidacionesMap({});
+      toast('⚠️ Validación se hará en el servidor', { icon: 'ℹ️', duration: 3000 });
+    }
   };
 
   const loadCursos = () => {
@@ -98,19 +129,37 @@ export default function SelectCourses() {
       // Deseleccionar el curso
       toggleCourse(cursoId);
     } else {
-      // ADVERTENCIA SUAVE - solo avisa, no bloquea
+      // Validar prerequisitos con convalidaciones
       const prerequisitos = prerequisitosMap[cursoId] || [];
-      const prerequisitosFaltantes = prerequisitos.filter(prereqCodigo => 
-        !selectedCourses.includes(prereqCodigo)
-      );
       
-      if (prerequisitosFaltantes.length > 0) {
-        toast('💡 Verifica prerequisitos. El backend validará al generar.', 
-          { duration: 2500, icon: '⚠️' }
-        );
+      if (prerequisitos.length > 0) {
+        const prerequisitosFaltantes = [];
+        
+        for (const prereqCodigo of prerequisitos) {
+          // Verificar si el prerequisito está aprobado directamente
+          let prereqCumplido = selectedCourses.includes(prereqCodigo);
+          
+          // Si no está aprobado, verificar convalidaciones
+          if (!prereqCumplido) {
+            const convalidados = convalidacionesMap[prereqCodigo] || [];
+            prereqCumplido = convalidados.some(convCodigo => 
+              selectedCourses.includes(convCodigo)
+            );
+          }
+          
+          if (!prereqCumplido) {
+            prerequisitosFaltantes.push(prereqCodigo);
+          }
+        }
+        
+        if (prerequisitosFaltantes.length > 0) {
+          toast(`⚠️ Prerequisito(s) faltante(s): ${prerequisitosFaltantes.join(', ')}`, 
+            { duration: 4000, icon: '💡' }
+          );
+        }
       }
       
-      // SIEMPRE MARCA - backend valida
+      // SIEMPRE MARCA - permite libertad al usuario
       toggleCourse(cursoId);
     }
   };
