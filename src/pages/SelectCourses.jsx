@@ -317,16 +317,12 @@ export default function SelectCourses() {
     if (todosSeleccionados) {
       // Deseleccionar todos los cursos de este ciclo
       const newSelected = selectedCourses.filter(id => !cursoIdsDelCiclo.includes(id));
-      useRecommendationStore.setState({ selectedCourses: newSelected });
+      setSelectedCourses(newSelected);
     } else {
-      // Seleccionar todos los cursos de este ciclo con auto-marcado de prerequisitos
-      let newSelected = [...selectedCourses];
-      for (const cursoId of cursoIdsDelCiclo) {
-        newSelected = autoMarcarPrerequisitos(cursoId, newSelected);
-      }
-      newSelected = [...new Set(newSelected)]; // Eliminar duplicados
-      useRecommendationStore.setState({ selectedCourses: newSelected });
-      toast.success(`Ciclo ${ciclo} marcado con sus prerequisitos`, { duration: 2000 });
+      // Seleccionar todos los cursos de este ciclo (sin validar prerequisitos)
+      const newSelected = [...new Set([...selectedCourses, ...cursoIdsDelCiclo])];
+      setSelectedCourses(newSelected);
+      toast.success(`✓ Ciclo ${ciclo} marcado completamente`, { duration: 2000 });
     }
   };
 
