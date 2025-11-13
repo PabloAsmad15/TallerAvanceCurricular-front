@@ -39,10 +39,19 @@ export default function SelectCourses() {
   }, [selectedMalla]);
 
   const loadPrerequisitos = async () => {
-    // SIN PREREQUISITOS - Para presentación sin errores
-    // El backend ya valida los prerequisitos reales
-    setPrerequisitosMap({});
-    setConvalidacionesMap({});
+    // PREREQUISITOS BÁSICOS SOLO PARA AYUDAR AL USUARIO
+    // El backend hace la validación robusta con la BD real
+    const prerequisitosBasicos = {
+      // Matemáticas (consistente en todas las mallas)
+      'CIEN-599': ['CIEN-397'], // Mat II requiere Mat I
+      
+      // Programación (ciclos tempranos)
+      'ICSI-402': ['ICSI-400'], // Solo malla 2015
+      'ICSI-506': ['CIEN-397'], // Algoritmia requiere Mat I en mallas nuevas
+    };
+    
+    setPrerequisitosMap(prerequisitosBasicos);
+    setConvalidacionesMap({}); // Backend maneja convalidaciones
   };
 
   const loadCursos = () => {
@@ -89,33 +98,20 @@ export default function SelectCourses() {
       // Deseleccionar el curso
       toggleCourse(cursoId);
     } else {
-      // Verificar prerequisitos antes de seleccionar
+      // ADVERTENCIA SUAVE - solo avisa, no bloquea
       const prerequisitos = prerequisitosMap[cursoId] || [];
-      
-      // Verificar cada prerequisito, pero también aceptar convalidaciones
-      const prerequisitosFaltantes = prerequisitos.filter(prereqCodigo => {
-        // El prerequisito está cumplido si:
-        // 1. El curso prerequisito ya está seleccionado
-        if (selectedCourses.includes(prereqCodigo)) return false;
-        
-        // 2. O algún curso equivalente (convalidación) del prerequisito está seleccionado
-        const cursosEquivalentes = convalidacionesMap[prereqCodigo] || [];
-        const tieneEquivalente = cursosEquivalentes.some(equiv => selectedCourses.includes(equiv));
-        
-        return !tieneEquivalente; // Falta si no tiene ni el prerequisito ni equivalente
-      });
+      const prerequisitosFaltantes = prerequisitos.filter(prereqCodigo => 
+        !selectedCourses.includes(prereqCodigo)
+      );
       
       if (prerequisitosFaltantes.length > 0) {
-        // Mostrar error indicando qué prerequisitos faltan
-        const curso = cursosPorCiclo.flatMap(c => c.cursos).find(c => c.id === cursoId || c.codigo === cursoId);
-        toast.error(
-          `⚠️ No puedes seleccionar ${curso?.codigo || cursoId}.\nFaltan prerequisitos: ${prerequisitosFaltantes.join(', ')}`,
-          { duration: 5000 }
+        toast('💡 Verifica prerequisitos. El backend validará al generar.', 
+          { duration: 2500, icon: '⚠️' }
         );
-      } else {
-        // Si tiene todos los prerequisitos (o sus equivalentes), marcar el curso
-        toggleCourse(cursoId);
       }
+      
+      // SIEMPRE MARCA - backend valida
+      toggleCourse(cursoId);
     }
   };
 
