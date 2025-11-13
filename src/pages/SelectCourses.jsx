@@ -161,28 +161,40 @@ export default function SelectCourses() {
       toast.success('¡Recomendación generada exitosamente!');
       navigate('/recommendations');
     } catch (error) {
-      console.error('Error al generar recomendación:', error); // Solo para debugging en consola
+      console.error('Error al generar recomendación:', error);
       
-      // Mensaje genérico y seguro para el usuario
-      let userMessage = 'Ocurrió un error al generar la recomendación. Por favor, intenta nuevamente.';
-      
-      // Mostrar mensaje del backend solo si es amigable (errores de validación de prerequisitos)
+      // Mostrar errores de validación de prerequisitos
       if (error.response?.data?.detail) {
         const detail = error.response.data.detail;
-        // Si es un array (errores de validación), mostrarlo
-        if (Array.isArray(detail)) {
-          userMessage = detail.join('\n');
-        } 
-        // Si es un string que no contiene palabras técnicas, mostrarlo
-        else if (typeof detail === 'string' && 
-                 !detail.includes('Traceback') && 
-                 !detail.includes('Exception') && 
-                 !detail.toLowerCase().includes('internal')) {
-          userMessage = detail;
+        
+        // Si es un objeto con errores de prerequisitos
+        if (detail.errores && Array.isArray(detail.errores)) {
+          // Mostrar cada error en un toast separado
+          toast.error(detail.mensaje || 'Error de validación', { duration: 6000 });
+          detail.errores.forEach((err, index) => {
+            setTimeout(() => {
+              toast.error(err, { duration: 8000 });
+            }, (index + 1) * 300); // Escalonar los mensajes
+          });
         }
+        // Si es un array de errores directamente
+        else if (Array.isArray(detail)) {
+          detail.forEach((err, index) => {
+            setTimeout(() => {
+              toast.error(err, { duration: 6000 });
+            }, index * 300);
+          });
+        }
+        // Si es un string
+        else if (typeof detail === 'string') {
+          toast.error(detail, { duration: 5000 });
+        }
+        else {
+          toast.error('Error al validar los cursos seleccionados', { duration: 5000 });
+        }
+      } else {
+        toast.error('Error al conectar con el servidor', { duration: 5000 });
       }
-      
-      toast.error(userMessage, { duration: 5000 });
     } finally {
       setGeneratingRecommendation(false);
     }
