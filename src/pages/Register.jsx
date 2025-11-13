@@ -21,13 +21,59 @@ export default function Register() {
     e.preventDefault();
     
     // Validaciones
+    // Validar nombre
+    if (formData.nombre.trim().length < 2) {
+      toast.error('El nombre debe tener al menos 2 caracteres');
+      return;
+    }
+    
+    if (!/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(formData.nombre)) {
+      toast.error('El nombre debe contener al menos una letra');
+      return;
+    }
+    
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.]+$/.test(formData.nombre)) {
+      toast.error('El nombre solo puede contener letras, espacios y puntos');
+      return;
+    }
+    
+    // Validar apellido
+    if (formData.apellido.trim().length < 2) {
+      toast.error('El apellido debe tener al menos 2 caracteres');
+      return;
+    }
+    
+    if (!/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(formData.apellido)) {
+      toast.error('El apellido debe contener al menos una letra');
+      return;
+    }
+    
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.]+$/.test(formData.apellido)) {
+      toast.error('El apellido solo puede contener letras, espacios y puntos');
+      return;
+    }
+    
+    // Validar email
     if (!formData.email.endsWith('@upao.edu.pe')) {
       toast.error('El correo debe terminar en @upao.edu.pe');
       return;
     }
     
-    if (formData.password.length < 6) {
-      toast.error('La contraseña debe tener al menos 6 caracteres');
+    // Validar longitud mínima de contraseña
+    if (formData.password.length < 8) {
+      toast.error('La contraseña debe tener al menos 8 caracteres');
+      return;
+    }
+    
+    // Validar que contenga letras
+    if (!/[a-zA-Z]/.test(formData.password)) {
+      toast.error('La contraseña debe contener al menos una letra');
+      return;
+    }
+    
+    // Validar que contenga números
+    if (!/\d/.test(formData.password)) {
+      toast.error('La contraseña debe contener al menos un número');
       return;
     }
     
@@ -95,11 +141,14 @@ export default function Register() {
                   type="text"
                   required
                   className="input pl-10"
-                  placeholder="Tu nombre"
+                  placeholder="Tu nombre (ej: Juan)"
                   value={formData.nombre}
                   onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                 />
               </div>
+              <p className="mt-1 text-xs text-gray-500">
+                Solo letras, espacios y puntos
+              </p>
             </div>
 
             {/* Apellido */}
@@ -113,11 +162,14 @@ export default function Register() {
                   type="text"
                   required
                   className="input pl-10"
-                  placeholder="Tu apellido"
+                  placeholder="Tu apellido (ej: Pérez)"
                   value={formData.apellido}
                   onChange={(e) => setFormData({ ...formData, apellido: e.target.value })}
                 />
               </div>
+              <p className="mt-1 text-xs text-gray-500">
+                Solo letras, espacios y puntos
+              </p>
             </div>
 
             {/* Email */}
@@ -136,9 +188,6 @@ export default function Register() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
               </div>
-              <p className="mt-1 text-xs text-gray-500">
-                Sugerencia: Puedes usar tu DNI como contraseña
-              </p>
             </div>
 
             {/* Password */}
@@ -152,11 +201,14 @@ export default function Register() {
                   type="password"
                   required
                   className="input pl-10"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 8 caracteres"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
               </div>
+              <p className="mt-1 text-xs text-gray-500">
+                💡 Debe contener al menos una letra y un número (ej: MiClave123)
+              </p>
             </div>
 
             {/* Confirm Password */}

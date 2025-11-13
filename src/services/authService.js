@@ -157,7 +157,7 @@ const authService = {
       'auth/email-already-in-use': 'Este correo ya está registrado',
       'auth/invalid-email': 'Correo electrónico inválido',
       'auth/operation-not-allowed': 'Operación no permitida',
-      'auth/weak-password': 'La contraseña es muy débil (mínimo 6 caracteres)',
+      'auth/weak-password': 'La contraseña debe tener mínimo 8 caracteres con letras y números',
       'auth/user-disabled': 'Esta cuenta ha sido deshabilitada',
       'auth/user-not-found': 'Usuario no encontrado',
       'auth/wrong-password': 'Contraseña incorrecta',
