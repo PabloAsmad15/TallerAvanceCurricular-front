@@ -3,11 +3,11 @@ export const cursosPorMalla = {
     "1": [
       { "codigo": "ICSI-400", "nombre": "FUNDAMENTOS DE PROGRAMACION I" },
       { "codigo": "ICSI-401", "nombre": "INTRODUCCION A LA ING. DE SISTEMAS Y TECNOLOGIA DE INFORMACION" },
-      { "codigo": "ICSI-450", "nombre": "FISICA GENERAL" },
+      { "codigo": "CIEN-538", "nombre": "FISICA GENERAL" },
       { "codigo": "CIEN-397", "nombre": "MATEMATICA I" },
       { "codigo": "HUMA-900", "nombre": "METODOLOGIA DEL APRENDIZAJE UNIVERSITARIO" },
       { "codigo": "HUMA-899", "nombre": "LENGUAJE I" },
-      { "codigo": "ICSI-451", "nombre": "ACTIVIDAD FORMATIVA I: Desarrollo Personal" }
+      { "codigo": "HUMA-640", "nombre": "ACTIVIDAD FORMATIVA I: Desarrollo Personal" }
     ],
     "2": [
       { "codigo": "ICSI-402", "nombre": "FUNDAMENTOS DE PROGRAMACION II" },
