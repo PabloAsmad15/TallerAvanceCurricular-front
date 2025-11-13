@@ -13,6 +13,7 @@ export default function SelectCourses() {
     selectedCourses,
     setSelectedMalla,
     toggleCourse,
+    setSelectedCourses,
     setCurrentRecommendation,
   } = useRecommendationStore();
 
@@ -113,7 +114,7 @@ export default function SelectCourses() {
       const nuevosSeleccionados = [...prerequisitosNecesarios, cursoId]; // Agregar el curso actual también
       const prerequisitosAgregados = nuevosSeleccionados.filter(c => !selectedCourses.includes(c) && c !== cursoId);
       
-      useRecommendationStore.setState({ selectedCourses: nuevosSeleccionados });
+      setSelectedCourses(nuevosSeleccionados);
       
       // Mostrar notificación si se auto-marcaron prerequisitos
       if (prerequisitosAgregados.length > 0) {
