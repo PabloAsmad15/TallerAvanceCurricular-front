@@ -25,7 +25,7 @@ const authService = {
       const token = await user.getIdToken();
       
       // 3. Sincronizar con backend (verificar token y obtener datos del usuario de PostgreSQL)
-      const response = await api.post('/auth/firebase-login', { firebaseToken: token });
+      const response = await api.post('/api/auth/firebase-login', { firebaseToken: token });
       
       // 4. Guardar token y datos del usuario
       localStorage.setItem('token', token);
@@ -51,7 +51,7 @@ const authService = {
       const token = await user.getIdToken();
       
       // 3. Crear registro en PostgreSQL con datos adicionales
-      const response = await api.post('/auth/firebase-register', {
+      const response = await api.post('/api/auth/firebase-register', {
         firebaseToken: token,
         firebaseUid: user.uid,
         email: user.email,
