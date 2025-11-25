@@ -20,60 +20,121 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validaciones
+    // Limpiar espacios múltiples en nombre y apellido
+    const nombreLimpio = formData.nombre.replace(/\s+/g, ' ').trim();
+    const apellidoLimpio = formData.apellido.replace(/\s+/g, ' ').trim();
+    
     // Validar nombre
-    if (formData.nombre.trim().length < 2) {
+    if (nombreLimpio.length < 2) {
       toast.error('El nombre debe tener al menos 2 caracteres');
       return;
     }
     
-    if (!/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(formData.nombre)) {
-      toast.error('El nombre debe contener al menos una letra');
+    if (nombreLimpio.length > 50) {
+      toast.error('El nombre no puede tener más de 50 caracteres');
       return;
     }
     
-    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.]+$/.test(formData.nombre)) {
-      toast.error('El nombre solo puede contener letras, espacios y puntos');
+    // Regex para nombre: permite letras, espacios, puntos, apóstrofes y guiones
+    const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+(?:[\s.'\-][a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+)*$/;
+    if (!nameRegex.test(nombreLimpio)) {
+      toast.error('El nombre solo puede contener letras, espacios, puntos, apóstrofes y guiones');
       return;
     }
     
     // Validar apellido
-    if (formData.apellido.trim().length < 2) {
+    if (apellidoLimpio.length < 2) {
       toast.error('El apellido debe tener al menos 2 caracteres');
       return;
     }
     
-    if (!/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(formData.apellido)) {
-      toast.error('El apellido debe contener al menos una letra');
+    if (apellidoLimpio.length > 50) {
+      toast.error('El apellido no puede tener más de 50 caracteres');
       return;
     }
     
-    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\.]+$/.test(formData.apellido)) {
-      toast.error('El apellido solo puede contener letras, espacios y puntos');
+    if (!nameRegex.test(apellidoLimpio)) {
+      toast.error('El apellido solo puede contener letras, espacios, puntos, apóstrofes y guiones');
       return;
     }
     
-    // Validar email
-    if (!formData.email.endsWith('@upao.edu.pe')) {
+    // Validar email con regex estricto
+    const emailLimpio = formData.email.trim().toLowerCase();
+    
+    // Validar que no tenga espacios
+    if (emailLimpio.includes(' ')) {
+      toast.error('El correo no puede contener espacios');
+      return;
+    }
+    
+    const emailRegex = /^[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9]@[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$/;
+    
+    if (!emailRegex.test(emailLimpio)) {
+      toast.error('Formato de email inválido');
+      return;
+    }
+    
+    if (emailLimpio.includes('..') || emailLimpio.includes('--') || emailLimpio.includes('__')) {
+      toast.error('El correo no puede contener puntos, guiones o guiones bajos consecutivos');
+      return;
+    }
+    
+    const localPart = emailLimpio.split('@')[0];
+    if (localPart.startsWith('.') || localPart.startsWith('-') || localPart.startsWith('_') ||
+        localPart.endsWith('.') || localPart.endsWith('-') || localPart.endsWith('_')) {
+      toast.error('El correo no puede comenzar o terminar con punto, guion o guion bajo antes del @');
+      return;
+    }
+    
+    // Validar que sea de @upao.edu.pe
+    if (!emailLimpio.endsWith('@upao.edu.pe')) {
       toast.error('El correo debe terminar en @upao.edu.pe');
       return;
     }
     
-    // Validar longitud mínima de contraseña
+    // Validar contraseña con requisitos estrictos
     if (formData.password.length < 8) {
       toast.error('La contraseña debe tener al menos 8 caracteres');
       return;
     }
     
-    // Validar que contenga letras
-    if (!/[a-zA-Z]/.test(formData.password)) {
-      toast.error('La contraseña debe contener al menos una letra');
+    if (formData.password.length > 128) {
+      toast.error('La contraseña no puede tener más de 128 caracteres');
       return;
     }
     
-    // Validar que contenga números
+    if (!/[a-z]/.test(formData.password)) {
+      toast.error('La contraseña debe contener al menos una letra minúscula');
+      return;
+    }
+    
+    if (!/[A-Z]/.test(formData.password)) {
+      toast.error('La contraseña debe contener al menos una letra mayúscula');
+      return;
+    }
+    
     if (!/\d/.test(formData.password)) {
       toast.error('La contraseña debe contener al menos un número');
+      return;
+    }
+    
+    if (!/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/;'`~]/.test(formData.password)) {
+      toast.error('La contraseña debe contener al menos un carácter especial');
+      return;
+    }
+    
+    if (/\s/.test(formData.password)) {
+      toast.error('La contraseña no puede contener espacios');
+      return;
+    }
+    
+    // Verificar contraseñas comunes
+    const commonPasswords = [
+      'password', '12345678', 'qwerty123', 'abc123', 'password123',
+      'admin123', 'letmein', 'welcome123', '123456789', 'password1'
+    ];
+    if (commonPasswords.includes(formData.password.toLowerCase())) {
+      toast.error('La contraseña es demasiado común, elige una más segura');
       return;
     }
     
@@ -160,7 +221,7 @@ export default function Register() {
                 />
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Solo letras, espacios y puntos
+                Permite letras, espacios, puntos, apóstrofes y guiones (ej: María José, O'Connor)
               </p>
             </div>
 
@@ -175,20 +236,20 @@ export default function Register() {
                   type="text"
                   required
                   className="input pl-10"
-                  placeholder="Tu apellido (ej: Pérez)"
+                  placeholder="Tu apellido (ej: García-Pérez)"
                   value={formData.apellido}
                   onChange={(e) => setFormData({ ...formData, apellido: e.target.value })}
                 />
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Solo letras, espacios y puntos
+                Permite letras, espacios, puntos, apóstrofes y guiones
               </p>
             </div>
 
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Correo Institucional
+                Correo Institucional UPAO
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -201,6 +262,9 @@ export default function Register() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
               </div>
+              <p className="mt-1 text-xs text-gray-500">
+                Debe terminar en @upao.edu.pe (sin espacios, puntos consecutivos, etc.)
+              </p>
             </div>
 
             {/* Password */}
@@ -220,7 +284,7 @@ export default function Register() {
                 />
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                💡 Debe contener al menos una letra y un número (ej: MiClave123)
+                💡 Mínimo 8 caracteres, con mayúscula, minúscula, número y carácter especial (!@#$%^&*)
               </p>
             </div>
 
