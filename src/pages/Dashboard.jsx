@@ -19,7 +19,7 @@ export default function Dashboard() {
       </div>
 
       {/* Feature Cards */}
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
+      <div className="grid md:grid-cols-3 gap-6 mb-8">
         <div className="card hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/select-courses')}>
           <div className="flex items-start space-x-4">
             <div className="p-3 bg-primary-100 rounded-lg">
@@ -30,10 +30,32 @@ export default function Dashboard() {
                 Seleccionar Cursos
               </h3>
               <p className="text-gray-600 text-sm mb-4">
-                Selecciona tu malla curricular y marca los cursos que ya aprobaste
+                Selecciona una malla y marca tus cursos aprobados
               </p>
-              <button className="btn btn-primary">
+              <button className="btn btn-primary w-full">
                 Comenzar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="card hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-300" onClick={() => navigate('/select-courses-multi')}>
+          <div className="flex items-start space-x-4">
+            <div className="p-3 bg-blue-600 rounded-lg">
+              <BookOpen className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                Múltiples Mallas
+                <span className="ml-2 text-xs bg-yellow-400 text-yellow-900 px-2 py-1 rounded-full font-bold">
+                  NUEVO
+                </span>
+              </h3>
+              <p className="text-gray-600 text-sm mb-4">
+                ¿Cursaste en varias mallas? Convalídalas automáticamente
+              </p>
+              <button className="btn bg-blue-600 text-white hover:bg-blue-700 w-full">
+                Probar ahora
               </button>
             </div>
           </div>
@@ -51,7 +73,7 @@ export default function Dashboard() {
               <p className="text-gray-600 text-sm mb-4">
                 Obtén recomendaciones personalizadas con IA
               </p>
-              <button className="btn btn-outline">
+              <button className="btn btn-outline w-full">
                 Ver
               </button>
             </div>

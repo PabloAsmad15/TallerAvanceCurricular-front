@@ -8,6 +8,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import SelectCourses from './pages/SelectCourses';
+import SelectCoursesMultiMalla from './pages/SelectCoursesMultiMalla';
 import Recommendations from './pages/Recommendations';
 import CompareAlgorithms from './pages/CompareAlgorithms';
 import History from './pages/History';
@@ -48,6 +49,7 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="select-courses" element={<SelectCourses />} />
+        <Route path="select-courses-multi" element={<SelectCoursesMultiMalla />} />
         <Route path="compare-algorithms" element={<CompareAlgorithms />} />
         <Route path="recommendations" element={<Recommendations />} />
         <Route path="history" element={<History />} />
