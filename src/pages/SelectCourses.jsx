@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, CheckCircle, Circle, Sparkles, Loader, BookOpen } from 'lucide-react';
+import { ChevronDown, ChevronUp, CheckCircle, Circle, Sparkles, Loader, BookOpen, ChartBarIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { mallasAPI, cursosAPI, recomendacionesAPI } from '../services/api';
 import { useRecommendationStore } from '../store/recommendationStore';
@@ -466,23 +466,38 @@ export default function SelectCourses() {
                 Has seleccionado {selectedCourses.length} cursos aprobados
               </p>
             </div>
-            <button
-              onClick={handleGenerateRecommendation}
-              disabled={generatingRecommendation || selectedCourses.length === 0}
-              className="btn bg-white text-primary-600 hover:bg-gray-100 flex items-center space-x-2 px-6 py-3"
-            >
-              {generatingRecommendation ? (
-                <>
-                  <Loader className="w-5 h-5 animate-spin" />
-                  <span>Generando...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-5 h-5" />
-                  <span>Generar Recomendación</span>
-                </>
-              )}
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate('/compare-algorithms', {
+                  state: {
+                    mallaId: selectedMalla.id,
+                    cursosAprobados: selectedCourses
+                  }
+                })}
+                disabled={selectedCourses.length === 0}
+                className="btn bg-white/90 text-primary-600 hover:bg-white flex items-center space-x-2 px-6 py-3"
+              >
+                <ChartBarIcon className="w-5 h-5" />
+                <span>Comparar Algoritmos</span>
+              </button>
+              <button
+                onClick={handleGenerateRecommendation}
+                disabled={generatingRecommendation || selectedCourses.length === 0}
+                className="btn bg-white text-primary-600 hover:bg-gray-100 flex items-center space-x-2 px-6 py-3"
+              >
+                {generatingRecommendation ? (
+                  <>
+                    <Loader className="w-5 h-5 animate-spin" />
+                    <span>Generando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5" />
+                    <span>Generar Recomendación</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

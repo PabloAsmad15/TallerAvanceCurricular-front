@@ -9,6 +9,7 @@ import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import SelectCourses from './pages/SelectCourses';
 import Recommendations from './pages/Recommendations';
+import CompareAlgorithms from './pages/CompareAlgorithms';
 import History from './pages/History';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -47,6 +48,7 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="select-courses" element={<SelectCourses />} />
+        <Route path="compare-algorithms" element={<CompareAlgorithms />} />
         <Route path="recommendations" element={<Recommendations />} />
         <Route path="history" element={<History />} />
       </Route>

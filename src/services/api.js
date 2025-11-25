@@ -93,6 +93,7 @@ export const cursosAPI = {
 // Recomendaciones API
 export const recomendacionesAPI = {
   create: (data) => api.post('/api/recommendations/', data),
+  comparar: (data) => api.post('/api/recommendations/comparar-algoritmos', data),
   getHistory: () => api.get('/api/recommendations/history'),
   getById: (id) => api.get(`/api/recommendations/${id}`),
   getStats: () => api.get('/api/recommendations/stats/algorithms'),
