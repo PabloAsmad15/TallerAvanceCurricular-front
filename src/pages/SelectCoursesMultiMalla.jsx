@@ -174,6 +174,31 @@ export default function SelectCoursesMultiMalla() {
     );
   }
 
+  // Guardar cursos de la malla actual
+  const guardarCursosMalla = () => {
+    if (cursosSeleccionados.length === 0) {
+      toast.error('Debes seleccionar al menos un curso');
+      return;
+    }
+    for (const codigo of cursosSeleccionados) {
+      const faltan = (prerequisitosMap[codigo] || []).filter(pr => !cursosSeleccionados.includes(pr));
+      if (faltan.length > 0) {
+        toast.error(`El curso ${codigo} requiere que selecciones también: ${faltan.join(', ')}`);
+        return;
+      }
+    }
+    const mallaConCursos = {
+      ...mallaActual,
+      cursos: cursosSeleccionados
+    };
+    setMallasSeleccionadas([...mallasSeleccionadas, mallaConCursos]);
+    setMallaActual(null);
+    setCursosPorCiclo([]);
+    setCursosSeleccionados([]);
+    setPrerequisitosMap({});
+    toast.success(`Cursos de malla ${mallaActual.anio} guardados`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
