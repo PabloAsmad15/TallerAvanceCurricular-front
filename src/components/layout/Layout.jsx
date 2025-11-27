@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { LogOut, Home, BookOpen, History, Sparkles, Shield, Menu, X } from 'lucide-react';
+import { LogOut, Home, BookOpen, History, Sparkles, Shield, Menu, X, Layers } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Layout() {
@@ -11,6 +11,7 @@ export default function Layout() {
   const navigation = [
     { name: 'Inicio', href: '/', icon: Home },
     { name: 'Seleccionar Cursos', href: '/select-courses', icon: BookOpen },
+    { name: 'Multi-malla', href: '/select-courses-multi', icon: Layers },
     { name: 'Recomendaciones', href: '/recommendations', icon: Sparkles },
     { name: 'Historial', href: '/history', icon: History },
   ];
