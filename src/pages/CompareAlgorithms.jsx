@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { recomendacionesAPI } from '../services/api';
@@ -10,6 +11,8 @@ import {
   Sparkles,
   Trophy
 } from 'lucide-react';
+import { useRecommendationStore } from '../store/recommendationStore';
+import toast from 'react-hot-toast';
 
 const CompareAlgorithms = () => {
   const location = useLocation();
@@ -369,50 +372,47 @@ const CompareAlgorithms = () => {
             algoritmo={algoritmo_seleccionado}
           />
         </div>
-      // Botón que obtiene y guarda la recomendación final usando el algoritmo seleccionado
-      import { useRecommendationStore } from '../store/recommendationStore';
-      import { useState } from 'react';
-      import toast from 'react-hot-toast';
-
-      function FinalRecommendationButton({ mallaId, cursosAprobados, cursosAprobadosMultiMalla, algoritmo }) {
-        const setCurrentRecommendation = useRecommendationStore(state => state.setCurrentRecommendation);
-        const navigate = useNavigate();
-        const [loading, setLoading] = useState(false);
-
-        const handleClick = async () => {
-          setLoading(true);
-          try {
-            let payload = { malla_id: mallaId, algoritmo };
-            if (cursosAprobadosMultiMalla) {
-              payload.cursos_aprobados = [];
-              payload.cursos_aprobados_multi_malla = cursosAprobadosMultiMalla;
-            } else {
-              payload.cursos_aprobados = cursosAprobados;
-            }
-            // Usar endpoint de recomendación con algoritmo forzado
-            const response = await recomendacionesAPI.create(payload);
-            setCurrentRecommendation(response.data);
-            navigate('/recommendations');
-          } catch (error) {
-            toast.error('Error al obtener la recomendación final');
-          } finally {
-            setLoading(false);
-          }
-        };
-
-        return (
-          <button
-            onClick={handleClick}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg"
-            disabled={loading}
-          >
-            {loading ? 'Generando recomendación...' : 'Continuar con Recomendación Final'}
-          </button>
-        );
-      }
       </div>
     </div>
   );
 };
+
+// Botón que obtiene y guarda la recomendación final usando el algoritmo seleccionado
+function FinalRecommendationButton({ mallaId, cursosAprobados, cursosAprobadosMultiMalla, algoritmo }) {
+  const setCurrentRecommendation = useRecommendationStore(state => state.setCurrentRecommendation);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    setLoading(true);
+    try {
+      let payload = { malla_id: mallaId, algoritmo };
+      if (cursosAprobadosMultiMalla) {
+        payload.cursos_aprobados = [];
+        payload.cursos_aprobados_multi_malla = cursosAprobadosMultiMalla;
+      } else {
+        payload.cursos_aprobados = cursosAprobados;
+      }
+      // Usar endpoint de recomendación con algoritmo forzado
+      const response = await recomendacionesAPI.create(payload);
+      setCurrentRecommendation(response.data);
+      navigate('/recommendations');
+    } catch (error) {
+      toast.error('Error al obtener la recomendación final');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg"
+      disabled={loading}
+    >
+      {loading ? 'Generando recomendación...' : 'Continuar con Recomendación Final'}
+    </button>
+  );
+}
 
 export default CompareAlgorithms;
