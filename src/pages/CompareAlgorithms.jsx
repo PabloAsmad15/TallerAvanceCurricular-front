@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { recomendacionesAPI } from '../services/api';
 import { 
-  ChartBarIcon, 
-  ClockIcon, 
-  BookOpenIcon, 
-  CheckCircleIcon,
-  XCircleIcon,
-  SparklesIcon,
-  TrophyIcon
-} from '@heroicons/react/24/outline';
+  ChartBar, 
+  Clock, 
+  BookOpen, 
+  CheckCircle,
+  XCircle,
+  Sparkles,
+  Trophy
+} from 'lucide-react';
 
 const CompareAlgorithms = () => {
   const location = useLocation();
@@ -110,7 +110,7 @@ const CompareAlgorithms = () => {
         <div className="max-w-2xl mx-auto">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6">
             <div className="flex items-center mb-4">
-              <XCircleIcon className="h-6 w-6 text-red-600 mr-2" />
+              <XCircle className="h-6 w-6 text-red-600 mr-2" />
               <h2 className="text-xl font-semibold text-red-800">Error</h2>
             </div>
             <p className="text-red-700 mb-4">{error}</p>
@@ -144,7 +144,7 @@ const CompareAlgorithms = () => {
           
           <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
             <div className="flex items-center mb-4">
-              <SparklesIcon className="h-8 w-8 text-yellow-500 mr-3" />
+              <Sparkles className="h-8 w-8 text-yellow-500 mr-3" />
               <h1 className="text-3xl font-bold text-gray-800">Comparación de Algoritmos</h1>
             </div>
             
@@ -155,7 +155,7 @@ const CompareAlgorithms = () => {
             {/* Algoritmo seleccionado por IA */}
             <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4">
               <div className="flex items-start">
-                <TrophyIcon className="h-6 w-6 text-green-600 mr-3 mt-1 flex-shrink-0" />
+                <Trophy className="h-6 w-6 text-green-600 mr-3 mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-green-800 mb-2">
                     Algoritmo recomendado por IA: {getAlgoritmoNombre(algoritmo_seleccionado)}
@@ -176,7 +176,7 @@ const CompareAlgorithms = () => {
                     {metricas_comparacion.algoritmos_exitosos}/4
                   </p>
                 </div>
-                <CheckCircleIcon className="h-10 w-10 text-green-500" />
+                <CheckCircle className="h-10 w-10 text-green-500" />
               </div>
             </div>
 
@@ -188,7 +188,7 @@ const CompareAlgorithms = () => {
                     {getAlgoritmoNombre(metricas_comparacion.algoritmo_mas_rapido)}
                   </p>
                 </div>
-                <ClockIcon className="h-10 w-10 text-blue-500" />
+                <Clock className="h-10 w-10 text-blue-500" />
               </div>
             </div>
 
@@ -200,7 +200,7 @@ const CompareAlgorithms = () => {
                     {getAlgoritmoNombre(metricas_comparacion.algoritmo_mas_cursos)}
                   </p>
                 </div>
-                <BookOpenIcon className="h-10 w-10 text-purple-500" />
+                <BookOpen className="h-10 w-10 text-purple-500" />
               </div>
             </div>
 
@@ -212,7 +212,7 @@ const CompareAlgorithms = () => {
                     {getAlgoritmoNombre(metricas_comparacion.algoritmo_mas_creditos)}
                   </p>
                 </div>
-                <ChartBarIcon className="h-10 w-10 text-orange-500" />
+                <ChartBar className="h-10 w-10 text-orange-500" />
               </div>
             </div>
           </div>
@@ -247,7 +247,7 @@ const CompareAlgorithms = () => {
                 {resultado.error ? (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <div className="flex items-center text-red-700">
-                      <XCircleIcon className="h-5 w-5 mr-2" />
+                      <XCircle className="h-5 w-5 mr-2" />
                       <span className="text-sm font-medium">Error: {resultado.error}</span>
                     </div>
                   </div>
@@ -277,12 +277,12 @@ const CompareAlgorithms = () => {
                     }`}>
                       {resultado.cumple_limite_creditos ? (
                         <>
-                          <CheckCircleIcon className="h-5 w-5 mr-2" />
+                          <CheckCircle className="h-5 w-5 mr-2" />
                           <span className="text-sm font-medium">Cumple límite de créditos</span>
                         </>
                       ) : (
                         <>
-                          <XCircleIcon className="h-5 w-5 mr-2" />
+                          <XCircle className="h-5 w-5 mr-2" />
                           <span className="text-sm font-medium">Excede límite de créditos</span>
                         </>
                       )}
@@ -322,7 +322,7 @@ const CompareAlgorithms = () => {
         {metricas_comparacion.consenso_cursos?.length > 0 && (
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
             <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-              <ChartBarIcon className="h-6 w-6 mr-2 text-indigo-600" />
+              <ChartBar className="h-6 w-6 mr-2 text-indigo-600" />
               Cursos con Mayor Consenso
             </h3>
             <p className="text-gray-600 mb-4 text-sm">
