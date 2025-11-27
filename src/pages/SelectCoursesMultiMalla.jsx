@@ -31,6 +31,8 @@ export default function SelectCoursesMultiMalla() {
   const [expandedCiclos, setExpandedCiclos] = useState([1, 2, 3]);
   
   const [generatingRecommendation, setGeneratingRecommendation] = useState(false);
+  // NUEVO: prerequisitos de cursos de la malla actual
+  const [prerequisitosMap, setPrerequisitosMap] = useState({}); // {codigo: [prereq1, ...]}
 
   // Agregar una malla al listado
   const agregarMalla = (malla) => {
@@ -44,49 +46,45 @@ export default function SelectCoursesMultiMalla() {
     loadCursos(malla);
   };
 
-  // Guardar cursos de la malla actual
-  const guardarCursosMalla = () => {
-    if (cursosSeleccionados.length === 0) {
-      toast.error('Debes seleccionar al menos un curso');
-      return;
-    }
-
-    const mallaConCursos = {
-      ...mallaActual,
-      cursos: cursosSeleccionados
-    };
-
-    setMallasSeleccionadas([...mallasSeleccionadas, mallaConCursos]);
-    setMallaActual(null);
-    setCursosPorCiclo([]);
-    setCursosSeleccionados([]);
-    
-    toast.success(`Cursos de malla ${mallaActual.anio} guardados`);
-  };
-
-  // Eliminar una malla del listado
-  const eliminarMalla = (mallaId) => {
-    setMallasSeleccionadas(mallasSeleccionadas.filter(m => m.id !== mallaId));
-    toast.success('Malla eliminada');
-  };
-
-  // Cargar cursos de una malla
+  // Cargar cursos y prerequisitos de una malla
   const loadCursos = async (malla) => {
     try {
-      const response = await cursosAPI.getByCiclo(malla.id);
-      setCursosPorCiclo(response.data);
+      const [cursosResp, prereqResp] = await Promise.all([
+        cursosAPI.getByCiclo(malla.id),
+        cursosAPI.getPrerequisitos(malla.id)
+      ]);
+      setCursosPorCiclo(cursosResp.data);
+      setPrerequisitosMap(prereqResp.data); // {codigo: [prereq1, ...]}
     } catch (error) {
-      console.error('Error cargando cursos:', error);
-      toast.error('Error al cargar cursos');
+      console.error('Error cargando cursos/prerequisitos:', error);
+      toast.error('Error al cargar cursos o prerequisitos');
     }
   };
 
   const toggleCourse = (courseCode) => {
     if (cursosSeleccionados.includes(courseCode)) {
+      if (!puedeDesmarcar(courseCode)) {
+        toast.error('No puedes desmarcar este curso porque es prerequisito de otro seleccionado');
+        return;
+      }
       setCursosSeleccionados(cursosSeleccionados.filter(c => c !== courseCode));
     } else {
-      setCursosSeleccionados([...cursosSeleccionados, courseCode]);
+      const nuevos = Array.from(marcarConPrereqs(courseCode));
+      setCursosSeleccionados(nuevos);
     }
+  };
+
+  // Marcar curso y todos sus prerequisitos recursivamente
+  const marcarConPrereqs = (codigo, seleccionados = new Set(cursosSeleccionados)) => {
+    if (seleccionados.has(codigo)) return seleccionados;
+    seleccionados.add(codigo);
+    (prerequisitosMap[codigo] || []).forEach(pr => marcarConPrereqs(pr, seleccionados));
+    return seleccionados;
+  };
+
+  // Desmarcar curso solo si no es prerequisito de otro seleccionado
+  const puedeDesmarcar = (codigo) => {
+    return !cursosSeleccionados.some(c => (prerequisitosMap[c] || []).includes(codigo));
   };
 
   const toggleCiclo = (ciclo) => {
@@ -94,6 +92,26 @@ export default function SelectCoursesMultiMalla() {
       setExpandedCiclos(expandedCiclos.filter(c => c !== ciclo));
     } else {
       setExpandedCiclos([...expandedCiclos, ciclo]);
+    }
+  };
+
+  // Marcar/desmarcar ciclo completo
+  const toggleCicloCompleto = (ciclo, cursos) => {
+    const todosSeleccionados = cursos.every(c => cursosSeleccionados.includes(c.codigo));
+    if (todosSeleccionados) {
+      let nuevos = [...cursosSeleccionados];
+      for (const curso of cursos) {
+        if (puedeDesmarcar(curso.codigo)) {
+          nuevos = nuevos.filter(c => c !== curso.codigo);
+        }
+      }
+      setCursosSeleccionados(nuevos);
+    } else {
+      let nuevos = new Set(cursosSeleccionados);
+      for (const curso of cursos) {
+        marcarConPrereqs(curso.codigo, nuevos);
+      }
+      setCursosSeleccionados(Array.from(nuevos));
     }
   };
 
@@ -273,23 +291,31 @@ export default function SelectCoursesMultiMalla() {
           <div className="space-y-4">
             {cursosPorCiclo.map(({ ciclo, cursos }) => (
               <div key={ciclo} className="card">
-                <button
-                  onClick={() => toggleCiclo(ciclo)}
-                  className="w-full flex justify-between items-center"
-                >
-                  <h3 className="text-lg font-bold text-gray-800">
-                    Ciclo {ciclo}
-                    <span className="ml-2 text-sm font-normal text-gray-600">
-                      ({cursos.filter(c => cursosSeleccionados.includes(c.codigo)).length}/{cursos.length})
-                    </span>
-                  </h3>
-                  {expandedCiclos.includes(ciclo) ? (
-                    <ChevronUp className="w-5 h-5" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5" />
-                  )}
-                </button>
-
+                <div className="flex items-center justify-between w-full">
+                  <button
+                    onClick={() => toggleCiclo(ciclo)}
+                    className="flex-1 flex justify-between items-center"
+                  >
+                    <h3 className="text-lg font-bold text-gray-800">
+                      Ciclo {ciclo}
+                      <span className="ml-2 text-sm font-normal text-gray-600">
+                        ({cursos.filter(c => cursosSeleccionados.includes(c.codigo)).length}/{cursos.length})
+                      </span>
+                    </h3>
+                    {expandedCiclos.includes(ciclo) ? (
+                      <ChevronUp className="w-5 h-5" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5" />
+                    )}
+                  </button>
+                  <input
+                    type="checkbox"
+                    className="ml-4 w-5 h-5 accent-blue-600"
+                    checked={cursos.every(c => cursosSeleccionados.includes(c.codigo))}
+                    onChange={() => toggleCicloCompleto(ciclo, cursos)}
+                    title="Marcar/desmarcar ciclo completo"
+                  />
+                </div>
                 {expandedCiclos.includes(ciclo) && (
                   <div className="mt-4 space-y-2">
                     {cursos.map(curso => (
@@ -301,6 +327,11 @@ export default function SelectCoursesMultiMalla() {
                             ? 'border-blue-500 bg-blue-50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
+                        title={
+                          (prerequisitosMap[curso.codigo]?.length)
+                            ? `Prerequisitos: ${prerequisitosMap[curso.codigo].join(', ')}`
+                            : 'Sin prerequisitos'
+                        }
                       >
                         <div className="flex items-start">
                           <div className="mt-1 mr-3">
@@ -316,6 +347,9 @@ export default function SelectCoursesMultiMalla() {
                               <span className="text-sm text-gray-600">{curso.creditos} créditos</span>
                             </div>
                             <p className="text-sm text-gray-600 mt-1">{curso.nombre}</p>
+                            {prerequisitosMap[curso.codigo]?.length > 0 && (
+                              <p className="text-xs text-blue-500 mt-1">Prerequisitos: {prerequisitosMap[curso.codigo].join(', ')}</p>
+                            )}
                           </div>
                         </div>
                       </div>
