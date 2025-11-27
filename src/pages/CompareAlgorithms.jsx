@@ -18,14 +18,13 @@ const CompareAlgorithms = () => {
   const [error, setError] = useState(null);
   const [comparacion, setComparacion] = useState(null);
   
-  const { mallaId, cursosAprobados } = location.state || {};
+  const { mallaId, cursosAprobados, cursosAprobadosMultiMalla } = location.state || {};
 
   useEffect(() => {
-    if (!mallaId || !cursosAprobados) {
+    if (!mallaId || (!cursosAprobados && !cursosAprobadosMultiMalla)) {
       navigate('/select-courses');
       return;
     }
-    
     compararAlgoritmos();
   }, []);
 
@@ -33,12 +32,14 @@ const CompareAlgorithms = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await recomendacionesAPI.comparar({
-        malla_id: mallaId,
-        cursos_aprobados: cursosAprobados
-      });
-      
+      let payload = { malla_id: mallaId };
+      if (cursosAprobadosMultiMalla) {
+        payload.cursos_aprobados = [];
+        payload.cursos_aprobados_multi_malla = cursosAprobadosMultiMalla;
+      } else {
+        payload.cursos_aprobados = cursosAprobados;
+      }
+      const response = await recomendacionesAPI.comparar(payload);
       setComparacion(response.data);
     } catch (err) {
       console.error('Error comparando algoritmos:', err);
