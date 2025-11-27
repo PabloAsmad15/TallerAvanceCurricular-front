@@ -289,75 +289,98 @@ export default function SelectCoursesMultiMalla() {
 
           {/* Lista de cursos por ciclo */}
           <div className="space-y-4">
-            {cursosPorCiclo.map(({ ciclo, cursos }) => (
-              <div key={ciclo} className="card">
-                <div className="flex items-center justify-between w-full">
-                  <button
-                    onClick={() => toggleCiclo(ciclo)}
-                    className="flex-1 flex justify-between items-center"
-                  >
-                    <h3 className="text-lg font-bold text-gray-800">
-                      Ciclo {ciclo}
-                      <span className="ml-2 text-sm font-normal text-gray-600">
-                        ({cursos.filter(c => cursosSeleccionados.includes(c.codigo)).length}/{cursos.length})
-                      </span>
-                    </h3>
-                    {expandedCiclos.includes(ciclo) ? (
-                      <ChevronUp className="w-5 h-5" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5" />
-                    )}
-                  </button>
-                  <input
-                    type="checkbox"
-                    className="ml-4 w-5 h-5 accent-blue-600"
-                    checked={cursos.every(c => cursosSeleccionados.includes(c.codigo))}
-                    onChange={() => toggleCicloCompleto(ciclo, cursos)}
-                    title="Marcar/desmarcar ciclo completo"
-                  />
-                </div>
-                {expandedCiclos.includes(ciclo) && (
-                  <div className="mt-4 space-y-2">
-                    {cursos.map(curso => (
-                      <div
-                        key={curso.id}
-                        onClick={() => toggleCourse(curso.codigo)}
-                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                          cursosSeleccionados.includes(curso.codigo)
-                            ? 'border-blue-500 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                        title={
-                          (prerequisitosMap[curso.codigo]?.length)
-                            ? `Prerequisitos: ${prerequisitosMap[curso.codigo].join(', ')}`
-                            : 'Sin prerequisitos'
-                        }
-                      >
-                        <div className="flex items-start">
-                          <div className="mt-1 mr-3">
-                            {cursosSeleccionados.includes(curso.codigo) ? (
-                              <CheckCircle className="w-5 h-5 text-blue-600" />
-                            ) : (
-                              <Circle className="w-5 h-5 text-gray-400" />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex justify-between">
-                              <span className="font-semibold text-gray-800">{curso.codigo}</span>
-                              <span className="text-sm text-gray-600">{curso.creditos} créditos</span>
-                            </div>
-                            <p className="text-sm text-gray-600 mt-1">{curso.nombre}</p>
-                            {prerequisitosMap[curso.codigo]?.length > 0 && (
-                              <p className="text-xs text-blue-500 mt-1">Prerequisitos: {prerequisitosMap[curso.codigo].join(', ')}</p>
-                            )}
-                          </div>
+            {cursosPorCiclo.map(({ ciclo, cursos }) => {
+              const todosSeleccionados = cursos.every(c => cursosSeleccionados.includes(c.codigo));
+              const algunoSeleccionado = cursos.some(c => cursosSeleccionados.includes(c.codigo));
+              const isExpanded = expandedCiclos.includes(ciclo);
+              return (
+                <div key={ciclo} className="card">
+                  <div className="flex items-center p-4">
+                    {/* Checkbox para seleccionar/deseleccionar todo el ciclo */}
+                    <div
+                      onClick={e => {
+                        e.stopPropagation();
+                        toggleCicloCompleto(ciclo, cursos);
+                      }}
+                      className="flex items-center justify-center w-6 h-6 mr-3 cursor-pointer"
+                    >
+                      {todosSeleccionados ? (
+                        <CheckCircle className="w-6 h-6 text-blue-600" />
+                      ) : algunoSeleccionado ? (
+                        <div className="w-6 h-6 rounded-full border-2 border-blue-600 bg-blue-100 flex items-center justify-center">
+                          <div className="w-3 h-3 rounded-full bg-blue-600" />
+                        </div>
+                      ) : (
+                        <Circle className="w-6 h-6 text-gray-400" />
+                      )}
+                    </div>
+                    <button
+                      onClick={() => toggleCiclo(ciclo)}
+                      className="flex-1 flex items-center justify-between hover:bg-gray-50 rounded-lg transition-colors py-2"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+                          {ciclo}
+                        </div>
+                        <div className="text-left">
+                          <h3 className="font-semibold text-gray-900">
+                            Ciclo {ciclo}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {cursos.filter(c => cursosSeleccionados.includes(c.codigo)).length} de {cursos.length} cursos seleccionados
+                          </p>
                         </div>
                       </div>
-                    ))}
+                      {isExpanded ? (
+                        <ChevronUp className="w-5 h-5 text-gray-400" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-gray-400" />
+                      )}
+                    </button>
                   </div>
-                )}
-              </div>
-            ))}
+                  {isExpanded && (
+                    <div className="px-4 pb-4 space-y-2">
+                      {cursos.map(curso => (
+                        <div
+                          key={curso.id}
+                          onClick={() => toggleCourse(curso.codigo)}
+                          className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                            cursosSeleccionados.includes(curso.codigo)
+                              ? 'border-blue-500 bg-blue-50'
+                              : 'border-gray-200 hover:border-gray-300 bg-white'
+                          }`}
+                          title={
+                            (prerequisitosMap[curso.codigo]?.length)
+                              ? `Prerequisitos: ${prerequisitosMap[curso.codigo].join(', ')}`
+                              : 'Sin prerequisitos'
+                          }
+                        >
+                          <div className="flex items-start">
+                            <div className="mt-1 mr-3">
+                              {cursosSeleccionados.includes(curso.codigo) ? (
+                                <CheckCircle className="w-5 h-5 text-blue-600" />
+                              ) : (
+                                <Circle className="w-5 h-5 text-gray-400" />
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex justify-between">
+                                <span className="font-semibold text-gray-800">{curso.codigo}</span>
+                                <span className="text-sm text-gray-600">{curso.creditos} créditos</span>
+                              </div>
+                              <p className="text-sm text-gray-600 mt-1">{curso.nombre}</p>
+                              {prerequisitosMap[curso.codigo]?.length > 0 && (
+                                <p className="text-xs text-blue-500 mt-1">Prerequisitos: {prerequisitosMap[curso.codigo].join(', ')}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </>
       )}
