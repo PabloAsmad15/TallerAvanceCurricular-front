@@ -78,7 +78,6 @@ export const authAPI = {
 
 // Mallas API
 export const mallasAPI = {
-  getAll: () => api.get('/api/mallas'),
   getById: (id) => api.get(`/api/mallas/${id}`),
 };
 
