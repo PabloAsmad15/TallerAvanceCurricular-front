@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp, CheckCircle, Circle, Sparkles, Loader, BookOpen, ChartBar } from 'lucide-react';
+import { ChevronDown, ChevronUp, CheckCircle, Circle, Sparkles, Loader, BookOpen, BarChart } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { mallasAPI, cursosAPI, recomendacionesAPI } from '../services/api';
 import { useRecommendationStore } from '../store/recommendationStore';
@@ -477,7 +477,7 @@ export default function SelectCourses() {
                 disabled={selectedCourses.length === 0}
                 className="btn bg-white/90 text-primary-600 hover:bg-white flex items-center space-x-2 px-6 py-3"
               >
-                <ChartBar className="w-5 h-5" />
+                <BarChart className="w-5 h-5" />
                 <span>Comparar Algoritmos</span>
               </button>
               <button

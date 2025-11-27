@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { recomendacionesAPI } from '../services/api';
 import { 
-  ChartBar, 
+  BarChart, 
   Clock, 
   BookOpen, 
   CheckCircle,
@@ -212,7 +212,7 @@ const CompareAlgorithms = () => {
                     {getAlgoritmoNombre(metricas_comparacion.algoritmo_mas_creditos)}
                   </p>
                 </div>
-                <ChartBar className="h-10 w-10 text-orange-500" />
+                <BarChart className="h-10 w-10 text-orange-500" />
               </div>
             </div>
           </div>
@@ -322,7 +322,7 @@ const CompareAlgorithms = () => {
         {metricas_comparacion.consenso_cursos?.length > 0 && (
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
             <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-              <ChartBar className="h-6 w-6 mr-2 text-indigo-600" />
+              <BarChart className="h-6 w-6 mr-2 text-indigo-600" />
               Cursos con Mayor Consenso
             </h3>
             <p className="text-gray-600 mb-4 text-sm">
