@@ -33,6 +33,8 @@ export default function SelectCoursesMultiMalla() {
   const [generatingRecommendation, setGeneratingRecommendation] = useState(false);
   // NUEVO: prerequisitos de cursos de la malla actual
   const [prerequisitosMap, setPrerequisitosMap] = useState({}); // {codigo: [prereq1, ...]}
+  const [errorCargaCursos, setErrorCargaCursos] = useState("");
+  const [errorCompararAlgoritmos, setErrorCompararAlgoritmos] = useState("");
 
   // Agregar una malla al listado
   const agregarMalla = (malla) => {
@@ -48,6 +50,7 @@ export default function SelectCoursesMultiMalla() {
 
   // Cargar cursos y prerequisitos de una malla
   const loadCursos = async (malla) => {
+    setErrorCargaCursos("");
     try {
       const [cursosResp, prereqResp] = await Promise.all([
         cursosAPI.getByCiclo(malla.id),
@@ -57,6 +60,9 @@ export default function SelectCoursesMultiMalla() {
       setPrerequisitosMap(prereqResp.data); // {codigo: [prereq1, ...]}
     } catch (error) {
       console.error('Error cargando cursos/prerequisitos:', error);
+      setErrorCargaCursos('No se pudieron cargar los cursos o prerequisitos. Intenta más tarde.');
+      setCursosPorCiclo([]);
+      setPrerequisitosMap({});
       toast.error('Error al cargar cursos o prerequisitos');
     }
   };
@@ -116,13 +122,12 @@ export default function SelectCoursesMultiMalla() {
   };
 
   const handleGenerateRecommendation = async () => {
+    setErrorCompararAlgoritmos("");
     if (mallasSeleccionadas.length === 0) {
       toast.error('Debes agregar al menos una malla con cursos');
       return;
     }
-
     setGeneratingRecommendation(true);
-
     try {
       // Construir array de cursos con su malla de origen
       const cursosMultiMalla = [];
@@ -146,10 +151,10 @@ export default function SelectCoursesMultiMalla() {
       setCurrentRecommendation(response.data);
       toast.success('Recomendación generada exitosamente');
       navigate('/recommendations');
-
     } catch (error) {
       console.error('Error al generar recomendación:', error);
-      const errorMsg = error.response?.data?.detail?.mensaje || error.response?.data?.detail || 'Error al generar recomendación';
+      const errorMsg = error.response?.data?.detail?.mensaje || error.response?.data?.detail || error.message || 'Error al generar recomendación';
+      setErrorCompararAlgoritmos('No se pudo generar la recomendación. Puede ser un problema de conexión o del servidor.');
       toast.error(errorMsg);
     } finally {
       setGeneratingRecommendation(false);
@@ -157,6 +162,17 @@ export default function SelectCoursesMultiMalla() {
   };
 
   const totalCursosSeleccionados = mallasSeleccionadas.reduce((sum, m) => sum + m.cursos.length, 0);
+
+  // En el return, antes de mostrar la UI principal:
+  if (errorCargaCursos) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <BookOpen className="w-16 h-16 text-red-400 mx-auto mb-4" />
+        <h3 className="text-lg font-semibold text-red-700 mb-2">{errorCargaCursos}</h3>
+        <button onClick={() => loadCursos(mallaActual)} className="btn bg-blue-600 text-white mt-4">Reintentar</button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -448,6 +464,13 @@ export default function SelectCoursesMultiMalla() {
           <p className="text-gray-600">
             Selecciona las mallas de las cuales has cursado y aprobado materias
           </p>
+        </div>
+      )}
+
+      {/* Justo antes del botón de comparar algoritmos */}
+      {errorCompararAlgoritmos && (
+        <div className="bg-red-100 text-red-700 rounded p-2 mb-2 text-sm font-semibold">
+          {errorCompararAlgoritmos}
         </div>
       )}
     </div>
