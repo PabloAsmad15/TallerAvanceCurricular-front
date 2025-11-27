@@ -11,7 +11,7 @@ export default function Layout() {
   const navigation = [
     { name: 'Inicio', href: '/', icon: Home },
     { name: 'Seleccionar Cursos', href: '/select-courses', icon: BookOpen },
-    { name: 'Multi-malla', href: '/select-courses-multi', icon: Layers },
+    { name: 'Múltiples Mallas', href: '/select-courses-multi', icon: Layers },
     { name: 'Recomendaciones', href: '/recommendations', icon: Sparkles },
     { name: 'Historial', href: '/history', icon: History },
   ];
