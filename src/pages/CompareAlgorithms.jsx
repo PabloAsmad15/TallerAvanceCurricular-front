@@ -362,22 +362,54 @@ const CompareAlgorithms = () => {
 
         {/* Botón para continuar */}
         <div className="text-center">
-          <button
-            onClick={() => {
-              // Usar el algoritmo seleccionado para generar recomendación final
-              navigate('/recommendations', {
-                state: {
-                  mallaId,
-                  cursosAprobados,
-                  algoritmoSugerido: algoritmo_seleccionado
-                }
-              });
-            }}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg"
-          >
-            Continuar con Recomendación Final
-          </button>
+          <FinalRecommendationButton
+            mallaId={mallaId}
+            cursosAprobados={cursosAprobados}
+            cursosAprobadosMultiMalla={cursosAprobadosMultiMalla}
+            algoritmo={algoritmo_seleccionado}
+          />
         </div>
+      // Botón que obtiene y guarda la recomendación final usando el algoritmo seleccionado
+      import { useRecommendationStore } from '../store/recommendationStore';
+      import { useState } from 'react';
+      import toast from 'react-hot-toast';
+
+      function FinalRecommendationButton({ mallaId, cursosAprobados, cursosAprobadosMultiMalla, algoritmo }) {
+        const setCurrentRecommendation = useRecommendationStore(state => state.setCurrentRecommendation);
+        const navigate = useNavigate();
+        const [loading, setLoading] = useState(false);
+
+        const handleClick = async () => {
+          setLoading(true);
+          try {
+            let payload = { malla_id: mallaId, algoritmo };
+            if (cursosAprobadosMultiMalla) {
+              payload.cursos_aprobados = [];
+              payload.cursos_aprobados_multi_malla = cursosAprobadosMultiMalla;
+            } else {
+              payload.cursos_aprobados = cursosAprobados;
+            }
+            // Usar endpoint de recomendación con algoritmo forzado
+            const response = await recomendacionesAPI.create(payload);
+            setCurrentRecommendation(response.data);
+            navigate('/recommendations');
+          } catch (error) {
+            toast.error('Error al obtener la recomendación final');
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        return (
+          <button
+            onClick={handleClick}
+            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg"
+            disabled={loading}
+          >
+            {loading ? 'Generando recomendación...' : 'Continuar con Recomendación Final'}
+          </button>
+        );
+      }
       </div>
     </div>
   );
