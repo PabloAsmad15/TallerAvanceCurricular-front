@@ -41,7 +41,7 @@ const authService = {
   /**
    * Registro de nuevo usuario
    */
-  async register(email, password, nombre, apellido, tipo = 'estudiante') {
+  async register(email, password, nombre, apellido, idEstudiante, tipo = 'estudiante') {
     try {
       // 1. Crear usuario en Firebase
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -57,6 +57,7 @@ const authService = {
         email: user.email,
         nombre,
         apellido,
+        id_estudiante: idEstudiante,
         tipo
       });
       

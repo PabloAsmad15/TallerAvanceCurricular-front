@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Lock, User } from 'lucide-react';
+import { UserPlus, Mail, Lock, User, Hash } from 'lucide-react';
 import toast from 'react-hot-toast';
 import authService from '../services/authService';
 import { useAuthStore } from '../store/authStore';
@@ -15,6 +15,7 @@ export default function Register() {
     confirmPassword: '',
     nombre: '',
     apellido: '',
+    idEstudiante: '',
   });
 
   const handleSubmit = async (e) => {
@@ -58,6 +59,13 @@ export default function Register() {
       return;
     }
     
+    // Validar ID estudiante
+    const idEstudianteLimpio = formData.idEstudiante.trim();
+    if (!/^000\d{6}$/.test(idEstudianteLimpio)) {
+      toast.error('El ID de estudiante debe tener 9 digitos y empezar con 000');
+      return;
+    }
+
     // Validar email con regex estricto
     const emailLimpio = formData.email.trim().toLowerCase();
     
@@ -151,7 +159,8 @@ export default function Register() {
         formData.email,
         formData.password,
         formData.nombre,
-        formData.apellido
+        formData.apellido,
+        idEstudianteLimpio
       );
       
       // Obtener token de Firebase
@@ -264,6 +273,27 @@ export default function Register() {
               </div>
               <p className="mt-1 text-xs text-gray-500">
                 Debe terminar en @upao.edu.pe (sin espacios, puntos consecutivos, etc.)
+              </p>
+            </div>
+
+            {/* ID Estudiante */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                ID Estudiante
+              </label>
+              <div className="relative">
+                <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  required
+                  className="input pl-10"
+                  placeholder="000123456"
+                  value={formData.idEstudiante}
+                  onChange={(e) => setFormData({ ...formData, idEstudiante: e.target.value })}
+                />
+              </div>
+              <p className="mt-1 text-xs text-gray-500">
+                Debe tener 9 digitos y empezar con 000
               </p>
             </div>
 
