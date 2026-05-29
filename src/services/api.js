@@ -106,4 +106,9 @@ export const adminAPI = {
   getRecomendacionesRecientes: (limit = 10) => api.get(`/api/admin/recomendaciones/recientes?limit=${limit}`),
 };
 
+// Asistente API
+export const assistantAPI = {
+  chat: (data) => api.post('/api/assistant/chat', data),
+};
+
 export default api;

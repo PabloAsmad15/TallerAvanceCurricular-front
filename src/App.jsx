@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
+import Assistant from './pages/Assistant';
 import SelectCourses from './pages/SelectCourses';
 import SelectCoursesMultiMalla from './pages/SelectCoursesMultiMalla';
 import Recommendations from './pages/Recommendations';
@@ -46,7 +47,8 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Dashboard />} />
+        <Route index element={<Assistant />} />
+        <Route path="dashboard" element={<Dashboard />} />
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="select-courses" element={<SelectCourses />} />
         <Route path="select-courses-multi" element={<SelectCoursesMultiMalla />} />
