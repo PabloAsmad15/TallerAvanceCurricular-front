@@ -36,7 +36,7 @@ import {
   FiX,
   FiLayers,
   FiGitBranch,
-  FiMessageSquare,
+  FiTerminal,
   FiMail,
   FiAlertTriangle,
   FiTrendingUp,
@@ -56,8 +56,8 @@ const AdminDashboard = () => {
     algorithms: {
       backtracking: 0,
       constraint_programming: 0,
-      langchain_agent: 0,
-      multimalla_convalida: 0,
+      prolog: 0,
+      reglas_asociacion: 0,
     },
     usage_by_day: [
       { day: 'Lun', recomendaciones: 12, usuarios: 8 },
@@ -116,8 +116,8 @@ const AdminDashboard = () => {
   const algos = stats.algorithms || {
     backtracking: 0,
     constraint_programming: 0,
-    langchain_agent: 0,
-    multimalla_convalida: 0,
+    prolog: 0,
+    reglas_asociacion: 0,
   };
 
   const usage = stats.usage_by_day || [];
@@ -125,7 +125,7 @@ const AdminDashboard = () => {
 
   return (
     <Container maxW="container.xl" py={6}>
-      {/* Cabecera con Logo de Tesis UPAO */}
+      {/* Cabecera con Logo UPAO */}
       <Box mb={6} bg="white" p={6} borderRadius="xl" shadow="sm" border="1px solid" borderColor="gray.100">
         <Flex align="center" justify="space-between" wrap="wrap" gap={4}>
           <HStack spacing={4}>
@@ -135,7 +135,7 @@ const AdminDashboard = () => {
                 Panel de Telemetría y Control Administrador UPAO
               </Heading>
               <Text fontSize="xs" color="gray.600">
-                Monitoreo en tiempo real de los 4 Algoritmos Inteligentes, correos de evidencia, incidencias y telemetría del sistema.
+                Monitoreo en tiempo real de los 4 Algoritmos Inteligentes (Prolog, Constraint Programming, Reglas de Asociación y Backtracking).
               </Text>
             </Box>
           </HStack>
@@ -168,7 +168,7 @@ const AdminDashboard = () => {
               <Stat>
                 <StatLabel fontSize="xs" color="gray.500">Recomendaciones Emitidas</StatLabel>
                 <StatNumber fontSize="2xl" fontWeight="bold" color="#002855">{stats.total_recommendations}</StatNumber>
-                <StatHelpText fontSize="xs" color="purple.600">Ejecutadas por Solvers</StatHelpText>
+                <StatHelpText fontSize="xs" color="purple.600">4 Algoritmos Activos</StatHelpText>
               </Stat>
               <Flex w={10} h={10} bg="purple.50" borderRadius="xl" align="center" justify="center">
                 <Icon as={FiCpu} w={5} h={5} color="purple.600" />
@@ -237,32 +237,34 @@ const AdminDashboard = () => {
         </SimpleGrid>
       </Box>
 
-      {/* MONITOREO DE LOS 4 ALGORITMOS */}
+      {/* MONITOREO DE LOS 4 ALGORITMOS DE TESIS */}
       <Box mb={8}>
         <Flex align="center" gap={2} mb={4}>
           <Icon as={FiCpu} color="#002855" w={5} h={5} />
           <Heading size="md" color="#002855">
-            Estado de Operación de los 4 Algoritmos Inteligentes
+            Monitoreo en Vivo de los 4 Algoritmos de Tesis
           </Heading>
         </Flex>
 
         <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
-          <Card shadow="xs" border="1px solid" borderColor="purple.200" borderRadius="xl" bg="purple.50">
+          {/* Algoritmo 1: Prolog */}
+          <Card shadow="xs" border="1px solid" borderColor="teal.200" borderRadius="xl" bg="teal.50">
             <CardBody p={4}>
               <Flex justify="space-between" align="center" mb={2}>
-                <Badge colorScheme="purple">Algoritmo 1</Badge>
-                <Icon as={FiGitBranch} color="purple.700" />
+                <Badge colorScheme="teal">Algoritmo 1</Badge>
+                <Icon as={FiTerminal} color="teal.700" />
               </Flex>
-              <Text fontWeight="bold" fontSize="sm" color="purple.900" mb={1}>Solver Backtracking</Text>
-              <Text fontSize="xs" color="purple.700" mb={2}>Búsqueda exhaustiva por ramas de prerrequisitos.</Text>
-              <Divider borderColor="purple.200" mb={2} />
+              <Text fontWeight="bold" fontSize="sm" color="teal.900" mb={1}>Motor Lógico Prolog</Text>
+              <Text fontSize="xs" color="teal.700" mb={2}>Inferencia basada en Cláusulas de Horn.</Text>
+              <Divider borderColor="teal.200" mb={2} />
               <Flex justify="space-between" align="center">
                 <Text fontSize="xs" color="gray.600">Ejecuciones:</Text>
-                <Text fontWeight="bold" fontSize="md" color="purple.900">{algos.backtracking}</Text>
+                <Text fontWeight="bold" fontSize="md" color="teal.900">{algos.prolog}</Text>
               </Flex>
             </CardBody>
           </Card>
 
+          {/* Algoritmo 2: Constraint Programming */}
           <Card shadow="xs" border="1px solid" borderColor="blue.200" borderRadius="xl" bg="blue.50">
             <CardBody p={4}>
               <Flex justify="space-between" align="center" mb={2}>
@@ -270,7 +272,7 @@ const AdminDashboard = () => {
                 <Icon as={FiCpu} color="blue.700" />
               </Flex>
               <Text fontWeight="bold" fontSize="sm" color="blue.900" mb={1}>Constraint Programming</Text>
-              <Text fontSize="xs" color="blue.700" mb={2}>CP-SAT / OR-Tools para mallas complejas.</Text>
+              <Text fontSize="xs" color="blue.700" mb={2}>CPSAT / OR-Tools para mallas complejas.</Text>
               <Divider borderColor="blue.200" mb={2} />
               <Flex justify="space-between" align="center">
                 <Text fontSize="xs" color="gray.600">Ejecuciones:</Text>
@@ -279,41 +281,43 @@ const AdminDashboard = () => {
             </CardBody>
           </Card>
 
-          <Card shadow="xs" border="1px solid" borderColor="teal.200" borderRadius="xl" bg="teal.50">
+          {/* Algoritmo 3: Reglas de Asociación */}
+          <Card shadow="xs" border="1px solid" borderColor="orange.200" borderRadius="xl" bg="orange.50">
             <CardBody p={4}>
               <Flex justify="space-between" align="center" mb={2}>
-                <Badge colorScheme="teal">Algoritmo 3</Badge>
-                <Icon as={FiMessageSquare} color="teal.700" />
+                <Badge colorScheme="orange">Algoritmo 3</Badge>
+                <Icon as={FiLayers} color="orange.700" />
               </Flex>
-              <Text fontWeight="bold" fontSize="sm" color="teal.900" mb={1}>Agente LangChain + LLM</Text>
-              <Text fontSize="xs" color="teal.700" mb={2}>Explicación pedagógica inteligente (Gemini API).</Text>
-              <Divider borderColor="teal.200" mb={2} />
+              <Text fontWeight="bold" fontSize="sm" color="orange.900" mb={1}>Reglas de Asociación</Text>
+              <Text fontSize="xs" color="orange.700" mb={2}>Minado de Patrones Apriori (Soporte/Confianza).</Text>
+              <Divider borderColor="orange.200" mb={2} />
               <Flex justify="space-between" align="center">
                 <Text fontSize="xs" color="gray.600">Ejecuciones:</Text>
-                <Text fontWeight="bold" fontSize="md" color="teal.900">{algos.langchain_agent}</Text>
+                <Text fontWeight="bold" fontSize="md" color="orange.900">{algos.reglas_asociacion}</Text>
               </Flex>
             </CardBody>
           </Card>
 
-          <Card shadow="xs" border="1px solid" borderColor="orange.200" borderRadius="xl" bg="orange.50">
+          {/* Algoritmo 4: Backtracking */}
+          <Card shadow="xs" border="1px solid" borderColor="purple.200" borderRadius="xl" bg="purple.50">
             <CardBody p={4}>
               <Flex justify="space-between" align="center" mb={2}>
-                <Badge colorScheme="orange">Algoritmo 4</Badge>
-                <Icon as={FiLayers} color="orange.700" />
+                <Badge colorScheme="purple">Algoritmo 4</Badge>
+                <Icon as={FiGitBranch} color="purple.700" />
               </Flex>
-              <Text fontWeight="bold" fontSize="sm" color="orange.900" mb={1}>Convalidador Multimalla</Text>
-              <Text fontSize="xs" color="orange.700" mb={2}>Traductor de Mallas 2015/2019/2022 a 2025.</Text>
-              <Divider borderColor="orange.200" mb={2} />
+              <Text fontWeight="bold" fontSize="sm" color="purple.900" mb={1}>Solver Backtracking</Text>
+              <Text fontSize="xs" color="purple.700" mb={2}>Búsqueda por ramas de prerrequisitos.</Text>
+              <Divider borderColor="purple.200" mb={2} />
               <Flex justify="space-between" align="center">
                 <Text fontSize="xs" color="gray.600">Ejecuciones:</Text>
-                <Text fontWeight="bold" fontSize="md" color="orange.900">{algos.multimalla_convalida}</Text>
+                <Text fontWeight="bold" fontSize="md" color="purple.900">{algos.backtracking}</Text>
               </Flex>
             </CardBody>
           </Card>
         </SimpleGrid>
       </Box>
 
-      {/* Tabla de Telemetría e Interacciones en Tiempo Real */}
+      {/* Tabla de Telemetría e Interacciones */}
       <Box bg="white" p={6} borderRadius="xl" shadow="sm" border="1px solid" borderColor="gray.100">
         <Flex justify="space-between" align="center" mb={4}>
           <Heading size="md" color="gray.800">
@@ -337,7 +341,7 @@ const AdminDashboard = () => {
               <Tr>
                 <Th>Correo Alumno</Th>
                 <Th>Fecha y Hora</Th>
-                <Th>Algoritmo Utilizado</Th>
+                <Th>Algoritmos Utilizados</Th>
                 <Th>Estado de Operación</Th>
               </Tr>
             </Thead>
@@ -347,7 +351,7 @@ const AdminDashboard = () => {
                   <Td fontWeight="600" color="gray.800">{log.user_email}</Td>
                   <Td color="gray.500" fontSize="xs">{log.created_at}</Td>
                   <Td>
-                    <Badge colorScheme={log.solver === 'Backtracking' ? 'purple' : 'blue'}>
+                    <Badge colorScheme="purple">
                       {log.solver}
                     </Badge>
                   </Td>
