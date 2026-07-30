@@ -15,7 +15,7 @@ import {
   Image,
   Button,
 } from '@chakra-ui/react';
-import { FiSend, FiZap, FiHelpCircle } from 'react-icons/fi';
+import { FiSend, FiZap, FiHelpCircle, FiPlusCircle, FiRefreshCw } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import ChatMessage from '../../components/ChatMessage';
 import useChatStore from '../../store/chatStore';
@@ -35,6 +35,7 @@ const ChatPage = () => {
     hasSentFirstEmail,
     isLoading,
     addMessage,
+    clearMessages,
     setHasSentFirstEmail,
     setIsLoading,
   } = useChatStore();
@@ -60,10 +61,23 @@ const ChatPage = () => {
       addMessage({
         content: `¡Hola, ${userName}! Soy tu Asesor Curricular Virtual UPAO. ¿En qué te puedo ayudar hoy?`,
         isBot: true,
-        showEmailButton: false, // ¡EL SALUDO INICIAL NUNCA MUESTRA BOTÓN DE CORREO!
+        showEmailButton: false,
       });
     }
   }, [addMessage, messages.length, userName]);
+
+  const handleNewChat = () => {
+    if (clearMessages) {
+      clearMessages();
+    }
+    toast({
+      title: 'Nuevo Chat Iniciado',
+      description: 'Se ha reiniciado la sesión de conversación.',
+      status: 'info',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
 
   const handleRecommendation = async (sendEmail = false) => {
     setIsLoading(true);
@@ -81,7 +95,7 @@ const ChatPage = () => {
       addMessage({
         content: formattedRecommendation,
         isBot: true,
-        showEmailButton: true, // ÚNICAMENTE SE MUESTRA EN RECOMENDACIONES
+        showEmailButton: true,
         buttons: [
           {
             label: "❓ ¿Por qué me diste esa recomendación y no otra?",
@@ -144,17 +158,11 @@ const ChatPage = () => {
 
     setIsLoading(true);
     try {
-      const promptWhy = "¿Por qué me diste esa recomendación y no otra? Explícame las restricciones de prerrequisitos, límites de créditos por ciclo y la selección interna del mejor algoritmo entre los 4 de tesis.";
+      const promptWhy = "¿Por qué me diste esa recomendación y no otra? Explícame las restricciones de prerrequisitos, límites de créditos por ciclo y la selección interna del mejor algoritmo.";
       const response = await chatService.sendGeneralQuery(promptWhy);
 
-      const explicacionRestricciones = `${response.respuesta}\n\n🛡️ *SELECCIÓN INTERNA DE PRECISIÓN Y RESTRICCIONES (4 ALGORITMOS)*:\n` +
-        `• *Selección Interna del Algoritmo Óptimo*: El agente evalúa internamente las respuestas de Backtracking, Constraint Programming, Prolog y Apriori, seleccionando la salida de mayor precisión determinista.\n` +
-        `• *Prerrequisitos Estrictos (Constraint Programming)*: Ninguna asignatura avanzada fue incluida sin haber completado sus materias previas obligatorias registradas en la base de datos.\n` +
-        `• *Tope Máximo de Créditos*: Respeta estrictamente el límite máximo regulatorio (máx. 22 créditos por semestre) para evitar sobrecarga académica.\n` +
-        `• *Cadena Crítica (Backtracking & Prolog)*: Prioriza los cursos que abren mayor cantidad de prerrequisitos para ciclos futuros.`;
-
       addMessage({
-        content: explicacionRestricciones,
+        content: response.respuesta,
         isBot: true,
         showEmailButton: false,
       });
@@ -214,7 +222,7 @@ const ChatPage = () => {
   return (
     <Container maxW="container.lg" px={{ base: 2, md: 4 }} py={{ base: 2, md: 4 }}>
       <VStack h="calc(100vh - 110px)" minH="550px" spacing={4} align="stretch">
-        {/* Header Minimalista Estilo Gemini / ChatGPT */}
+        {/* Header Minimalista Estilo Gemini / ChatGPT con Botón + Nuevo Chat */}
         <MotionBox
           bg="white"
           px={5}
@@ -228,19 +236,33 @@ const ChatPage = () => {
         >
           <Flex justify="space-between" align="center">
             <HStack spacing={3}>
-              <Image src="/logo.svg" h="32px" w="32px" alt="UPAO Logo" />
+              <Image src="/logo.svg" h="38px" w="38px" alt="UPAO Logo" objectFit="contain" />
               <Box>
                 <Heading size="xs" color="#002855" fontWeight="700">
-                  Asesor Curricular UPAO (4 Algoritmos + RAG)
+                  Asesor Curricular UPAO
                 </Heading>
                 <Text fontSize="10px" color="gray.500" fontWeight="500">
-                  Evaluación determinista sin alucinaciones basada en tu historial académico
+                  Evaluación determinista e inteligente sin alucinaciones
                 </Text>
               </Box>
             </HStack>
-            <Badge colorScheme="blue" borderRadius="full" px={3} py={1} fontSize="xs">
-              ● Usuario: {userName}
-            </Badge>
+
+            <HStack spacing={3}>
+              <Button
+                size="xs"
+                colorScheme="blue"
+                variant="outline"
+                borderRadius="lg"
+                leftIcon={<FiPlusCircle />}
+                onClick={handleNewChat}
+                _hover={{ bg: 'blue.50' }}
+              >
+                + Nuevo Chat
+              </Button>
+              <Badge colorScheme="blue" borderRadius="full" px={3} py={1} fontSize="xs">
+                ● {userName}
+              </Badge>
+            </HStack>
           </Flex>
         </MotionBox>
 
