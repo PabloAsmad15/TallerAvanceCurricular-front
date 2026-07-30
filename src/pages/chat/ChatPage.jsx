@@ -15,11 +15,11 @@ import {
   Image,
   Button,
 } from '@chakra-ui/react';
-import { FiSend, FiZap, FiHelpCircle, FiMail } from 'react-icons/fi';
+import { FiSend, FiZap, FiHelpCircle } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import ChatMessage from '../../components/ChatMessage';
-import FileUploader from '../../components/FileUploader';
 import useChatStore from '../../store/chatStore';
+import useAuthStore from '../../store/authStore';
 import chatService from '../../services/chatService';
 
 const MotionBox = motion(Box);
@@ -29,16 +29,26 @@ const ChatPage = () => {
   const messagesEndRef = useRef(null);
   const toast = useToast();
   
+  const { userEmail } = useAuthStore();
   const {
     messages,
-    isReportUploaded,
     hasSentFirstEmail,
     isLoading,
     addMessage,
-    setReportUploaded,
     setHasSentFirstEmail,
     setIsLoading,
   } = useChatStore();
+
+  // Extraer un nombre amigable a partir del correo registrado
+  const userName = useMemo(() => {
+    if (!userEmail) return 'Estudiante';
+    const prefix = userEmail.split('@')[0];
+    if (prefix.toLowerCase().startsWith('pasmad') || prefix.toLowerCase().startsWith('pablo')) {
+      return 'Pablo';
+    }
+    // Capitalizar primera letra
+    return prefix.charAt(0).toUpperCase() + prefix.slice(1);
+  }, [userEmail]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -51,33 +61,11 @@ const ChatPage = () => {
   useEffect(() => {
     if (messages.length === 0) {
       addMessage({
-        content: "¡Hola! Soy tu Asesor Curricular Virtual UPAO. ¿En qué te puedo ayudar hoy? Puedes solicitar una recomendación para el próximo ciclo o realizar preguntas sobre tu avance académico.",
+        content: `¡Hola, ${userName}! Soy tu Asesor Curricular Virtual UPAO. ¿En qué te puedo ayudar hoy?`,
         isBot: true,
       });
     }
-  }, [addMessage, messages.length]);
-
-  const handleFileUpload = async (file) => {
-    setIsLoading(true);
-    try {
-      const response = await chatService.uploadReport(file);
-      setReportUploaded(true);
-      addMessage({
-        content: response.message || "¡Excelente! Ya cargué tu historial académico de la base de datos. Puedes escribir 'Quiero que me des la recomendación para el próximo ciclo' o consultar sobre tus materias.",
-        isBot: true,
-      });
-    } catch (error) {
-      toast({
-        title: 'Error al procesar el archivo',
-        description: error.response?.data?.detail || 'No se pudo procesar el archivo. Inténtalo nuevamente.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [addMessage, messages.length, userName]);
 
   const handleRecommendation = async (sendEmail = false) => {
     setIsLoading(true);
@@ -90,7 +78,7 @@ const ChatPage = () => {
             .join('\n')
         : response.recomendacion;
 
-      const formattedRecommendation = `🔍 *Buscando tu historial académico en la base de datos Supabase...*\n\n${response.explicacion}\n\n📚 *Cursos Recomendados para tu Matrícula (Malla 2025)*:\n${cursosTexto}`;
+      const formattedRecommendation = `${response.explicacion}\n\n📚 *Cursos Recomendados para tu Matrícula (Malla 2025)*:\n${cursosTexto}`;
 
       addMessage({
         content: formattedRecommendation,
@@ -138,7 +126,7 @@ const ChatPage = () => {
         isClosable: true,
       });
       addMessage({
-        content: "✉️ ¡Listo! He enviado la constancia detallada de recomendación a tu correo institucional UPAO.",
+        content: `✉️ ¡Listo, ${userName}! He enviado la constancia detallada de recomendación a tu correo institucional UPAO.`,
         isBot: true,
       });
     } catch (error) {
@@ -161,14 +149,14 @@ const ChatPage = () => {
 
     setIsLoading(true);
     try {
-      const promptWhy = "¿Por qué me diste esa recomendación y no otra? Explícame las restricciones de prerrequisitos, límites de créditos por ciclo y el análisis de los 4 algoritmos.";
+      const promptWhy = "¿Por qué me diste esa recomendación y no otra? Explícame las restricciones de prerrequisitos, límites de créditos por ciclo y la selección interna del mejor algoritmo entre los 4 de tesis.";
       const response = await chatService.sendGeneralQuery(promptWhy);
 
-      const explicacionRestricciones = `${response.respuesta}\n\n🛡️ *FUNDAMENTACIÓN TÉCNICA DE RESTRICCIONES Y 4 ALGORITMOS*:\n` +
-        `• *Prerrequisitos Estrictos (Constraint Programming)*: Se verificó el árbol de prerrequisitos en la base de datos. Ninguna asignatura avanzada fue incluida sin haber completado sus materias previas obligatorias.\n` +
-        `• *Tope Máximo de Créditos por Semestre*: La recomendación respeta el límite regulatorio máximo (máx. 22 créditos) para evitar sobrecarga académica.\n` +
-        `• *Optimización de Ramas (Backtracking)*: Priorizó los cursos que abren mayor cantidad de asignaturas en ciclos posteriores (cadena crítica).\n` +
-        `• *Reglas de Asociación Apriori & Prolog*: Minaron los patrones de mayor tasa de éxito de estudiantes UPAO en la Malla 2025.`;
+      const explicacionRestricciones = `${response.respuesta}\n\n🛡️ *SELECCIÓN INTERNA DE PRECISIÓN Y RESTRICCIONES (4 ALGORITMOS)*:\n` +
+        `• *Selección Interna del Algoritmo Óptimo*: El agente evalúa internamente las respuestas de Backtracking, Constraint Programming, Prolog y Apriori, seleccionando la salida de mayor precisión determinista.\n` +
+        `• *Prerrequisitos Estrictos (Constraint Programming)*: Ninguna asignatura avanzada fue incluida sin haber completado sus materias previas obligatorias registradas en la base de datos.\n` +
+        `• *Tope Máximo de Créditos*: Respeta estrictamente el límite máximo regulatorio (máx. 22 créditos por semestre) para evitar sobrecarga académica.\n` +
+        `• *Cadena Crítica (Backtracking & Prolog)*: Prioriza los cursos que abren mayor cantidad de prerrequisitos para ciclos futuros.`;
 
       addMessage({
         content: explicacionRestricciones,
@@ -184,10 +172,6 @@ const ChatPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleQuickPrompt = (promptText) => {
-    setUserInput(promptText);
   };
 
   const handleSubmit = async (e) => {
@@ -257,8 +241,8 @@ const ChatPage = () => {
                 </Text>
               </Box>
             </HStack>
-            <Badge colorScheme={isReportUploaded ? 'green' : 'blue'} borderRadius="full" px={3} py={1} fontSize="xs">
-              {isReportUploaded ? '● Historial Activo' : '● Conectado a DB'}
+            <Badge colorScheme="blue" borderRadius="full" px={3} py={1} fontSize="xs">
+              ● Sesión Activa: {userName}
             </Badge>
           </Flex>
         </MotionBox>
