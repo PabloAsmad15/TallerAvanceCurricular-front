@@ -1,7 +1,9 @@
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
-const API_URL = import.meta.env.VITE_API_URL || '';
+const DEFAULT_BACKEND = 'https://backend-glimmering-breeze-46.fly.dev';
+const BASE_URL = import.meta.env.VITE_API_URL || DEFAULT_BACKEND;
+const API_URL = BASE_URL.replace(/\/$/, '');
 
 const authService = {
   login: async (email, password) => {
@@ -14,18 +16,16 @@ const authService = {
       const token = response.data?.access_token;
       if (!token) throw new Error('No se recibió access_token');
 
-      // Decodificar el token para obtener el rol (si existe)
       let role = null;
       try {
         const decoded = jwtDecode(token);
         role = decoded?.role ?? null;
       } catch (e) {
-        // No es crítico, seguiremos sin role
+        // Ignorar error de decodificación
       }
 
       return { access_token: token, role };
     } catch (err) {
-      // Re-lanzar para que el caller pueda mostrar el error
       throw err;
     }
   },

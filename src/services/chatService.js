@@ -1,7 +1,9 @@
 import axios from 'axios';
 import useAuthStore from '../store/authStore';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const DEFAULT_BACKEND = 'https://backend-glimmering-breeze-46.fly.dev';
+const BASE_URL = import.meta.env.VITE_API_URL || DEFAULT_BACKEND;
+const API_URL = BASE_URL.replace(/\/$/, '');
 
 // Interceptor para añadir el token a todas las peticiones
 axios.interceptors.request.use((config) => {
