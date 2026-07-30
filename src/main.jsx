@@ -7,9 +7,8 @@ import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ChakraProvider theme={theme}>
+    <ChakraProvider theme={theme} toastOptions={{ defaultOptions: { position: 'top-right' } }}>
       <App />
     </ChakraProvider>
   </React.StrictMode>,
 )
-
