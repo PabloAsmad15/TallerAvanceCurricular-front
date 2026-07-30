@@ -39,13 +39,11 @@ const ChatPage = () => {
     setIsLoading,
   } = useChatStore();
 
-  // Función 100% dinámica para extraer el primer nombre real de CUALQUIER usuario
   const userName = useMemo(() => {
     if (!userEmail) return 'Estudiante';
-    const emailPrefix = userEmail.split('@')[0]; // Tomar parte previa al @
-    const firstName = emailPrefix.split('.')[0].replace(/[0-9]/g, ''); // Remover números
+    const emailPrefix = userEmail.split('@')[0];
+    const firstName = emailPrefix.split('.')[0].replace(/[0-9]/g, '');
     if (!firstName || firstName.length < 2) return 'Estudiante';
-    // Formatear Nombre (ej. maria -> Maria, juan -> Juan, pablo -> Pablo)
     return firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
   }, [userEmail]);
 
@@ -62,6 +60,7 @@ const ChatPage = () => {
       addMessage({
         content: `¡Hola, ${userName}! Soy tu Asesor Curricular Virtual UPAO. ¿En qué te puedo ayudar hoy?`,
         isBot: true,
+        showEmailButton: false, // ¡EL SALUDO INICIAL NUNCA MUESTRA BOTÓN DE CORREO!
       });
     }
   }, [addMessage, messages.length, userName]);
@@ -82,11 +81,8 @@ const ChatPage = () => {
       addMessage({
         content: formattedRecommendation,
         isBot: true,
+        showEmailButton: true, // ÚNICAMENTE SE MUESTRA EN RECOMENDACIONES
         buttons: [
-          {
-            label: "✉️ Enviar Constancia a mi Correo",
-            onClick: () => handleSendEmailAction(formattedRecommendation),
-          },
           {
             label: "❓ ¿Por qué me diste esa recomendación y no otra?",
             onClick: () => handleAskWhyRecommendation(),
@@ -110,33 +106,33 @@ const ChatPage = () => {
     }
   };
 
-  const handleSendEmailAction = async (contentToSend) => {
-    setIsLoading(true);
+  const handleSendDirectEmailAction = async (contentToSend) => {
     try {
       await chatService.sendEmail({
         content: contentToSend,
         subject: "Evidencia de Recomendación Curricular UPAO"
       });
+
       toast({
         title: 'Correo Enviado',
-        description: 'Se ha enviado la constancia formal de recomendación a tu correo institucional UPAO.',
+        description: `Se ha enviado la constancia a ${userEmail || 'tu correo registrado'}.`,
         status: 'success',
-        duration: 5000,
+        duration: 4000,
         isClosable: true,
       });
+
       addMessage({
-        content: `✉️ ¡Listo, ${userName}! He enviado la constancia detallada de recomendación a tu correo institucional UPAO.`,
+        content: `✉️ ¡El correo ha sido enviado con éxito a tu dirección registrada (${userEmail || 'UPAO'})! ¿Te puedo ayudar a resolver algo más?`,
         isBot: true,
+        showEmailButton: false,
       });
     } catch (error) {
       toast({
         title: 'Error al enviar correo',
-        description: 'No se pudo enviar la constancia por correo. Inténtalo nuevamente.',
+        description: 'No se pudo enviar la constancia por correo.',
         status: 'error',
         duration: 4000,
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -160,6 +156,7 @@ const ChatPage = () => {
       addMessage({
         content: explicacionRestricciones,
         isBot: true,
+        showEmailButton: false,
       });
     } catch (error) {
       toast({
@@ -198,6 +195,7 @@ const ChatPage = () => {
         addMessage({
           content: response.respuesta,
           isBot: true,
+          showEmailButton: false,
         });
       } catch (error) {
         toast({
@@ -270,6 +268,7 @@ const ChatPage = () => {
                 <ChatMessage
                   message={message}
                   isBot={message.isBot}
+                  onSendDirectEmail={handleSendDirectEmailAction}
                 />
               </MotionBox>
             ))}
