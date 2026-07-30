@@ -60,7 +60,7 @@ const Navbar = () => {
           </Box>
         </HStack>
 
-        {/* Navegación por Secciones: Asesor IA | Multimalla | Mis Cursos | Historial | Admin */}
+        {/* Navegación por Secciones: Asesor IA | Selección de Cursos | Historial de Recomendaciones | Admin */}
         <HStack spacing={2}>
           <MotionBox whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
             <Button
@@ -84,11 +84,11 @@ const Navbar = () => {
               bg={location.pathname.startsWith('/malla') ? 'whiteAlpha.300' : 'transparent'}
               color="white"
               borderRadius="lg"
-              leftIcon={<FiGrid />}
+              leftIcon={<FiCheckSquare />}
               onClick={() => navigate('/malla')}
               _hover={{ bg: 'whiteAlpha.300', shadow: 'md' }}
             >
-              Multimalla & Formulario
+              Selección de Cursos
             </Button>
           </MotionBox>
 
@@ -99,11 +99,11 @@ const Navbar = () => {
               bg={location.pathname.startsWith('/historial') ? 'whiteAlpha.300' : 'transparent'}
               color="white"
               borderRadius="lg"
-              leftIcon={<FiCheckSquare />}
+              leftIcon={<FiClock />}
               onClick={() => navigate('/historial')}
               _hover={{ bg: 'whiteAlpha.300', shadow: 'md' }}
             >
-              Cursos Aprobados
+              Historial de Recomendaciones
             </Button>
           </MotionBox>
 

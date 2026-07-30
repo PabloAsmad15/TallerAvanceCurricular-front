@@ -4,9 +4,6 @@ import {
   Container,
   Heading,
   Text,
-  SimpleGrid,
-  Card,
-  CardBody,
   Badge,
   Flex,
   HStack,
@@ -24,21 +21,19 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  Button,
 } from '@chakra-ui/react';
-import { FiCheckCircle, FiClock, FiBookOpen, FiAward, FiMail } from 'react-icons/fi';
+import { FiCheckCircle, FiClock, FiAward, FiMail } from 'react-icons/fi';
 import axios from 'axios';
 import useAuthStore from '../../store/authStore';
-import { mallasData } from '../../data/mallasData';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://taller-avance-curricular-upao.fly.dev';
 
 const HistorialPage = () => {
   const [historyLogs, setHistoryLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token, userEmail } = useAuthStore();
-  const toast = useToast();
+  const { token } = useAuthStore();
 
-  // Cursos aprobados por defecto (o extraídos del backend)
   const defaultApprovedCourses = [
     { codigo: 'ICSI-506', nombre: 'ALGORITMIA Y PROGRAMACIÓN', creditos: 4, ciclo: 'Ciclo I', estado: 'Aprobado' },
     { codigo: 'HUMA-900', nombre: 'METODOLOGIA DEL APRENDIZAJE UNIVERSITARIO', creditos: 2, ciclo: 'Ciclo I', estado: 'Aprobado' },
@@ -78,22 +73,22 @@ const HistorialPage = () => {
 
   return (
     <Container maxW="container.xl" py={6}>
-      {/* Cabecera de Historial */}
+      {/* Cabecera del Historial de Recomendaciones */}
       <Box mb={6} bg="white" p={6} borderRadius="xl" shadow="sm" border="1px solid" borderColor="gray.100">
         <Flex justify="space-between" align="center" wrap="wrap" gap={4}>
           <Box>
             <Heading size="lg" color="#002855" mb={1}>
-              Mis Cursos Aprobados y Evidencias Académicas
+              Historial de Recomendaciones y Evidencias Emitidas
             </Heading>
             <Text fontSize="sm" color="gray.600">
-              Consulta tu avance curricular acumulado y el historial de constancias formalmente emitidas.
+              Consulta las constancias de recomendaciones enviadas por el Asesor IA y tus asignaturas reconocidas en la plataforma.
             </Text>
           </Box>
           <HStack spacing={3}>
             <Badge colorScheme="green" p={2} borderRadius="md" fontSize="xs">
               <HStack spacing={1}>
                 <Icon as={FiAward} />
-                <Text>{totalCreditosAprobados} Créditos Aprobados</Text>
+                <Text>{totalCreditosAprobados} Créditos Registrados</Text>
               </HStack>
             </Badge>
           </HStack>
@@ -102,17 +97,62 @@ const HistorialPage = () => {
 
       <Tabs variant="enclosed" colorScheme="blue">
         <TabList mb="1em">
-          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiCheckCircle} /><Text>Mis Cursos Aprobados ({defaultApprovedCourses.length})</Text></HStack></Tab>
-          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiClock} /><Text>Historial de Recomendaciones Emitidas</Text></HStack></Tab>
+          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiClock} /><Text>Historial de Recomendaciones IA</Text></HStack></Tab>
+          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiCheckCircle} /><Text>Mis Cursos Registrados</Text></HStack></Tab>
         </TabList>
 
         <TabPanels>
-          {/* SECCIÓN 1: VISTA DE CURSOS APROBADOS */}
+          {/* TAB 1: HISTORIAL DE RECOMENDACIONES */}
+          <TabPanel px={0}>
+            <Box bg="white" p={6} borderRadius="xl" shadow="sm" border="1px solid" borderColor="gray.100">
+              <Heading size="sm" color="#002855" mb={4}>
+                Registro de Recomendaciones Generadas por los 4 Algoritmos
+              </Heading>
+
+              {loading ? (
+                <Flex justify="center" p={6}>
+                  <Spinner size="md" color="#002855" />
+                </Flex>
+              ) : historyLogs.length === 0 ? (
+                <Text fontSize="sm" color="gray.500" textAlign="center" py={6}>
+                  No tienes recomendaciones registradas previamente. Puedes solicitar una nueva recomendación en la sección Asesor IA.
+                </Text>
+              ) : (
+                <Table variant="simple" size="sm">
+                  <Thead bg="gray.50">
+                    <Tr>
+                      <Th>Fecha y Hora</Th>
+                      <Th>Algoritmo Utilizado</Th>
+                      <Th>Estado de Constancia</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {historyLogs.map((log, idx) => (
+                      <Tr key={idx}>
+                        <Td color="gray.600" fontSize="xs">{log.created_at || 'Reciente'}</Td>
+                        <Td><Badge colorScheme="purple">{log.solver_utilizado || '4 Algoritmos UPAO'}</Badge></Td>
+                        <Td>
+                          <Badge colorScheme="teal">
+                            <HStack spacing={1}>
+                              <Icon as={FiMail} />
+                              <Text>Enviado por Correo</Text>
+                            </HStack>
+                          </Badge>
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              )}
+            </Box>
+          </TabPanel>
+
+          {/* TAB 2: VISTA DE CURSOS REGISTRADOS */}
           <TabPanel px={0}>
             <Box bg="white" p={6} borderRadius="xl" shadow="sm" border="1px solid" borderColor="gray.100">
               <Flex justify="space-between" align="center" mb={4}>
                 <Heading size="sm" color="#002855">
-                  Asignaturas Aprobadas Registradas en el Sistema UPAO
+                  Asignaturas Registradas en el Expediente Académico
                 </Heading>
                 <Badge colorScheme="blue" borderRadius="full" px={3} py={1}>
                   Malla Vigente 2025
@@ -126,7 +166,7 @@ const HistorialPage = () => {
                     <Th>Código</Th>
                     <Th>Nombre de la Asignatura</Th>
                     <Th>Créditos</Th>
-                    <Th>Estado Académico</Th>
+                    <Th>Estado</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -148,51 +188,6 @@ const HistorialPage = () => {
                   ))}
                 </Tbody>
               </Table>
-            </Box>
-          </TabPanel>
-
-          {/* SECCIÓN 2: HISTORIAL DE RECOMENDACIONES Y EVIDENCIAS */}
-          <TabPanel px={0}>
-            <Box bg="white" p={6} borderRadius="xl" shadow="sm" border="1px solid" borderColor="gray.100">
-              <Heading size="sm" color="#002855" mb={4}>
-                Constancias de Recomendación Emitidas por el Asesor IA
-              </Heading>
-
-              {loading ? (
-                <Flex justify="center" p={6}>
-                  <Spinner size="md" color="#002855" />
-                </Flex>
-              ) : historyLogs.length === 0 ? (
-                <Text fontSize="sm" color="gray.500" textAlign="center" py={6}>
-                  No tienes recomendaciones registradas previamente. Puedes solicitar una en el Asesor IA.
-                </Text>
-              ) : (
-                <Table variant="simple" size="sm">
-                  <Thead bg="gray.50">
-                    <Tr>
-                      <Th>Fecha y Hora</Th>
-                      <Th>Solver / Algoritmo</Th>
-                      <Th>Constancia de Evidencia</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {historyLogs.map((log, idx) => (
-                      <Tr key={idx}>
-                        <Td color="gray.600" fontSize="xs">{log.created_at || 'Reciente'}</Td>
-                        <Td><Badge colorScheme="purple">{log.solver_utilizado || '4 Algoritmos UPAO'}</Badge></Td>
-                        <Td>
-                          <Badge colorScheme="teal">
-                            <HStack spacing={1}>
-                              <Icon as={FiMail} />
-                              <Text>Enviado por Correo</Text>
-                            </HStack>
-                          </Badge>
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              )}
             </Box>
           </TabPanel>
         </TabPanels>
