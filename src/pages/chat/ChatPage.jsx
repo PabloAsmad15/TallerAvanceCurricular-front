@@ -11,12 +11,16 @@ import {
   Heading,
   Text,
   Badge,
+  HStack,
 } from '@chakra-ui/react';
-import { FiSend } from 'react-icons/fi';
+import { FiSend, FiCpu } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 import ChatMessage from '../../components/ChatMessage';
 import FileUploader from '../../components/FileUploader';
 import useChatStore from '../../store/chatStore';
 import chatService from '../../services/chatService';
+
+const MotionBox = motion(Box);
 
 const ChatPage = () => {
   const [userInput, setUserInput] = useState('');
@@ -157,51 +161,70 @@ const ChatPage = () => {
   return (
     <Container maxW="container.md" px={{ base: 2, md: 4 }} py={{ base: 2, md: 4 }}>
       <VStack h="calc(100vh - 120px)" minH="500px" spacing={4} align="stretch">
-        {/* Cabecera del Chat */}
-        <Flex
+        {/* Cabecera del Chat Animada */}
+        <MotionBox
           bg="white"
           p={4}
-          borderRadius="xl"
+          borderRadius="2xl"
           boxShadow="sm"
           border="1px solid"
           borderColor="gray.100"
-          justify="space-between"
-          align="center"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
         >
-          <Box>
-            <Heading size="md" color="gray.800">
-              Asesor Curricular IA
-            </Heading>
-            <Text fontSize="xs" color="gray.500">
-              Universidad Privada Antenor Orrego (UPAO)
-            </Text>
-          </Box>
-          <Badge colorScheme={isReportUploaded ? 'green' : 'orange'} borderRadius="full" px={3} py={1}>
-            {isReportUploaded ? 'Reporte Cargado' : 'Pendiente Reporte'}
-          </Badge>
-        </Flex>
+          <Flex justify="space-between" align="center">
+            <HStack spacing={3}>
+              <Flex w={10} h={10} bg="blue.50" borderRadius="xl" align="center" justify="center">
+                <FiCpu size={22} color="#002855" />
+              </Flex>
+              <Box>
+                <Heading size="sm" color="#002855" fontWeight="700">
+                  Asesor Curricular IA (LangChain + 4 Solvers)
+                </Heading>
+                <Text fontSize="xs" color="gray.500" fontWeight="500">
+                  Universidad Privada Antenor Orrego (UPAO)
+                </Text>
+              </Box>
+            </HStack>
+            <Badge colorScheme={isReportUploaded ? 'green' : 'orange'} borderRadius="full" px={3} py={1} fontSize="xs">
+              {isReportUploaded ? '● Reporte Cargado' : '○ Pendiente Reporte'}
+            </Badge>
+          </Flex>
+        </MotionBox>
 
-        {/* Área de mensajes */}
+        {/* Área de mensajes animada */}
         <Box
           flex={1}
           w="100%"
           overflowY="auto"
           p={{ base: 3, md: 5 }}
           bg="gray.50"
-          borderRadius="xl"
+          borderRadius="2xl"
           border="1px solid"
           borderColor="gray.200"
+          shadow="inner"
         >
-          {messages.map((message, index) => (
-            <ChatMessage
-              key={index}
-              message={message}
-              isBot={message.isBot}
-            />
-          ))}
+          <AnimatePresence>
+            {messages.map((message, index) => (
+              <MotionBox
+                key={index}
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                mb={3}
+              >
+                <ChatMessage
+                  message={message}
+                  isBot={message.isBot}
+                />
+              </MotionBox>
+            ))}
+          </AnimatePresence>
           {isLoading && (
             <Flex justify="center" p={4}>
-              <Spinner size="md" color="brand.500" thickness="3px" />
+              <Spinner size="md" color="#002855" thickness="3px" />
             </Flex>
           )}
           <div ref={messagesEndRef} />
@@ -209,7 +232,13 @@ const ChatPage = () => {
 
         {/* Entrada de datos */}
         {!isReportUploaded ? (
-          <FileUploader onFileUpload={handleFileUpload} />
+          <MotionBox
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <FileUploader onFileUpload={handleFileUpload} />
+          </MotionBox>
         ) : (
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <Flex gap={2}>
@@ -222,15 +251,19 @@ const ChatPage = () => {
                 size="lg"
                 fontSize="sm"
                 borderRadius="xl"
+                shadow="sm"
+                _focus={{ borderColor: '#002855', shadow: 'md' }}
               />
               <IconButton
                 type="submit"
                 icon={<FiSend />}
-                colorScheme="brand"
+                colorScheme="blue"
+                bg="#002855"
                 size="lg"
                 borderRadius="xl"
                 isLoading={isLoading}
                 aria-label="Enviar mensaje"
+                _hover={{ bg: '#001d3d', scale: 1.05 }}
               />
             </Flex>
           </form>

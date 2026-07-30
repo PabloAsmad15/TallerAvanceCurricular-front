@@ -1,49 +1,73 @@
-/* Resetear los estilos por defecto */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
 * {
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
+}
+
+body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  background-color: #f4f7fb;
+  color: #1e293b;
+  overflow-x: hidden;
 }
 
-/* Estilo para el body y html */
-html, body {
-  height: 100%;
-  width: 100%;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: #f7fafc;
-  color: #1a202c;
+/* --- Glassmorphism & Animations --- */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
-/* Asegurar que #root ocupe toda la altura */
-#root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+.glass-navbar {
+  background: rgba(0, 40, 85, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-/* Mejoras de tipografía */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  font-synthesis: none;
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 40, 85, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(0, 40, 85, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 40, 85, 0);
+  }
 }
 
-/* Personalización de scrollbar */
+.pulse-ring {
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes floatAnim {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.float-effect {
+  animation: floatAnim 4s ease-in-out infinite;
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+  background: #f1f5f9;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #94a3b8;
 }
