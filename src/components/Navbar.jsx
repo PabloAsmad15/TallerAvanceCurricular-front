@@ -7,6 +7,7 @@ import {
   HStack,
   Badge,
   Icon,
+  Image,
   Menu,
   MenuButton,
   MenuList,
@@ -30,22 +31,21 @@ const Navbar = () => {
   return (
     <Box bg="#002855" px={6} py={3} color="white" boxShadow="md">
       <Flex maxW="container.xl" mx="auto" align="center" justify="space-between">
-        {/* Logo / Marca UPAO */}
+        {/* Logo de Tesis & Marca UPAO */}
         <HStack spacing={3} cursor="pointer" onClick={() => navigate('/app')}>
-          <Flex
-            w={10}
-            h={10}
-            bg="white"
-            borderRadius="lg"
-            align="center"
-            justify="center"
-            boxShadow="sm"
-          >
-            <Icon as={FiMessageSquare} color="#002855" w={5} h={5} />
-          </Flex>
+          <Image
+            src="/logo.png"
+            h="38px"
+            w="38px"
+            objectFit="cover"
+            borderRadius="md"
+            border="1px solid"
+            borderColor="whiteAlpha.400"
+            alt="UPAO Logo"
+          />
           <Box>
             <Heading size="sm" fontWeight="bold" letterSpacing="tight">
-              Asesor Curricular UPAO
+              Asesor Curricular IA
             </Heading>
             <Text fontSize="xs" color="whiteAlpha.800">
               Universidad Privada Antenor Orrego
