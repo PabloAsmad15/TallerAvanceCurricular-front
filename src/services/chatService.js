@@ -26,6 +26,14 @@ const chatService = {
     return response.data;
   },
 
+  saveSelectedCourses: async (cursos, mallaOrigen = 2025) => {
+    const response = await axios.post(`${API_URL}/chat/save-selection`, {
+      cursos,
+      malla_origen: mallaOrigen
+    });
+    return response.data;
+  },
+
   getRecommendation: async (sendEmail = false) => {
     const response = await axios.post(`${API_URL}/chat/recommend`, {
       send_email: sendEmail,

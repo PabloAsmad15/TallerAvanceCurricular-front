@@ -28,10 +28,9 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  Stack,
   Divider,
 } from '@chakra-ui/react';
-import { FiCheckSquare, FiRepeat, FiCheckCircle, FiCpu, FiSearch, FiLayers, FiZap } from 'react-icons/fi';
+import { FiCheckSquare, FiRepeat, FiCheckCircle, FiCpu, FiSearch, FiLayers } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import chatService from '../../services/chatService';
@@ -100,6 +99,10 @@ const MultimallaPage = () => {
   const handleEvaluateMultimallaForm = async () => {
     setIsLoading(true);
     try {
+      // 1. Guardar la lista exacta de asignaturas marcadas en Supabase DB
+      await chatService.saveSelectedCourses(selectedCourses);
+
+      // 2. Generar recomendación basada en los cursos recién guardados
       const response = await chatService.getRecommendation(false);
       
       const cursosTexto = Array.isArray(response.recomendacion)
@@ -123,7 +126,7 @@ const MultimallaPage = () => {
 
       toast({
         title: 'Recomendación Generada',
-        description: `Se procesaron ${selectedCourses.length} asignaturas a través de los 4 Algoritmos. Redirigiendo al Asesor IA...`,
+        description: `Se sincronizaron y evaluaron tus ${selectedCourses.length} asignaturas marcadas. Redirigiendo al Asesor IA...`,
         status: 'success',
         duration: 3000,
         isClosable: true,
