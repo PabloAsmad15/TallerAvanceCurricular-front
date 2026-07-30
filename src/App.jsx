@@ -4,10 +4,12 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import PasswordRecoveryPage from './pages/auth/PasswordRecoveryPage';
 import ChatPage from './pages/chat/ChatPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import Navbar from './components/Navbar';
 import useAuthStore from './store/authStore';
 
-// Componente protegido que verifica autenticación
-const ProtectedRoute = ({ children, allowedRole }) => {
+// Componente protegido con Navbar integrado
+const ProtectedLayout = ({ children, allowedRole }) => {
   const token = useAuthStore((state) => state.token);
   const userRole = useAuthStore((state) => state.userRole);
 
@@ -16,10 +18,17 @@ const ProtectedRoute = ({ children, allowedRole }) => {
   }
 
   if (allowedRole && userRole !== allowedRole) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/app" replace />;
   }
 
-  return children;
+  return (
+    <Box minH="100vh" bg="gray.50">
+      <Navbar />
+      <Box p={{ base: 2, md: 4 }}>
+        {children}
+      </Box>
+    </Box>
+  );
 };
 
 function App() {
@@ -34,17 +43,17 @@ function App() {
           <Route
             path="/app/*"
             element={
-              <ProtectedRoute>
+              <ProtectedLayout>
                 <ChatPage />
-              </ProtectedRoute>
+              </ProtectedLayout>
             }
           />
           <Route
             path="/admin/*"
             element={
-              <ProtectedRoute allowedRole="admin">
-                <Box p={8}>Admin Dashboard (En desarrollo)</Box>
-              </ProtectedRoute>
+              <ProtectedLayout allowedRole="admin">
+                <AdminDashboard />
+              </ProtectedLayout>
             }
           />
           <Route path="*" element={<Navigate to="/login" replace />} />

@@ -1,0 +1,135 @@
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Button,
+  HStack,
+  Badge,
+  Icon,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+} from '@chakra-ui/react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { FiMessageSquare, FiShield, FiLogOut, FiUser, FiChevronDown } from 'react-icons/fi';
+import useAuthStore from '../store/authStore';
+
+const Navbar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userEmail, userRole, logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  return (
+    <Box bg="#002855" px={6} py={3} color="white" boxShadow="md">
+      <Flex maxW="container.xl" mx="auto" align="center" justify="space-between">
+        {/* Marca / Logo UPAO */}
+        <HStack spacing={3} cursor="pointer" onClick={() => navigate('/app')}>
+          <Flex
+            w={10}
+            h={10}
+            bg="white"
+            borderRadius="lg"
+            align="center"
+            justify="center"
+            boxShadow="sm"
+          >
+            <Icon as={FiMessageSquare} color="#002855" w={5} h={5} />
+          </Flex>
+          <Box>
+            <Heading size="sm" fontWeight="bold" letterSpacing="tight">
+              Asesor Curricular UPAO
+            </Heading>
+            <Text fontSize="xs" color="whiteAlpha.800">
+              Universidad Privada Antenor Orrego
+            </Text>
+          </Box>
+        </HStack>
+
+        {/* Navegación por Secciones */}
+        <HStack spacing={3}>
+          <Button
+            size="sm"
+            variant={location.pathname.startsWith('/app') ? 'solid' : 'ghost'}
+            bg={location.pathname.startsWith('/app') ? 'whiteAlpha.200' : 'transparent'}
+            color="white"
+            leftIcon={<FiMessageSquare />}
+            onClick={() => navigate('/app')}
+            _hover={{ bg: 'whiteAlpha.300' }}
+          >
+            Asesor Virtual
+          </Button>
+
+          {userRole === 'admin' && (
+            <Button
+              size="sm"
+              variant={location.pathname.startsWith('/admin') ? 'solid' : 'ghost'}
+              bg={location.pathname.startsWith('/admin') ? 'whiteAlpha.200' : 'transparent'}
+              color="white"
+              leftIcon={<FiShield />}
+              onClick={() => navigate('/admin/dashboard')}
+              _hover={{ bg: 'whiteAlpha.300' }}
+            >
+              Panel Admin
+            </Button>
+          )}
+
+          {/* Menú de Usuario */}
+          <Menu>
+            <MenuButton
+              as={Button}
+              size="sm"
+              variant="outline"
+              borderColor="whiteAlpha.400"
+              color="white"
+              rightIcon={<FiChevronDown />}
+              _hover={{ bg: 'whiteAlpha.200' }}
+              _active={{ bg: 'whiteAlpha.300' }}
+            >
+              <HStack spacing={2}>
+                <Icon as={FiUser} />
+                <Text fontSize="xs" display={{ base: 'none', md: 'inline' }}>
+                  {userEmail || 'Estudiante'}
+                </Text>
+                {userRole === 'admin' && (
+                  <Badge colorScheme="purple" fontSize="0.6em">
+                    ADMIN
+                  </Badge>
+                )}
+              </HStack>
+            </MenuButton>
+            <MenuList color="gray.800" shadow="xl" borderRadius="xl">
+              <Box px={4} py={2}>
+                <Text fontWeight="bold" fontSize="xs">
+                  Sesión Activa
+                </Text>
+                <Text fontSize="xs" color="gray.500" isTruncated maxW="200px">
+                  {userEmail || 'usuario@upao.edu.pe'}
+                </Text>
+              </Box>
+              <MenuDivider />
+              <MenuItem
+                icon={<FiLogOut color="red" />}
+                color="red.600"
+                fontWeight="600"
+                fontSize="xs"
+                onClick={handleLogout}
+              >
+                Cerrar Sesión
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </HStack>
+      </Flex>
+    </Box>
+  );
+};
+
+export default Navbar;
