@@ -94,7 +94,8 @@ const ChatPage = () => {
             .join('\n')
         : response.recomendacion;
 
-      const formattedRecommendation = `${response.explicacion}\n\n📚 *Cursos Recomendados para tu Matrícula (Malla 2025)*:\n${cursosTexto}`;
+      const cleanExplanation = (response.explicacion || '').replace(/\*/g, '');
+      const formattedRecommendation = `${cleanExplanation}\n\n📚 Cursos Recomendados para tu Matrícula (Malla 2025):\n${cursosTexto}`;
 
       addMessage({
         content: formattedRecommendation,
@@ -162,11 +163,13 @@ const ChatPage = () => {
 
     setIsLoading(true);
     try {
-      const promptWhy = "¿Por qué me diste esa recomendación y no otra? Explícame las restricciones de prerrequisitos, límites de créditos por ciclo y la selección interna del mejor algoritmo.";
+      const promptWhy = "¿Por qué me diste esa recomendación y no otra? Explícame por qué no me diste cursos de ciclos superiores si desaprobé alguna materia y cómo funciona la condición de alumno irregular por reglamento UPAO.";
       const response = await chatService.sendGeneralQuery(promptWhy);
 
+      const cleanAnswer = (response.respuesta || '').replace(/\*/g, '');
+
       addMessage({
-        content: response.respuesta,
+        content: cleanAnswer,
         isBot: true,
         showEmailButton: false,
       });
@@ -204,8 +207,9 @@ const ChatPage = () => {
       setIsLoading(true);
       try {
         const response = await chatService.sendGeneralQuery(currentQuery);
+        const cleanGeneralResponse = (response.respuesta || '').replace(/\*/g, '');
         addMessage({
-          content: response.respuesta,
+          content: cleanGeneralResponse,
           isBot: true,
           showEmailButton: false,
         });
