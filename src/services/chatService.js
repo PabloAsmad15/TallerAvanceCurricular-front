@@ -33,6 +33,16 @@ const chatService = {
     return response.data;
   },
 
+  getMyAcademicHistory: async () => {
+    const response = await axios.get(`${API_URL}/chat/my-academic-history`);
+    return response.data;
+  },
+
+  getRecommendationHistory: async () => {
+    const response = await axios.get(`${API_URL}/chat/history`);
+    return response.data;
+  },
+
   sendGeneralQuery: async (query) => {
     const response = await axios.post(`${API_URL}/chat/general-query`, {
       query,
