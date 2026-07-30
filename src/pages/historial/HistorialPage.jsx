@@ -27,10 +27,26 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from '@chakra-ui/react';
-import { FiCheckCircle, FiClock, FiAward, FiMail, FiBookOpen, FiCpu } from 'react-icons/fi';
+import { FiCheckCircle, FiAward, FiBookOpen, FiCpu } from 'react-icons/fi';
 import useAuthStore from '../../store/authStore';
 import chatService from '../../services/chatService';
 import { mallasData } from '../../data/mallasData';
+
+const getCycleRank = (cicloStr) => {
+  if (!cicloStr) return 99;
+  const lower = cicloStr.toLowerCase();
+  if (lower.includes('ciclo i') && !lower.includes('ii') && !lower.includes('v') && !lower.includes('x')) return 1;
+  if (lower.includes('ciclo ii') && !lower.includes('iii')) return 2;
+  if (lower.includes('ciclo iii')) return 3;
+  if (lower.includes('ciclo iv')) return 4;
+  if (lower.includes('ciclo v') && !lower.includes('vi')) return 5;
+  if (lower.includes('ciclo vi') && !lower.includes('vii')) return 6;
+  if (lower.includes('ciclo vii')) return 7;
+  if (lower.includes('ciclo viii')) return 8;
+  if (lower.includes('ciclo ix')) return 9;
+  if (lower.includes('ciclo x')) return 10;
+  return 99;
+};
 
 const HistorialPage = () => {
   const [academicHistory, setAcademicHistory] = useState({ cursos_codigos: [], malla_origen: 2025 });
@@ -69,26 +85,33 @@ const HistorialPage = () => {
     }
   }, [token, toast]);
 
-  // Mapa de todas las mallas para resolver nombres y créditos exactos
+  // Mapa global de todas las mallas para resolver nombres, créditos y ciclos exactos
   const allCoursesMap = useMemo(() => {
     const map = {};
     Object.values(mallasData.mallas).forEach(planList => {
       planList.forEach(curso => {
-        map[curso.codigo] = curso;
+        if (!map[curso.codigo]) {
+          map[curso.codigo] = curso;
+        }
       });
     });
     return map;
   }, []);
 
-  const approvedCoursesList = (academicHistory.cursos_codigos || []).map(cod => {
-    const found = allCoursesMap[cod];
-    return {
-      codigo: cod,
-      nombre: found ? found.nombre : 'ASIGNATURA REGISTRADA',
-      creditos: found ? found.creditos : 4,
-      ciclo: found ? found.ciclo : 'Ciclo Regular'
-    };
-  });
+  // Lista ordenada por ciclo de menor a mayor (Ciclo I -> Ciclo II -> Ciclo III -> Ciclo IV -> Ciclo V)
+  const approvedCoursesList = useMemo(() => {
+    const list = (academicHistory.cursos_codigos || []).map(cod => {
+      const found = allCoursesMap[cod];
+      return {
+        codigo: cod,
+        nombre: found ? found.nombre : cod,
+        creditos: found ? found.creditos : 4,
+        ciclo: found ? found.ciclo : 'Ciclo I'
+      };
+    });
+
+    return list.sort((a, b) => getCycleRank(a.ciclo) - getCycleRank(b.ciclo));
+  }, [academicHistory.cursos_codigos, allCoursesMap]);
 
   const totalCreditosAprobados = approvedCoursesList.reduce((acc, c) => acc + c.creditos, 0);
 
@@ -118,17 +141,17 @@ const HistorialPage = () => {
 
       <Tabs variant="enclosed" colorScheme="blue">
         <TabList mb="1em">
-          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiBookOpen} /><Text>📚 Cursos Aprobados y Créditos Acumulados ({approvedCoursesList.length})</Text></HStack></Tab>
-          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiCpu} /><Text>🤖 Recomendaciones del Agente IA para el Ciclo ({historyLogs.length})</Text></HStack></Tab>
+          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiBookOpen} /><Text>📚 Cursos Aprobados ({approvedCoursesList.length})</Text></HStack></Tab>
+          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiCpu} /><Text>🤖 Recomendaciones IA ({historyLogs.length})</Text></HStack></Tab>
         </TabList>
 
         <TabPanels>
-          {/* PESTAÑA 1: CURSOS APROBADOS Y CRÉDITOS ACUMULADOS */}
+          {/* PESTAÑA 1: CURSOS APROBADOS ORDENADOS POR CICLO (MENOR A MAYOR) */}
           <TabPanel px={0}>
             <Box bg="white" p={6} borderRadius="2xl" shadow="sm" border="1px solid" borderColor="gray.100">
               <Flex justify="space-between" align="center" mb={4}>
                 <Heading size="sm" color="#002855">
-                  Asignaturas Aprobadas Acumuladas en la Base de Datos
+                  Asignaturas Aprobadas (Ordenadas por Ciclo)
                 </Heading>
                 <Badge colorScheme="purple" borderRadius="full" px={3} py={1}>
                   Malla Origen {academicHistory.malla_origen || 2025}
@@ -157,8 +180,8 @@ const HistorialPage = () => {
                   <Tbody>
                     {approvedCoursesList.map((c, idx) => (
                       <Tr key={idx}>
-                        <Td fontWeight="600" color="gray.500">{c.ciclo}</Td>
-                        <Td fontWeight="bold" color="#002855">{c.codigo}</Td>
+                        <Td fontWeight="700" color="#002855">{c.ciclo}</Td>
+                        <Td fontWeight="bold" color="blue.600">{c.codigo}</Td>
                         <Td fontWeight="600" color="gray.800">{c.nombre}</Td>
                         <Td><Badge colorScheme="purple">{c.creditos} crd</Badge></Td>
                         <Td>
@@ -177,11 +200,11 @@ const HistorialPage = () => {
             </Box>
           </TabPanel>
 
-          {/* PESTAÑA 2: RECOMENDACIONES DEL AGENTE IA PARA EL CICLO */}
+          {/* PESTAÑA 2: RECOMENDACIONES DEL AGENTE IA */}
           <TabPanel px={0}>
             <Box bg="white" p={6} borderRadius="2xl" shadow="sm" border="1px solid" borderColor="gray.100">
               <Heading size="sm" color="#002855" mb={4}>
-                Asignaciones y Cursos Recomendados por los 4 Algoritmos para el Ciclo
+                Asignaciones y Cursos Recomendados por el Agente IA
               </Heading>
 
               {loading ? (
