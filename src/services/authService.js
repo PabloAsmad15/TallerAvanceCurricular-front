@@ -7,9 +7,24 @@ const FIREBASE_API_KEY = import.meta.env.VITE_FIREBASE_API_KEY || '';
 const FIREBASE_PASSWORD_RESET_URL = FIREBASE_API_KEY
   ? `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${FIREBASE_API_KEY}`
   : '';
+const FIREBASE_SIGNIN_URL = FIREBASE_API_KEY
+  ? `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`
+  : '';
+const FIREBASE_SIGNUP_URL = FIREBASE_API_KEY
+  ? `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`
+  : '';
 
 const authService = {
   login: async (email, password) => {
+    if (FIREBASE_SIGNIN_URL) {
+      const response = await axios.post(FIREBASE_SIGNIN_URL, {
+        email,
+        password,
+        returnSecureToken: true,
+      });
+      return { access_token: response.data.idToken, role: 'student' };
+    }
+
     const formData = new FormData();
     formData.append('username', email);
     formData.append('password', password);
@@ -34,6 +49,15 @@ const authService = {
   },
 
   register: async (email, password) => {
+    if (FIREBASE_SIGNUP_URL) {
+      const response = await axios.post(FIREBASE_SIGNUP_URL, {
+        email,
+        password,
+        returnSecureToken: true,
+      });
+      return response.data;
+    }
+
     const response = await axios.post(`${API_URL}/auth/register`, {
       email,
       password,

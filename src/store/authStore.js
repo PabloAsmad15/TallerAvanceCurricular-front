@@ -17,7 +17,7 @@ const useAuthStore = create(
             set({
               token,
               userRole: decoded?.role ?? null,
-              userEmail: decoded?.sub ?? null,
+              userEmail: decoded?.email ?? decoded?.sub ?? null,
               isAuthenticated: true,
             });
           } catch (e) {
