@@ -15,7 +15,7 @@ import {
   Image,
   Button,
 } from '@chakra-ui/react';
-import { FiSend, FiZap, FiHelpCircle, FiPlusCircle, FiRefreshCw } from 'react-icons/fi';
+import { FiSend, FiZap, FiHelpCircle, FiPlusCircle } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import ChatMessage from '../../components/ChatMessage';
 import useChatStore from '../../store/chatStore';
@@ -41,11 +41,15 @@ const ChatPage = () => {
   } = useChatStore();
 
   const userName = useMemo(() => {
-    if (!userEmail) return 'Estudiante';
+    if (!userEmail) return 'Pablo';
+    const emailLower = userEmail.toLowerCase();
+    if (emailLower.includes('pasm') || emailLower.includes('pablo')) {
+      return 'Pablo';
+    }
     const emailPrefix = userEmail.split('@')[0];
-    const firstName = emailPrefix.split('.')[0].replace(/[0-9]/g, '');
-    if (!firstName || firstName.length < 2) return 'Estudiante';
-    return firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+    const rawName = emailPrefix.split('.')[0].replace(/[0-9]/g, '');
+    if (!rawName || rawName.length < 2) return 'Pablo';
+    return rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase();
   }, [userEmail]);
 
   const scrollToBottom = () => {
@@ -260,7 +264,7 @@ const ChatPage = () => {
                 + Nuevo Chat
               </Button>
               <Badge colorScheme="blue" borderRadius="full" px={3} py={1} fontSize="xs">
-                ● {userName}
+                ● Usuario: {userName}
               </Badge>
             </HStack>
           </Flex>
