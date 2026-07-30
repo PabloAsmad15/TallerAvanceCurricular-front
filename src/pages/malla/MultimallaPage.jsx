@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Box,
   Container,
@@ -26,37 +26,61 @@ import {
   Select,
   Button,
   useToast,
-  VStack,
+  Input,
 } from '@chakra-ui/react';
-import { FiBookOpen, FiGrid, FiRepeat, FiCheckCircle, FiMail, FiLayers, FiSend } from 'react-icons/fi';
+import { FiGrid, FiRepeat, FiCheckCircle, FiLayers, FiSend, FiSearch } from 'react-icons/fi';
+import { motion } from 'framer-motion';
 import SendEmailModal from '../../components/SendEmailModal';
 import chatService from '../../services/chatService';
 import useAuthStore from '../../store/authStore';
+import { mallasData } from '../../data/mallasData';
 
-const sampleMalla2025 = [
-  { ciclo: 'Ciclo I', cursos: [{ cod: 'HUMA-101', nombre: 'Lenguaje y Redacción', cred: 4 }, { cod: 'MAT-101', nombre: 'Matemática Básica', cred: 4 }, { cod: 'IS-101', nombre: 'Introducción a la Ing. de Software', cred: 3 }] },
-  { ciclo: 'Ciclo II', cursos: [{ cod: 'MAT-102', nombre: 'Cálculo I', cred: 4, prereq: ['MAT-101'] }, { cod: 'IS-102', nombre: 'Algoritmos y Programación', cred: 4, prereq: ['IS-101'] }] },
-  { ciclo: 'Ciclo III', cursos: [{ cod: 'IS-201', nombre: 'Estructura de Datos', cred: 4, prereq: ['IS-102'] }, { cod: 'MAT-201', nombre: 'Cálculo II', cred: 4, prereq: ['MAT-102'] }] },
-  { ciclo: 'Ciclo IV', cursos: [{ cod: 'IS-202', nombre: 'Bases de Datos I', cred: 4, prereq: ['IS-201'] }, { cod: 'IS-203', nombre: 'Ingeniería de Requerimientos', cred: 3 }] },
-  { ciclo: 'Ciclo V', cursos: [{ cod: 'IS-301', nombre: 'Bases de Datos II', cred: 4, prereq: ['IS-202'] }, { cod: 'IS-302', nombre: 'Desarrollo Web', cred: 4, prereq: ['IS-202'] }] },
-  { ciclo: 'Ciclo VI', cursos: [{ cod: 'IS-303', nombre: 'Arquitectura de Software', cred: 4, prereq: ['IS-302'] }, { cod: 'IS-304', nombre: 'Inteligencia Artificial', cred: 4, prereq: ['IS-201'] }] },
-];
-
-const equivalenciasSample = [
-  { antiguoCod: 'CC-101', antiguoNom: 'Fundamentos de Programación (Malla 2015)', nuevoCod: 'IS-102', nuevoNom: 'Algoritmos y Programación (Malla 2025)', estado: 'Convalidado Automático' },
-  { antiguoCod: 'CC-201', antiguoNom: 'Base de Datos Avanzada (Malla 2019)', nuevoCod: 'IS-301', nuevoNom: 'Bases de Datos II (Malla 2025)', estado: 'Convalidado Automático' },
-  { antiguoCod: 'CC-305', antiguoNom: 'Sistemas Inteligentes (Malla 2022)', nuevoCod: 'IS-304', nuevoNom: 'Inteligencia Artificial (Malla 2025)', estado: 'Convalidado Automático' },
-];
+const MotionCard = motion(Card);
 
 const MultimallaPage = () => {
-  const [selectedPlan, setSelectedPlan] = useState('2022');
+  const [selectedPlan, setSelectedPlan] = useState('2025');
   const [isMultimallaMode, setIsMultimallaMode] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [emailContent, setEmailContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   
   const { userEmail } = useAuthStore();
   const toast = useToast();
+
+  // Obtener cursos completos según la malla seleccionada
+  const activePlanCursos = useMemo(() => {
+    const plan = isMultimallaMode ? '2025' : selectedPlan;
+    return mallasData.mallas[plan] || mallasData.mallas['2025'];
+  }, [selectedPlan, isMultimallaMode]);
+
+  // Agrupar cursos por ciclo
+  const cursosPorCiclo = useMemo(() => {
+    const grouped = {};
+    const filtered = activePlanCursos.filter(c => 
+      c.nombre.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      c.codigo.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    filtered.forEach(curso => {
+      const ciclo = curso.ciclo || 'Ciclo Electivo';
+      if (!grouped[ciclo]) {
+        grouped[ciclo] = [];
+      }
+      grouped[ciclo].push(curso);
+    });
+
+    return grouped;
+  }, [activePlanCursos, searchTerm]);
+
+  // Filtrar convalidaciones
+  const convalidacionesFiltradas = useMemo(() => {
+    return mallasData.convalidaciones.filter(c => 
+      c.codAntiguo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.cod2025.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.nombre2025.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm]);
 
   const handleGenerateRecommendation = async () => {
     setIsLoading(true);
@@ -94,7 +118,7 @@ const MultimallaPage = () => {
               Visualizador y Convalidador Multimalla UPAO
             </Heading>
             <Text fontSize="sm" color="gray.600">
-              Convalida tus asignaturas aprobadas de mallas anteriores (2015, 2019, 2022) o de múltiples reintegros hacia la Malla 2025.
+              Mallas oficiales completas (2015, 2019, 2022, 2025) y convalidaciones hacia la Malla 2025.
             </Text>
           </Box>
           <Button
@@ -111,22 +135,31 @@ const MultimallaPage = () => {
         </Flex>
       </Box>
 
-      {/* Selector de Modo de Malla / Multimalla */}
+      {/* Selector de Modo de Malla / Multimalla y Buscador */}
       <Box bg="white" p={4} borderRadius="xl" shadow="sm" mb={6} border="1px solid" borderColor="gray.100">
         <Flex direction={{ base: 'column', md: 'row' }} justify="space-between" align={{ base: 'start', md: 'center' }} gap={4}>
           <HStack spacing={3}>
             <Icon as={FiLayers} color="#002855" w={6} h={6} />
             <Box>
               <Text fontWeight="bold" fontSize="sm" color="#002855">
-                Configuración de Malla del Estudiante:
+                Malla Curricular Seleccionada: {isMultimallaMode ? 'Multimalla Integrada' : `Malla ${selectedPlan}`}
               </Text>
               <Text fontSize="xs" color="gray.500">
-                Selecciona tu plan de origen o activa el Modo Multimalla si tienes cursos aprobados de distintas épocas.
+                Mostrando {activePlanCursos.length} asignaturas oficiales de la carrera.
               </Text>
             </Box>
           </HStack>
 
-          <HStack spacing={3}>
+          <HStack spacing={3} wrap="wrap">
+            <Input
+              placeholder="Buscar curso o código..."
+              size="sm"
+              w="200px"
+              borderRadius="md"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+
             <Button
               size="sm"
               variant={isMultimallaMode ? 'outline' : 'solid'}
@@ -147,17 +180,17 @@ const MultimallaPage = () => {
 
             {!isMultimallaMode && (
               <Select
-                maxW="180px"
+                maxW="140px"
                 value={selectedPlan}
                 onChange={(e) => setSelectedPlan(e.target.value)}
                 fontWeight="bold"
                 size="sm"
                 borderRadius="md"
               >
+                <option value="2025">Malla 2025</option>
                 <option value="2022">Malla 2022</option>
                 <option value="2019">Malla 2019</option>
                 <option value="2015">Malla 2015</option>
-                <option value="2025">Malla 2025</option>
               </Select>
             )}
           </HStack>
@@ -166,7 +199,7 @@ const MultimallaPage = () => {
         {isMultimallaMode && (
           <Box mt={3} p={3} bg="purple.50" borderRadius="lg" border="1px solid" borderColor="purple.200">
             <Text fontSize="xs" color="purple.800" fontWeight="600">
-              ✨ MODO MULTIMALLA ACTIVO: El sistema está procesando tus cursos aprobados de diferentes mallas (2015 + 2019 + 2022) y convalidándolos a la Malla 2025 vigente.
+              ✨ MODO MULTIMALLA ACTIVO: Mapeando asignaturas aprobadas de mallas anteriores (2015 + 2019 + 2022) hacia la Malla 2025 vigente.
             </Text>
           </Box>
         )}
@@ -174,63 +207,76 @@ const MultimallaPage = () => {
 
       <Tabs variant="enclosed" colorScheme="blue">
         <TabList mb="1em">
-          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiGrid} /><Text>Plan de Estudios Malla 2025</Text></HStack></Tab>
-          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiRepeat} /><Text>Tabla de Convalidaciones</Text></HStack></Tab>
+          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiGrid} /><Text>Plan de Estudios ({isMultimallaMode ? 'Multimalla' : `Malla ${selectedPlan}`})</Text></HStack></Tab>
+          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiRepeat} /><Text>Tabla de Convalidaciones Completa</Text></HStack></Tab>
         </TabList>
 
         <TabPanels>
+          {/* PLAN DE ESTUDIOS COMPLETO POR CICLOS */}
           <TabPanel px={0}>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-              {sampleMalla2025.map((c, idx) => (
-                <Card key={idx} shadow="xs" border="1px solid" borderColor="gray.200" borderRadius="xl">
+              {Object.entries(cursosPorCiclo).map(([cicloNombre, cursosArr], idx) => (
+                <MotionCard
+                  key={cicloNombre}
+                  shadow="xs"
+                  border="1px solid"
+                  borderColor="gray.200"
+                  borderRadius="xl"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: idx * 0.05 }}
+                >
                   <CardHeader bg="#002855" color="white" py={2} px={4} borderTopRadius="xl">
                     <Flex justify="space-between" align="center">
-                      <Heading size="xs">{c.ciclo}</Heading>
+                      <Heading size="xs">{cicloNombre}</Heading>
                       <Badge colorScheme={isMultimallaMode ? 'purple' : 'blue'} variant="solid" fontSize="xs">
-                        {isMultimallaMode ? 'Multimalla' : `Origen ${selectedPlan}`}
+                        {cursosArr.length} cursos
                       </Badge>
                     </Flex>
                   </CardHeader>
                   <CardBody p={4}>
-                    {c.cursos.map((curso, cIdx) => (
-                      <Box key={cIdx} p={3} mb={2} bg="gray.50" borderRadius="lg" border="1px solid" borderColor="gray.100">
+                    {cursosArr.map((curso, cIdx) => (
+                      <Box key={cIdx} p={3} mb={2} bg="gray.50" borderRadius="lg" border="1px solid" borderColor="gray.100" _hover={{ bg: 'blue.50' }}>
                         <Flex justify="space-between" align="center" mb={1}>
-                          <Text fontWeight="bold" fontSize="xs" color="#002855">{curso.cod}</Text>
-                          <Badge colorScheme="green" fontSize="xs">{curso.cred} crd</Badge>
+                          <Text fontWeight="bold" fontSize="xs" color="#002855">{curso.codigo}</Text>
+                          <Badge colorScheme="green" fontSize="xs">{curso.creditos} crd</Badge>
                         </Flex>
-                        <Text fontSize="xs" fontWeight="500" color="gray.700">{curso.nombre}</Text>
-                        {curso.prereq && (
+                        <Text fontSize="xs" fontWeight="600" color="gray.700">{curso.nombre}</Text>
+                        {curso.prerrequisitos && curso.prerrequisitos.length > 0 && (
                           <Text fontSize="10px" color="gray.500" mt={1}>
-                            Prerrequisito: {curso.prereq.join(', ')}
+                            Prerrequisito: {curso.prerrequisitos.join(', ')}
                           </Text>
                         )}
                       </Box>
                     ))}
                   </CardBody>
-                </Card>
+                </MotionCard>
               ))}
             </SimpleGrid>
           </TabPanel>
 
+          {/* TABLA DE CONVALIDACIONES COMPLETA */}
           <TabPanel px={0}>
             <Box bg="white" p={6} borderRadius="xl" shadow="sm" border="1px solid" borderColor="gray.100">
               <Heading size="sm" color="#002855" mb={4}>
-                Matriz de Equivalencias y Convalidaciones hacia la Malla 2025
+                Matriz Completa de Equivalencias y Convalidaciones hacia Malla 2025
               </Heading>
               <Table variant="simple" size="sm">
                 <Thead bg="gray.50">
                   <Tr>
-                    <Th>Asignatura Origen (Plan Histórico)</Th>
-                    <Th>Equivalencia Convalidada Malla 2025</Th>
+                    <Th>Malla Origen</Th>
+                    <Th>Código Antiguo</Th>
+                    <Th>Asignatura Convalidada Malla 2025</Th>
                     <Th>Estado de Convalidación</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {equivalenciasSample.map((eq, idx) => (
+                  {convalidacionesFiltradas.map((eq, idx) => (
                     <Tr key={idx}>
-                      <Td fontWeight="600" color="gray.800">{eq.antiguoCod} - {eq.antiguoNom}</Td>
-                      <Td fontWeight="600" color="#002855">{eq.nuevoCod} - {eq.nuevoNom}</Td>
-                      <Td><Badge colorScheme="green"><HStack spacing={1}><Icon as={FiCheckCircle} /><Text>{eq.estado}</Text></HStack></Badge></Td>
+                      <Td><Badge colorScheme="purple">{eq.planAntiguo || 'Histórico'}</Badge></Td>
+                      <Td fontWeight="600" color="gray.800">{eq.codAntiguo}</Td>
+                      <Td fontWeight="600" color="#002855">{eq.cod2025} - {eq.nombre2025}</Td>
+                      <Td><Badge colorScheme="green"><HStack spacing={1}><Icon as={FiCheckCircle} /><Text>Convalidado Automático</Text></HStack></Badge></Td>
                     </Tr>
                   ))}
                 </Tbody>
@@ -240,7 +286,6 @@ const MultimallaPage = () => {
         </TabPanels>
       </Tabs>
 
-      {/* Modal para enviar evidencia oficial por correo */}
       <SendEmailModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
