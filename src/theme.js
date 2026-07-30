@@ -7,22 +7,17 @@ const config = {
 
 const colors = {
   brand: {
-    50: '#e6f0ff',
-    100: '#b3d1ff',
-    200: '#80b3ff',
-    300: '#4d94ff',
-    400: '#1a75ff',
-    500: '#147bff', // Color principal UPAO
-    600: '#005ed6',
-    700: '#0046b0',
-    800: '#002f8a',
-    900: '#001964',
+    50: '#eef4ff',
+    100: '#d0e1fd',
+    200: '#a2c4fc',
+    300: '#74a7fa',
+    400: '#468af9',
+    500: '#002855', // Azul Real UPAO
+    600: '#001e40',
+    700: '#00142b',
+    800: '#000b17',
+    900: '#000305',
   },
-  accent: {
-    50: '#fff5f0',
-    500: '#ff6b35',
-    600: '#e8551e',
-  }
 }
 
 const styles = {
@@ -69,7 +64,7 @@ const components = {
         if (props.colorScheme === 'brand') {
           return {
             borderColor: 'brand.500',
-            color: 'brand.600',
+            color: 'brand.500',
             _hover: {
               bg: 'brand.50',
             },
@@ -80,7 +75,7 @@ const components = {
       ghost: {
         _hover: {
           bg: 'brand.50',
-          color: 'brand.600',
+          color: 'brand.500',
         },
       },
     },
@@ -90,39 +85,21 @@ const components = {
       outline: {
         field: {
           borderRadius: 'lg',
-          bg: 'white',
-          borderColor: 'gray.200',
+          bg: '#edf2f7',
+          borderColor: 'transparent',
           _hover: {
             borderColor: 'brand.300',
           },
           _focus: {
+            bg: 'white',
             borderColor: 'brand.500',
-            boxShadow: '0 0 0 1px #147bff',
+            boxShadow: '0 0 0 1px #002855',
           },
         },
-      },
-    },
-  },
-  Card: {
-    baseStyle: {
-      container: {
-        borderRadius: 'xl',
-        boxShadow: 'sm',
-        border: '1px solid',
-        borderColor: 'gray.100',
-        bg: 'white',
-        overflow: 'hidden',
-      },
-    },
-  },
-  Modal: {
-    baseStyle: {
-      dialog: {
-        borderRadius: 'xl',
       },
     },
   },
 }
 
 export const theme = extendTheme({ config, colors, styles, components })
-export default theme
+export default theme
