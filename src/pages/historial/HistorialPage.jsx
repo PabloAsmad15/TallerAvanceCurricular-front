@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Box,
   Container,
@@ -21,8 +21,13 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from '@chakra-ui/react';
-import { FiCheckCircle, FiClock, FiAward, FiMail, FiBookOpen } from 'react-icons/fi';
+import { FiCheckCircle, FiClock, FiAward, FiMail, FiBookOpen, FiCpu } from 'react-icons/fi';
 import useAuthStore from '../../store/authStore';
 import chatService from '../../services/chatService';
 import { mallasData } from '../../data/mallasData';
@@ -64,7 +69,7 @@ const HistorialPage = () => {
     }
   }, [token, toast]);
 
-  // Cruzar los códigos almacenados en DB con el catálogo de mallas para obtener nombre y créditos reales
+  // Mapa de todas las mallas para resolver nombres y créditos exactos
   const allCoursesMap = useMemo(() => {
     const map = {};
     Object.values(mallasData.mallas).forEach(planList => {
@@ -89,22 +94,22 @@ const HistorialPage = () => {
 
   return (
     <Container maxW="container.xl" py={6}>
-      {/* Cabecera del Historial Académico */}
+      {/* Cabecera Principal */}
       <Box mb={6} bg="white" p={6} borderRadius="2xl" shadow="sm" border="1px solid" borderColor="gray.100">
         <Flex justify="space-between" align="center" wrap="wrap" gap={4}>
           <Box>
             <Heading size="lg" color="#002855" mb={1}>
-              Historial Académico y Recomendaciones Emitidas
+              Expediente Académico y Recomendaciones IA
             </Heading>
             <Text fontSize="sm" color="gray.600">
-              Cargando registros reales en tiempo real desde la Base de Datos Supabase/PostgreSQL del estudiante {userEmail || 'UPAO'}.
+              Registros en tiempo real desde Supabase / PostgreSQL para el alumno {userEmail || 'UPAO'}.
             </Text>
           </Box>
           <HStack spacing={3}>
             <Badge colorScheme="green" p={3} borderRadius="xl" fontSize="xs">
               <HStack spacing={1}>
                 <Icon as={FiAward} />
-                <Text fontWeight="bold">{totalCreditosAprobados} Créditos Aprobados en DB</Text>
+                <Text fontWeight="bold">{totalCreditosAprobados} Créditos Acumulados</Text>
               </HStack>
             </Badge>
           </HStack>
@@ -113,17 +118,17 @@ const HistorialPage = () => {
 
       <Tabs variant="enclosed" colorScheme="blue">
         <TabList mb="1em">
-          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiBookOpen} /><Text>Mi Historial Académico DB ({approvedCoursesList.length} Cursos)</Text></HStack></Tab>
-          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiClock} /><Text>Historial de Recomendaciones Emitidas</Text></HStack></Tab>
+          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiBookOpen} /><Text>📚 Cursos Aprobados y Créditos Acumulados ({approvedCoursesList.length})</Text></HStack></Tab>
+          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiCpu} /><Text>🤖 Recomendaciones del Agente IA para el Ciclo ({historyLogs.length})</Text></HStack></Tab>
         </TabList>
 
         <TabPanels>
-          {/* TAB 1: HISTORIAL ACADÉMICO REAL DE CURSOS APROBADOS DE LA DB */}
+          {/* PESTAÑA 1: CURSOS APROBADOS Y CRÉDITOS ACUMULADOS */}
           <TabPanel px={0}>
             <Box bg="white" p={6} borderRadius="2xl" shadow="sm" border="1px solid" borderColor="gray.100">
               <Flex justify="space-between" align="center" mb={4}>
                 <Heading size="sm" color="#002855">
-                  Asignaturas Aprobadas Registradas en PostgreSQL / Supabase
+                  Asignaturas Aprobadas Acumuladas en la Base de Datos
                 </Heading>
                 <Badge colorScheme="purple" borderRadius="full" px={3} py={1}>
                   Malla Origen {academicHistory.malla_origen || 2025}
@@ -160,7 +165,7 @@ const HistorialPage = () => {
                           <Badge colorScheme="green">
                             <HStack spacing={1}>
                               <Icon as={FiCheckCircle} />
-                              <Text>Aprobado en DB</Text>
+                              <Text>Aprobado</Text>
                             </HStack>
                           </Badge>
                         </Td>
@@ -172,11 +177,11 @@ const HistorialPage = () => {
             </Box>
           </TabPanel>
 
-          {/* TAB 2: HISTORIAL REAL DE RECOMENDACIONES EMITIDAS */}
+          {/* PESTAÑA 2: RECOMENDACIONES DEL AGENTE IA PARA EL CICLO */}
           <TabPanel px={0}>
             <Box bg="white" p={6} borderRadius="2xl" shadow="sm" border="1px solid" borderColor="gray.100">
               <Heading size="sm" color="#002855" mb={4}>
-                Constancias de Recomendación Emitidas por los 4 Algoritmos
+                Asignaciones y Cursos Recomendados por los 4 Algoritmos para el Ciclo
               </Heading>
 
               {loading ? (
@@ -185,34 +190,31 @@ const HistorialPage = () => {
                 </Flex>
               ) : historyLogs.length === 0 ? (
                 <Text fontSize="sm" color="gray.500" textAlign="center" py={6}>
-                  No tienes constancias de recomendación emitidas previamente en la base de datos.
+                  No tienes recomendaciones del Agente IA registradas previamente.
                 </Text>
               ) : (
-                <Table variant="simple" size="sm">
-                  <Thead bg="gray.50">
-                    <Tr>
-                      <Th>Fecha y Hora</Th>
-                      <Th>Algoritmo Utilizado</Th>
-                      <Th>Constancia de Evidencia</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {historyLogs.map((log, idx) => (
-                      <Tr key={idx}>
-                        <Td color="gray.600" fontSize="xs">{log.created_at || 'Reciente'}</Td>
-                        <Td><Badge colorScheme="purple">{log.solver_utilizado || '4 Algoritmos UPAO'}</Badge></Td>
-                        <Td>
-                          <Badge colorScheme="teal">
-                            <HStack spacing={1}>
-                              <Icon as={FiMail} />
-                              <Text>Enviado por Correo</Text>
-                            </HStack>
-                          </Badge>
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
+                <Accordion allowToggle defaultIndex={[0]}>
+                  {historyLogs.map((log, idx) => (
+                    <AccordionItem key={idx} border="1px solid" borderColor="gray.200" borderRadius="xl" mb={3} overflow="hidden">
+                      <AccordionButton bg="gray.50" _expanded={{ bg: 'blue.50', color: '#002855' }}>
+                        <Box flex="1" textAlign="left">
+                          <HStack spacing={3}>
+                            <Badge colorScheme="purple">{log.solver_utilizado || '4 Algoritmos UPAO'}</Badge>
+                            <Text fontSize="xs" fontWeight="bold" color="gray.600">Fecha: {log.created_at || 'Reciente'}</Text>
+                          </HStack>
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                      <AccordionPanel p={4} bg="white">
+                        <Text fontSize="xs" whiteSpace="pre-wrap" color="gray.700" lineHeight="1.6">
+                          {typeof log.recomendacion === 'object' 
+                            ? log.recomendacion.explicacion || JSON.stringify(log.recomendacion, null, 2)
+                            : log.recomendacion}
+                        </Text>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
               )}
             </Box>
           </TabPanel>
