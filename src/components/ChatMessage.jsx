@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { Box, Text, VStack, Button, Flex, Avatar, useDisclosure, HStack } from '@chakra-ui/react';
-import { FiMail, FiCpu, FiUser } from 'react-icons/fi';
+import { Box, Text, VStack, Button, Flex, Avatar, useDisclosure, HStack, Image } from '@chakra-ui/react';
+import { FiMail, FiUser } from 'react-icons/fi';
 import SendEmailModal from './SendEmailModal';
 
 const ChatMessage = ({ message, isBot }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // Determinar si el mensaje parece una recomendación o respuesta del bot que se puede enviar por correo
   const isEmailable = isBot && message.content && message.content.trim().length > 0;
 
   return (
@@ -14,37 +12,38 @@ const ChatMessage = ({ message, isBot }) => {
       <Flex
         w="100%"
         justify={isBot ? 'flex-start' : 'flex-end'}
-        mb={4}
+        mb={5}
         gap={3}
         alignItems="flex-start"
       >
         {isBot && (
           <Avatar
             size="sm"
-            bg="brand.500"
-            color="white"
-            icon={<FiCpu size="18" />}
-            mt={1}
+            src="/logo.svg"
+            bg="#002855"
+            p={1}
+            boxShadow="sm"
           />
         )}
 
         <Box
-          bg={isBot ? 'white' : 'brand.500'}
+          bg={isBot ? 'white' : '#002855'}
           color={isBot ? 'gray.800' : 'white'}
-          p={4}
-          borderRadius={isBot ? '2xl' : '2xl'}
-          borderTopLeftRadius={isBot ? 'xs' : '2xl'}
-          borderTopRightRadius={isBot ? '2xl' : 'xs'}
-          maxW={{ base: '85%', md: '75%' }}
+          px={5}
+          py={4}
+          borderRadius="2xl"
+          borderTopLeftRadius={isBot ? '4px' : '2xl'}
+          borderTopRightRadius={isBot ? '2xl' : '4px'}
+          maxW={{ base: '90%', md: '80%' }}
           boxShadow={isBot ? 'sm' : 'md'}
           border={isBot ? '1px solid' : 'none'}
-          borderColor={isBot ? 'gray.200' : 'transparent'}
+          borderColor={isBot ? 'gray.100' : 'transparent'}
         >
           <VStack align="stretch" spacing={2}>
-            <Text fontSize="xs" fontWeight="bold" color={isBot ? 'brand.600' : 'brand.100'}>
-              {isBot ? 'Asesor Virtual UPAO' : 'Tú'}
+            <Text fontSize="xs" fontWeight="700" color={isBot ? '#002855' : 'blue.100'}>
+              {isBot ? 'Asesor Curricular UPAO' : 'Tú'}
             </Text>
-            <Text fontSize="sm" whiteSpace="pre-wrap" lineHeight="relaxed">
+            <Text fontSize="sm" whiteSpace="pre-wrap" lineHeight="1.6" color={isBot ? 'gray.700' : 'white'}>
               {message.content}
             </Text>
 
@@ -54,7 +53,7 @@ const ChatMessage = ({ message, isBot }) => {
                   <Button
                     key={idx}
                     size="xs"
-                    colorScheme="brand"
+                    colorScheme="blue"
                     variant="outline"
                     onClick={btn.onClick}
                   >
@@ -65,16 +64,16 @@ const ChatMessage = ({ message, isBot }) => {
             )}
 
             {isEmailable && (
-              <Flex justify="flex-end" pt={2}>
+              <Flex justify="flex-end" pt={1}>
                 <Button
                   size="xs"
                   variant="ghost"
-                  colorScheme="brand"
+                  colorScheme="blue"
                   leftIcon={<FiMail />}
                   onClick={onOpen}
-                  _hover={{ bg: 'brand.50' }}
+                  _hover={{ bg: 'blue.50' }}
                 >
-                  Enviar por correo
+                  Enviar Evidencia por Correo
                 </Button>
               </Flex>
             )}
@@ -84,10 +83,9 @@ const ChatMessage = ({ message, isBot }) => {
         {!isBot && (
           <Avatar
             size="sm"
-            bg="gray.600"
+            bg="gray.700"
             color="white"
-            icon={<FiUser size="18" />}
-            mt={1}
+            icon={<FiUser size="16" />}
           />
         )}
       </Flex>

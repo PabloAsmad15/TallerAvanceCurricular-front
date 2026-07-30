@@ -12,8 +12,11 @@ import {
   Text,
   Badge,
   HStack,
+  Image,
+  Button,
+  SimpleGrid,
 } from '@chakra-ui/react';
-import { FiSend, FiCpu } from 'react-icons/fi';
+import { FiSend, FiCpu, FiMessageSquare, FiBookOpen, FiCompass, FiZap } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import ChatMessage from '../../components/ChatMessage';
 import FileUploader from '../../components/FileUploader';
@@ -49,7 +52,7 @@ const ChatPage = () => {
   useEffect(() => {
     if (messages.length === 0) {
       addMessage({
-        content: "¡Hola! Soy tu Asesor Virtual UPAO. Por favor, sube tu reporte de notas (PDF o XML) para analizar tu avance curricular y ofrecerte recomendaciones personalizadas.",
+        content: "¡Hola! Soy tu Asesor Curricular Virtual UPAO. Sube tu reporte académico o realiza preguntas directas sobre tu avance, mallas o convalidaciones.",
         isBot: true,
       });
     }
@@ -61,7 +64,7 @@ const ChatPage = () => {
       const response = await chatService.uploadReport(file);
       setReportUploaded(true);
       addMessage({
-        content: response.message || "¡Perfecto! Ya analicé tu reporte académico. Puedes pedirme una 'Recomendación de cursos' o realizarme cualquier consulta sobre tu plan de estudios.",
+        content: response.message || "¡Perfecto! Ya procesé tu historial de notas. Solicita una 'Recomendación de cursos' o consulta sobre equivalencias de la Malla 2025.",
         isBot: true,
       });
     } catch (error) {
@@ -84,11 +87,11 @@ const ChatPage = () => {
       
       const cursosTexto = Array.isArray(response.recomendacion)
         ? response.recomendacion
-            .map((c, i) => `${i + 1}. ${typeof c === 'object' ? `${c.codigo} - ${c.nombre} (${c.creditos} créditos)` : c}`)
+            .map((c, i) => `${i + 1}. ${typeof c === 'object' ? `${c.codigo} - ${c.nombre} (${c.creditos} crd)` : c}`)
             .join('\n')
         : response.recomendacion;
 
-      const formattedRecommendation = `${response.explicacion}\n\n📚 Cursos Recomendados:\n${cursosTexto}`;
+      const formattedRecommendation = `${response.explicacion}\n\n📚 Recomendación de Cursos para Matrícula:\n${cursosTexto}`;
 
       addMessage({
         content: formattedRecommendation,
@@ -98,7 +101,7 @@ const ChatPage = () => {
       if (!hasSentFirstEmail) {
         setHasSentFirstEmail(true);
         addMessage({
-          content: "✨ He enviado automáticamente esta primera recomendación a tu correo registrado. Si deseas reenviarla o enviar cualquier otra consulta a un correo distinto, puedes usar el botón 'Enviar por correo' debajo de cada mensaje.",
+          content: "✨ Se ha enviado automáticamente la constancia de recomendación a tu correo UPAO registrado. Puedes usar 'Enviar por correo' para reenviarla en cualquier momento.",
           isBot: true,
         });
       }
@@ -115,9 +118,12 @@ const ChatPage = () => {
     }
   };
 
+  const handleQuickPrompt = (promptText) => {
+    setUserInput(promptText);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!userInput.trim()) return;
 
     const currentQuery = userInput;
@@ -131,11 +137,7 @@ const ChatPage = () => {
     const inputLower = currentQuery.toLowerCase();
 
     if (inputLower.includes('recomendación') || inputLower.includes('recomienda') || inputLower.includes('curso')) {
-      if (!hasSentFirstEmail) {
-        await handleRecommendation(true);
-      } else {
-        await handleRecommendation(false);
-      }
+      await handleRecommendation(!hasSentFirstEmail);
     } else {
       setIsLoading(true);
       try {
@@ -159,61 +161,58 @@ const ChatPage = () => {
   };
 
   return (
-    <Container maxW="container.md" px={{ base: 2, md: 4 }} py={{ base: 2, md: 4 }}>
-      <VStack h="calc(100vh - 120px)" minH="500px" spacing={4} align="stretch">
-        {/* Cabecera del Chat Animada */}
+    <Container maxW="container.lg" px={{ base: 2, md: 4 }} py={{ base: 2, md: 4 }}>
+      <VStack h="calc(100vh - 110px)" minH="550px" spacing={4} align="stretch">
+        {/* Header Minimalista Estilo Gemini / ChatGPT */}
         <MotionBox
           bg="white"
-          p={4}
+          px={5}
+          py={3}
           borderRadius="2xl"
           boxShadow="sm"
           border="1px solid"
           borderColor="gray.100"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
         >
           <Flex justify="space-between" align="center">
             <HStack spacing={3}>
-              <Flex w={10} h={10} bg="blue.50" borderRadius="xl" align="center" justify="center">
-                <FiCpu size={22} color="#002855" />
-              </Flex>
+              <Image src="/logo.svg" h="32px" w="32px" alt="UPAO Logo" />
               <Box>
-                <Heading size="sm" color="#002855" fontWeight="700">
-                  Asesor Curricular IA (LangChain + 4 Solvers)
+                <Heading size="xs" color="#002855" fontWeight="700">
+                  Asesor Curricular UPAO (LangChain + Gemini RAG)
                 </Heading>
-                <Text fontSize="xs" color="gray.500" fontWeight="500">
-                  Universidad Privada Antenor Orrego (UPAO)
+                <Text fontSize="10px" color="gray.500" fontWeight="500">
+                  Responde mediante los 4 Algoritmos Deterministas sin alucinaciones
                 </Text>
               </Box>
             </HStack>
             <Badge colorScheme={isReportUploaded ? 'green' : 'orange'} borderRadius="full" px={3} py={1} fontSize="xs">
-              {isReportUploaded ? '● Reporte Cargado' : '○ Pendiente Reporte'}
+              {isReportUploaded ? '● Reporte Procesado' : '○ Cargar Historial'}
             </Badge>
           </Flex>
         </MotionBox>
 
-        {/* Área de mensajes animada */}
+        {/* Stream de Conversación Principal */}
         <Box
           flex={1}
           w="100%"
           overflowY="auto"
-          p={{ base: 3, md: 5 }}
-          bg="gray.50"
+          p={{ base: 3, md: 6 }}
+          bg="white"
           borderRadius="2xl"
           border="1px solid"
-          borderColor="gray.200"
-          shadow="inner"
+          borderColor="gray.100"
+          shadow="sm"
         >
           <AnimatePresence>
             {messages.map((message, index) => (
               <MotionBox
                 key={index}
-                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                initial={{ opacity: 0, y: 10, scale: 0.99 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                mb={3}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
               >
                 <ChatMessage
                   message={message}
@@ -230,40 +229,82 @@ const ChatPage = () => {
           <div ref={messagesEndRef} />
         </Box>
 
-        {/* Entrada de datos */}
+        {/* Prompts Rápidos Sugeridos */}
+        {isReportUploaded && (
+          <HStack spacing={2} overflowX="auto" py={1} px={1}>
+            <Button
+              size="xs"
+              variant="outline"
+              colorScheme="blue"
+              borderRadius="full"
+              leftIcon={<FiZap />}
+              onClick={() => handleQuickPrompt('¿Cuáles son los cursos recomendados para mi matrícula?')}
+            >
+              Recomendar Cursos
+            </Button>
+            <Button
+              size="xs"
+              variant="outline"
+              colorScheme="purple"
+              borderRadius="full"
+              leftIcon={<FiCompass />}
+              onClick={() => handleQuickPrompt('¿Cuántos créditos necesito para llevar Prácticas Pre-Profesionales?')}
+            >
+              Requisitos Prácticas
+            </Button>
+            <Button
+              size="xs"
+              variant="outline"
+              colorScheme="teal"
+              borderRadius="full"
+              leftIcon={<FiBookOpen />}
+              onClick={() => handleQuickPrompt('¿Cuáles son las convalidaciones de la Malla 2022 a la Malla 2025?')}
+            >
+              Convalidaciones
+            </Button>
+          </HStack>
+        )}
+
+        {/* Barra de Entrada Estilo Gemini / ChatGPT */}
         {!isReportUploaded ? (
           <MotionBox
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
           >
             <FileUploader onFileUpload={handleFileUpload} />
           </MotionBox>
         ) : (
           <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            <Flex gap={2}>
+            <Flex
+              bg="gray.50"
+              p={2}
+              borderRadius="2xl"
+              border="1px solid"
+              borderColor="gray.200"
+              align="center"
+              shadow="sm"
+              _focusWithin={{ borderColor: '#002855', bg: 'white', shadow: 'md' }}
+            >
               <Input
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Pregunta sobre tus cursos o solicita recomendaciones..."
+                placeholder="Escribe un mensaje al Asesor Curricular..."
                 disabled={isLoading}
-                bg="white"
-                size="lg"
+                border="none"
+                focusBorderColor="transparent"
                 fontSize="sm"
-                borderRadius="xl"
-                shadow="sm"
-                _focus={{ borderColor: '#002855', shadow: 'md' }}
+                px={3}
               />
               <IconButton
                 type="submit"
                 icon={<FiSend />}
                 colorScheme="blue"
                 bg="#002855"
-                size="lg"
+                size="md"
                 borderRadius="xl"
                 isLoading={isLoading}
                 aria-label="Enviar mensaje"
-                _hover={{ bg: '#001d3d', scale: 1.05 }}
+                _hover={{ bg: '#001d3d' }}
               />
             </Flex>
           </form>

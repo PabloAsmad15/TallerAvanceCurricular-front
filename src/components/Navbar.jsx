@@ -15,7 +15,7 @@ import {
   MenuDivider,
 } from '@chakra-ui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiMessageSquare, FiGrid, FiClock, FiShield, FiLogOut, FiUser, FiChevronDown } from 'react-icons/fi';
+import { FiMessageSquare, FiGrid, FiClock, FiCheckSquare, FiShield, FiLogOut, FiUser, FiChevronDown } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import useAuthStore from '../store/authStore';
 
@@ -35,26 +35,23 @@ const Navbar = () => {
   return (
     <Box className="glass-navbar" sticky="top" zIndex={1000} px={6} py={3} color="white" boxShadow="lg" borderBottom="1px solid rgba(255,255,255,0.1)">
       <Flex maxW="container.xl" mx="auto" align="center" justify="space-between">
-        {/* Logo de Tesis & Marca UPAO animado */}
+        {/* Logo Minimalista de Tesis & Marca UPAO */}
         <HStack spacing={3} cursor="pointer" onClick={() => navigate('/app')}>
           <MotionFlex
-            whileHover={{ scale: 1.08, rotate: 2 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
             <Image
-              src="/logo.png"
-              h="40px"
-              w="40px"
-              objectFit="cover"
-              borderRadius="xl"
-              boxShadow="0 4px 14px rgba(0,0,0,0.25)"
-              border="2px solid rgba(255,255,255,0.8)"
-              alt="UPAO Logo"
+              src="/logo.svg"
+              h="38px"
+              w="38px"
+              objectFit="contain"
+              alt="UPAO AI Logo"
             />
           </MotionFlex>
           <Box>
-            <Heading size="sm" fontWeight="bold" letterSpacing="tight" bgGradient="linear(to-r, white, blue.100)" bgClip="text">
+            <Heading size="sm" fontWeight="700" letterSpacing="tight" bgGradient="linear(to-r, white, blue.100)" bgClip="text">
               Asesor Curricular IA
             </Heading>
             <Text fontSize="xs" color="whiteAlpha.800" fontWeight="500">
@@ -63,7 +60,7 @@ const Navbar = () => {
           </Box>
         </HStack>
 
-        {/* Navegación por Secciones con Framer Motion */}
+        {/* Navegación por Secciones: Asesor IA | Multimalla | Mis Cursos | Historial | Admin */}
         <HStack spacing={2}>
           <MotionBox whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
             <Button
@@ -91,7 +88,7 @@ const Navbar = () => {
               onClick={() => navigate('/malla')}
               _hover={{ bg: 'whiteAlpha.300', shadow: 'md' }}
             >
-              Multimalla
+              Multimalla & Formulario
             </Button>
           </MotionBox>
 
@@ -102,11 +99,11 @@ const Navbar = () => {
               bg={location.pathname.startsWith('/historial') ? 'whiteAlpha.300' : 'transparent'}
               color="white"
               borderRadius="lg"
-              leftIcon={<FiClock />}
+              leftIcon={<FiCheckSquare />}
               onClick={() => navigate('/historial')}
               _hover={{ bg: 'whiteAlpha.300', shadow: 'md' }}
             >
-              Mi Historial
+              Cursos Aprobados
             </Button>
           </MotionBox>
 

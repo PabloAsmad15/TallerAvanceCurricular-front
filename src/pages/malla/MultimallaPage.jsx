@@ -27,8 +27,11 @@ import {
   Button,
   useToast,
   Input,
+  Checkbox,
+  VStack,
+  Divider,
 } from '@chakra-ui/react';
-import { FiGrid, FiRepeat, FiCheckCircle, FiLayers, FiSend, FiSearch } from 'react-icons/fi';
+import { FiGrid, FiRepeat, FiCheckCircle, FiLayers, FiSend, FiCpu, FiCheckSquare } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import SendEmailModal from '../../components/SendEmailModal';
 import chatService from '../../services/chatService';
@@ -39,22 +42,25 @@ const MotionCard = motion(Card);
 
 const MultimallaPage = () => {
   const [selectedPlan, setSelectedPlan] = useState('2025');
-  const [isMultimallaMode, setIsMultimallaMode] = useState(false);
+  const [isMultimallaMode, setIsMultimallaMode] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [emailContent, setEmailContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Estado para los cursos seleccionados en el Formulario Multimalla
+  const [selectedCourses, setSelectedCourses] = useState([
+    'HUMA-900', 'HUMA-1179', 'ICSI-506', 'CIEN-753', 'ICSI-509'
+  ]);
+  
   const { userEmail } = useAuthStore();
   const toast = useToast();
 
-  // Obtener cursos completos según la malla seleccionada
   const activePlanCursos = useMemo(() => {
     const plan = isMultimallaMode ? '2025' : selectedPlan;
     return mallasData.mallas[plan] || mallasData.mallas['2025'];
   }, [selectedPlan, isMultimallaMode]);
 
-  // Agrupar cursos por ciclo
   const cursosPorCiclo = useMemo(() => {
     const grouped = {};
     const filtered = activePlanCursos.filter(c => 
@@ -73,7 +79,6 @@ const MultimallaPage = () => {
     return grouped;
   }, [activePlanCursos, searchTerm]);
 
-  // Filtrar convalidaciones
   const convalidacionesFiltradas = useMemo(() => {
     return mallasData.convalidaciones.filter(c => 
       c.codAntiguo.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -82,7 +87,15 @@ const MultimallaPage = () => {
     );
   }, [searchTerm]);
 
-  const handleGenerateRecommendation = async () => {
+  const toggleCourseSelection = (codigo) => {
+    if (selectedCourses.includes(codigo)) {
+      setSelectedCourses(selectedCourses.filter(c => c !== codigo));
+    } else {
+      setSelectedCourses([...selectedCourses, codigo]);
+    }
+  };
+
+  const handleEvaluateMultimallaForm = async () => {
     setIsLoading(true);
     try {
       const response = await chatService.getRecommendation(false);
@@ -93,14 +106,22 @@ const MultimallaPage = () => {
             .join('\n')
         : response.recomendacion;
 
-      const fullReport = `=== EVIDENCIA DE RECOMENDACIÓN CURRICULAR UPAO ===\nAlumno: ${userEmail || 'Estudiante UPAO'}\nModo: ${isMultimallaMode ? 'MULTIMALLA (Varias Mallas)' : `Malla ${selectedPlan}`}\n\n${response.explicacion}\n\n📚 Cursos Sugeridos para Matrícula Malla 2025:\n${cursosTexto}`;
+      const report = `=== EVIDENCIA DE EVALUACIÓN MULTIMALLA (4 ALGORITMOS UPAO) ===\nAlumno: ${userEmail || 'Estudiante UPAO'}\nCursos Aprobados Seleccionados (${selectedCourses.length}):\n${selectedCourses.join(', ')}\n\n${response.explicacion}\n\n📚 Recomendación de Matrícula Malla 2025:\n${cursosTexto}`;
 
-      setEmailContent(fullReport);
+      setEmailContent(report);
       setIsModalOpen(true);
+
+      toast({
+        title: 'Evaluación Multimalla Completada',
+        description: `Se evaluaron ${selectedCourses.length} asignaturas seleccionadas con los 4 Algoritmos Inteligentes.`,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error) {
       toast({
-        title: 'Error al generar informe',
-        description: error.response?.data?.detail || 'No se pudo generar la recomendación multimalla.',
+        title: 'Error al evaluar formulario',
+        description: error.response?.data?.detail || 'Ocurrió un error al procesar el formulario multimalla.',
         status: 'error',
         duration: 4000,
       });
@@ -115,44 +136,44 @@ const MultimallaPage = () => {
         <Flex justify="space-between" align={{ base: 'start', md: 'center' }} direction={{ base: 'column', md: 'row' }} gap={4}>
           <Box>
             <Heading size="lg" color="#002855" mb={1}>
-              Visualizador y Convalidador Multimalla UPAO
+              Formulario y Convalidador Multimalla UPAO
             </Heading>
             <Text fontSize="sm" color="gray.600">
-              Mallas oficiales completas (2015, 2019, 2022, 2025) y convalidaciones hacia la Malla 2025.
+              Selecciona los cursos aprobados de tus mallas anteriores (2015, 2019, 2022) en el formulario interactivo para que el Agente IA evalúe la convalidación hacia la Malla 2025.
             </Text>
           </Box>
           <Button
-            colorScheme="brand"
+            colorScheme="blue"
             bg="#002855"
             size="md"
-            leftIcon={<FiSend />}
+            leftIcon={<FiCpu />}
             isLoading={isLoading}
-            onClick={handleGenerateRecommendation}
+            onClick={handleEvaluateMultimallaForm}
             _hover={{ bg: '#001d3d' }}
           >
-            Enviar Evidencia por Correo
+            Evaluar Convalidación con Agente IA
           </Button>
         </Flex>
       </Box>
 
-      {/* Selector de Modo de Malla / Multimalla y Buscador */}
+      {/* Control y Selector de Modo */}
       <Box bg="white" p={4} borderRadius="xl" shadow="sm" mb={6} border="1px solid" borderColor="gray.100">
         <Flex direction={{ base: 'column', md: 'row' }} justify="space-between" align={{ base: 'start', md: 'center' }} gap={4}>
           <HStack spacing={3}>
             <Icon as={FiLayers} color="#002855" w={6} h={6} />
             <Box>
               <Text fontWeight="bold" fontSize="sm" color="#002855">
-                Malla Curricular Seleccionada: {isMultimallaMode ? 'Multimalla Integrada' : `Malla ${selectedPlan}`}
+                Modo Multimalla: {isMultimallaMode ? 'Formulario Interactivo Activo' : `Vista de Malla ${selectedPlan}`}
               </Text>
               <Text fontSize="xs" color="gray.500">
-                Mostrando {activePlanCursos.length} asignaturas oficiales de la carrera.
+                {selectedCourses.length} asignaturas marcadas en el formulario multimalla.
               </Text>
             </Box>
           </HStack>
 
           <HStack spacing={3} wrap="wrap">
             <Input
-              placeholder="Buscar curso o código..."
+              placeholder="Buscar asignatura o código..."
               size="sm"
               w="200px"
               borderRadius="md"
@@ -162,20 +183,20 @@ const MultimallaPage = () => {
 
             <Button
               size="sm"
-              variant={isMultimallaMode ? 'outline' : 'solid'}
+              variant={!isMultimallaMode ? 'solid' : 'outline'}
               colorScheme="blue"
               onClick={() => setIsMultimallaMode(false)}
             >
-              Malla Única
+              Vista Malla Única
             </Button>
             <Button
               size="sm"
               variant={isMultimallaMode ? 'solid' : 'outline'}
               colorScheme="purple"
-              leftIcon={<FiLayers />}
+              leftIcon={<FiCheckSquare />}
               onClick={() => setIsMultimallaMode(true)}
             >
-              Modo Multimalla
+              Formulario Multimalla
             </Button>
 
             {!isMultimallaMode && (
@@ -197,22 +218,27 @@ const MultimallaPage = () => {
         </Flex>
 
         {isMultimallaMode && (
-          <Box mt={3} p={3} bg="purple.50" borderRadius="lg" border="1px solid" borderColor="purple.200">
-            <Text fontSize="xs" color="purple.800" fontWeight="600">
-              ✨ MODO MULTIMALLA ACTIVO: Mapeando asignaturas aprobadas de mallas anteriores (2015 + 2019 + 2022) hacia la Malla 2025 vigente.
-            </Text>
+          <Box mt={3} p={4} bg="purple.50" borderRadius="lg" border="1px solid" borderColor="purple.200">
+            <Flex justify="space-between" align="center" wrap="wrap" gap={2}>
+              <Text fontSize="xs" color="purple.900" fontWeight="600">
+                📝 FORMULARIO INTERACTIVO MULTIMALLA: Marca las casillas de las asignaturas aprobadas en tus mallas previas (2015/2019/2022) y presiona "Evaluar Convalidación".
+              </Text>
+              <Badge colorScheme="purple" fontSize="xs">
+                {selectedCourses.length} seleccionados
+              </Badge>
+            </Flex>
           </Box>
         )}
       </Box>
 
       <Tabs variant="enclosed" colorScheme="blue">
         <TabList mb="1em">
-          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiGrid} /><Text>Plan de Estudios ({isMultimallaMode ? 'Multimalla' : `Malla ${selectedPlan}`})</Text></HStack></Tab>
-          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiRepeat} /><Text>Tabla de Convalidaciones Completa</Text></HStack></Tab>
+          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiGrid} /><Text>Formulario y Cursos ({isMultimallaMode ? 'Multimalla' : `Malla ${selectedPlan}`})</Text></HStack></Tab>
+          <Tab fontWeight="bold"><HStack spacing={2}><Icon as={FiRepeat} /><Text>Tabla de Convalidaciones</Text></HStack></Tab>
         </TabList>
 
         <TabPanels>
-          {/* PLAN DE ESTUDIOS COMPLETO POR CICLOS */}
+          {/* VISTA DE CURSOS Y FORMULARIO POR CICLOS */}
           <TabPanel px={0}>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
               {Object.entries(cursosPorCiclo).map(([cicloNombre, cursosArr], idx) => (
@@ -235,24 +261,65 @@ const MultimallaPage = () => {
                     </Flex>
                   </CardHeader>
                   <CardBody p={4}>
-                    {cursosArr.map((curso, cIdx) => (
-                      <Box key={cIdx} p={3} mb={2} bg="gray.50" borderRadius="lg" border="1px solid" borderColor="gray.100" _hover={{ bg: 'blue.50' }}>
-                        <Flex justify="space-between" align="center" mb={1}>
-                          <Text fontWeight="bold" fontSize="xs" color="#002855">{curso.codigo}</Text>
-                          <Badge colorScheme="green" fontSize="xs">{curso.creditos} crd</Badge>
-                        </Flex>
-                        <Text fontSize="xs" fontWeight="600" color="gray.700">{curso.nombre}</Text>
-                        {curso.prerrequisitos && curso.prerrequisitos.length > 0 && (
-                          <Text fontSize="10px" color="gray.500" mt={1}>
-                            Prerrequisito: {curso.prerrequisitos.join(', ')}
-                          </Text>
-                        )}
-                      </Box>
-                    ))}
+                    {cursosArr.map((curso, cIdx) => {
+                      const isChecked = selectedCourses.includes(curso.codigo);
+                      return (
+                        <Box
+                          key={cIdx}
+                          p={3}
+                          mb={2}
+                          bg={isChecked ? 'purple.50' : 'gray.50'}
+                          borderRadius="lg"
+                          border="1px solid"
+                          borderColor={isChecked ? 'purple.300' : 'gray.100'}
+                          cursor="pointer"
+                          onClick={() => isMultimallaMode && toggleCourseSelection(curso.codigo)}
+                          _hover={{ bg: isChecked ? 'purple.100' : 'blue.50' }}
+                        >
+                          <Flex justify="space-between" align="center" mb={1}>
+                            <HStack spacing={2}>
+                              {isMultimallaMode && (
+                                <Checkbox
+                                  isChecked={isChecked}
+                                  colorScheme="purple"
+                                  onChange={() => toggleCourseSelection(curso.codigo)}
+                                />
+                              )}
+                              <Text fontWeight="bold" fontSize="xs" color="#002855">{curso.codigo}</Text>
+                            </HStack>
+                            <Badge colorScheme={isChecked ? 'purple' : 'green'} fontSize="xs">{curso.creditos} crd</Badge>
+                          </Flex>
+                          <Text fontSize="xs" fontWeight="600" color="gray.700" ml={isMultimallaMode ? 6 : 0}>{curso.nombre}</Text>
+                          {curso.prerrequisitos && curso.prerrequisitos.length > 0 && (
+                            <Text fontSize="10px" color="gray.500" mt={1} ml={isMultimallaMode ? 6 : 0}>
+                              Prerrequisito: {curso.prerrequisitos.join(', ')}
+                            </Text>
+                          )}
+                        </Box>
+                      );
+                    })}
                   </CardBody>
                 </MotionCard>
               ))}
             </SimpleGrid>
+
+            {isMultimallaMode && (
+              <Box mt={6} textAlign="center">
+                <Button
+                  colorScheme="purple"
+                  size="lg"
+                  leftIcon={<FiCpu />}
+                  isLoading={isLoading}
+                  onClick={handleEvaluateMultimallaForm}
+                  px={8}
+                  borderRadius="xl"
+                  shadow="md"
+                  _hover={{ scale: 1.02 }}
+                >
+                  🤖 Evaluar Convalidación y Generar Recomendación IA
+                </Button>
+              </Box>
+            )}
           </TabPanel>
 
           {/* TABLA DE CONVALIDACIONES COMPLETA */}
