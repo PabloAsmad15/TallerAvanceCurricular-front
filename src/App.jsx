@@ -4,11 +4,13 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import PasswordRecoveryPage from './pages/auth/PasswordRecoveryPage';
 import ChatPage from './pages/chat/ChatPage';
+import MultimallaPage from './pages/malla/MultimallaPage';
+import HistorialPage from './pages/historial/HistorialPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Navbar from './components/Navbar';
 import useAuthStore from './store/authStore';
 
-// Componente protegido con Navbar integrado
+// Componente protegido con Navbar superior
 const ProtectedLayout = ({ children, allowedRole }) => {
   const token = useAuthStore((state) => state.token);
   const userRole = useAuthStore((state) => state.userRole);
@@ -40,11 +42,29 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/password-recovery" element={<PasswordRecoveryPage />} />
+          
+          {/* Rutas Protegidas por Secciones */}
           <Route
             path="/app/*"
             element={
               <ProtectedLayout>
                 <ChatPage />
+              </ProtectedLayout>
+            }
+          />
+          <Route
+            path="/malla/*"
+            element={
+              <ProtectedLayout>
+                <MultimallaPage />
+              </ProtectedLayout>
+            }
+          />
+          <Route
+            path="/historial/*"
+            element={
+              <ProtectedLayout>
+                <HistorialPage />
               </ProtectedLayout>
             }
           />

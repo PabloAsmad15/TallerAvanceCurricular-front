@@ -14,7 +14,7 @@ import {
   MenuDivider,
 } from '@chakra-ui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiMessageSquare, FiShield, FiLogOut, FiUser, FiChevronDown } from 'react-icons/fi';
+import { FiMessageSquare, FiGrid, FiClock, FiShield, FiLogOut, FiUser, FiChevronDown } from 'react-icons/fi';
 import useAuthStore from '../store/authStore';
 
 const Navbar = () => {
@@ -30,7 +30,7 @@ const Navbar = () => {
   return (
     <Box bg="#002855" px={6} py={3} color="white" boxShadow="md">
       <Flex maxW="container.xl" mx="auto" align="center" justify="space-between">
-        {/* Marca / Logo UPAO */}
+        {/* Logo / Marca UPAO */}
         <HStack spacing={3} cursor="pointer" onClick={() => navigate('/app')}>
           <Flex
             w={10}
@@ -53,25 +53,49 @@ const Navbar = () => {
           </Box>
         </HStack>
 
-        {/* Navegación por Secciones */}
-        <HStack spacing={3}>
+        {/* Navegación por Secciones: Asesor Virtual | Multimalla | Historial | Admin */}
+        <HStack spacing={2}>
           <Button
             size="sm"
             variant={location.pathname.startsWith('/app') ? 'solid' : 'ghost'}
-            bg={location.pathname.startsWith('/app') ? 'whiteAlpha.200' : 'transparent'}
+            bg={location.pathname.startsWith('/app') ? 'whiteAlpha.300' : 'transparent'}
             color="white"
             leftIcon={<FiMessageSquare />}
             onClick={() => navigate('/app')}
             _hover={{ bg: 'whiteAlpha.300' }}
           >
-            Asesor Virtual
+            Asesor IA
+          </Button>
+
+          <Button
+            size="sm"
+            variant={location.pathname.startsWith('/malla') ? 'solid' : 'ghost'}
+            bg={location.pathname.startsWith('/malla') ? 'whiteAlpha.300' : 'transparent'}
+            color="white"
+            leftIcon={<FiGrid />}
+            onClick={() => navigate('/malla')}
+            _hover={{ bg: 'whiteAlpha.300' }}
+          >
+            Multimalla
+          </Button>
+
+          <Button
+            size="sm"
+            variant={location.pathname.startsWith('/historial') ? 'solid' : 'ghost'}
+            bg={location.pathname.startsWith('/historial') ? 'whiteAlpha.300' : 'transparent'}
+            color="white"
+            leftIcon={<FiClock />}
+            onClick={() => navigate('/historial')}
+            _hover={{ bg: 'whiteAlpha.300' }}
+          >
+            Mi Historial
           </Button>
 
           {userRole === 'admin' && (
             <Button
               size="sm"
               variant={location.pathname.startsWith('/admin') ? 'solid' : 'ghost'}
-              bg={location.pathname.startsWith('/admin') ? 'whiteAlpha.200' : 'transparent'}
+              bg={location.pathname.startsWith('/admin') ? 'whiteAlpha.300' : 'transparent'}
               color="white"
               leftIcon={<FiShield />}
               onClick={() => navigate('/admin/dashboard')}
@@ -92,6 +116,7 @@ const Navbar = () => {
               rightIcon={<FiChevronDown />}
               _hover={{ bg: 'whiteAlpha.200' }}
               _active={{ bg: 'whiteAlpha.300' }}
+              ml={2}
             >
               <HStack spacing={2}>
                 <Icon as={FiUser} />
@@ -111,7 +136,7 @@ const Navbar = () => {
                   Sesión Activa
                 </Text>
                 <Text fontSize="xs" color="gray.500" isTruncated maxW="200px">
-                  {userEmail || 'usuario@upao.edu.pe'}
+                  {userEmail || 'pasmadm1@upao.edu.pe'}
                 </Text>
               </Box>
               <MenuDivider />
