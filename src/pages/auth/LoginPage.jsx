@@ -49,6 +49,7 @@ const LoginPage = () => {
         status: 'success',
         duration: 3000,
         isClosable: true,
+        position: 'top-right',
       });
     } catch (error) {
       toast({
@@ -57,6 +58,7 @@ const LoginPage = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
+        position: 'top-right',
       });
     } finally {
       setIsLoading(false);

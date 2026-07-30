@@ -42,6 +42,7 @@ const RegisterPage = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
+        position: 'top-right',
       });
       return;
     }
@@ -53,6 +54,7 @@ const RegisterPage = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
+        position: 'top-right',
       });
       return;
     }
@@ -68,6 +70,7 @@ const RegisterPage = () => {
         status: 'success',
         duration: 5000,
         isClosable: true,
+        position: 'top-right',
       });
       
       navigate('/login');
@@ -78,6 +81,7 @@ const RegisterPage = () => {
         status: 'error',
         duration: 5000,
         isClosable: true,
+        position: 'top-right',
       });
     } finally {
       setIsLoading(false);
