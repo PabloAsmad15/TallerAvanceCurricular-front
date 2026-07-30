@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   Box,
   Container,
@@ -39,15 +39,14 @@ const ChatPage = () => {
     setIsLoading,
   } = useChatStore();
 
-  // Extraer un nombre amigable a partir del correo registrado
+  // Función 100% dinámica para extraer el primer nombre real de CUALQUIER usuario
   const userName = useMemo(() => {
     if (!userEmail) return 'Estudiante';
-    const prefix = userEmail.split('@')[0];
-    if (prefix.toLowerCase().startsWith('pasmad') || prefix.toLowerCase().startsWith('pablo')) {
-      return 'Pablo';
-    }
-    // Capitalizar primera letra
-    return prefix.charAt(0).toUpperCase() + prefix.slice(1);
+    const emailPrefix = userEmail.split('@')[0]; // Tomar parte previa al @
+    const firstName = emailPrefix.split('.')[0].replace(/[0-9]/g, ''); // Remover números
+    if (!firstName || firstName.length < 2) return 'Estudiante';
+    // Formatear Nombre (ej. maria -> Maria, juan -> Juan, pablo -> Pablo)
+    return firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
   }, [userEmail]);
 
   const scrollToBottom = () => {
@@ -242,7 +241,7 @@ const ChatPage = () => {
               </Box>
             </HStack>
             <Badge colorScheme="blue" borderRadius="full" px={3} py={1} fontSize="xs">
-              ● Sesión Activa: {userName}
+              ● Usuario: {userName}
             </Badge>
           </Flex>
         </MotionBox>
