@@ -33,17 +33,18 @@ import {
   Radio,
   Stack,
 } from '@chakra-ui/react';
-import { FiGrid, FiRepeat, FiCheckCircle, FiLayers, FiSend, FiCpu, FiCheckSquare, FiSearch, FiHelpCircle } from 'react-icons/fi';
+import { FiGrid, FiRepeat, FiCheckCircle, FiLayers, FiSend, FiCpu, FiCheckSquare, FiSearch } from 'react-icons/fi';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import SendEmailModal from '../../components/SendEmailModal';
 import chatService from '../../services/chatService';
 import useAuthStore from '../../store/authStore';
 import { mallasData } from '../../data/mallasData';
+import useChatStore from '../../store/chatStore';
 
 const MotionCard = motion(Card);
 
 const MultimallaPage = () => {
-  // Modalidad: 'UNICA' o 'MULTIMALLA'
   const [modalidad, setModalidad] = useState('UNICA'); 
   const [selectedPlan, setSelectedPlan] = useState('2025');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,6 +52,9 @@ const MultimallaPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
+  const navigate = useNavigate();
+  const { addMessage } = useChatStore();
+
   // Estado de cursos aprobados marcados por el estudiante
   const [selectedCourses, setSelectedCourses] = useState([
     'HUMA-900', 'HUMA-1179', 'ICSI-506', 'CIEN-753', 'ICSI-509'
@@ -114,21 +118,35 @@ const MultimallaPage = () => {
             .join('\n')
         : response.recomendacion;
 
-      const report = `=== EVIDENCIA DE EVALUACIÓN ACADÉMICA UPAO ===\nAlumno: ${userEmail || 'Estudiante UPAO'}\nModalidad: ${isMultimallaMode ? 'MULTIMALLA (Varias Mallas)' : `Malla Única ${selectedPlan}`}\nCursos Aprobados Seleccionados (${selectedCourses.length}):\n${selectedCourses.join(', ')}\n\n${response.explicacion}\n\n📚 Recomendación de Matrícula Malla 2025:\n${cursosTexto}`;
+      const formattedRecommendation = `${response.explicacion}\n\n📚 Recomendación de Matrícula Malla 2025 (4 Algoritmos UPAO):\n${cursosTexto}`;
 
-      setEmailContent(report);
-      setIsModalOpen(true);
+      // Insertar la recomendación generada en la tienda del Chat para continuidad directa
+      addMessage({
+        content: `He seleccionado ${selectedCourses.length} asignaturas aprobadas en el modo ${isMultimallaMode ? 'Multimalla' : `Malla Única ${selectedPlan}`}.\n\nCursos Marcados:\n${selectedCourses.join(', ')}`,
+        isBot: false,
+      });
+
+      addMessage({
+        content: formattedRecommendation,
+        isBot: true,
+      });
 
       toast({
-        title: 'Evaluación Completada',
-        description: `Se evaluaron ${selectedCourses.length} asignaturas seleccionadas mediante los 4 Algoritmos Inteligentes.`,
+        title: 'Recomendación Generada',
+        description: `Se evaluaron ${selectedCourses.length} asignaturas. Redirigiendo al Asesor IA...`,
         status: 'success',
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
       });
+
+      // Redirigir suavemente al Chat de la IA
+      setTimeout(() => {
+        navigate('/app');
+      }, 1000);
+
     } catch (error) {
       toast({
-        title: 'Error al evaluar selección',
+        title: 'Error al obtener recomendación',
         description: error.response?.data?.detail || 'Ocurrió un error al procesar tu selección de asignaturas.',
         status: 'error',
         duration: 4000,
@@ -325,7 +343,7 @@ const MultimallaPage = () => {
               ))}
             </SimpleGrid>
 
-            {/* BOTÓN FLOTANTE Y PRINCIPAL DE EVALUACIÓN */}
+            {/* BOTÓN PRINCIPAL: "🤖 Obtener Recomendación" */}
             <Box mt={8} textAlign="center">
               <Button
                 colorScheme="blue"
@@ -342,7 +360,7 @@ const MultimallaPage = () => {
                 fontWeight="bold"
                 _hover={{ bg: '#001d3d', scale: 1.03 }}
               >
-                🤖 Evaluar Convalidación y Generar Recomendación IA
+                🤖 Obtener Recomendación
               </Button>
             </Box>
           </TabPanel>
