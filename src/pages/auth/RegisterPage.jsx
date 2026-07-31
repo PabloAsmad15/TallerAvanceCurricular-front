@@ -16,11 +16,15 @@ import {
   FormHelperText,
   Flex,
   Icon,
+  SimpleGrid,
 } from '@chakra-ui/react';
-import { FiUserPlus, FiMail, FiLock } from 'react-icons/fi';
+import { FiUserPlus, FiMail, FiLock, FiUser, FiHash } from 'react-icons/fi';
 import authService from '../../services/authService';
 
 const RegisterPage = () => {
+  const [studentId, setStudentId] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -35,6 +39,18 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!studentId.trim() || !firstName.trim() || !lastName.trim()) {
+      toast({
+        title: 'Error de registro',
+        description: 'Por favor completa tu ID, Nombre y Apellido.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+      return;
+    }
+
     if (!validateEmail(email)) {
       toast({
         title: 'Error de registro',
@@ -62,11 +78,12 @@ const RegisterPage = () => {
     setIsLoading(true);
 
     try {
+      // Registrar en Firebase Auth (y pasar metadatos si fuera necesario en el futuro)
       await authService.register(email, password);
       
       toast({
         title: '¡Registro exitoso!',
-        description: 'Ya puedes iniciar sesión con tu cuenta.',
+        description: `Bienvenido(a) ${firstName}. Ya puedes iniciar sesión con tu cuenta.`,
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -99,7 +116,7 @@ const RegisterPage = () => {
       px={4}
       py={8}
     >
-      <VStack spacing={6} maxW="440px" w="100%" align="center">
+      <VStack spacing={6} maxW="480px" w="100%" align="center">
         {/* Icono superior circular */}
         <Flex
           w={16}
@@ -132,18 +149,87 @@ const RegisterPage = () => {
           boxShadow="2xl"
         >
           <Heading size="md" color="gray.800" mb={6} fontWeight="bold">
-            Crear Cuenta
+            Crear Cuenta de Estudiante
           </Heading>
 
           <form onSubmit={handleSubmit}>
             <VStack spacing={4} align="stretch">
+              
+              <FormControl id="studentId" isRequired>
+                <FormLabel fontSize="xs" fontWeight="600" color="gray.600" mb={1}>
+                  ID de Estudiante (Código)
+                </FormLabel>
+                <InputGroup size="md">
+                  <InputLeftElement pointerEvents="none" h="100%">
+                    <Icon as={FiHash} color="gray.400" w={4} h={4} />
+                  </InputLeftElement>
+                  <Input
+                    placeholder="Ej: 000123456"
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
+                    bg="#edf2f7"
+                    border="none"
+                    borderRadius="lg"
+                    fontSize="sm"
+                    _placeholder={{ color: 'gray.400' }}
+                    _focus={{ bg: 'white', border: '1px solid #002855', boxShadow: 'none' }}
+                  />
+                </InputGroup>
+              </FormControl>
+
+              <SimpleGrid columns={2} spacing={3}>
+                <FormControl id="firstName" isRequired>
+                  <FormLabel fontSize="xs" fontWeight="600" color="gray.600" mb={1}>
+                    Nombre
+                  </FormLabel>
+                  <InputGroup size="md">
+                    <InputLeftElement pointerEvents="none" h="100%">
+                      <Icon as={FiUser} color="gray.400" w={4} h={4} />
+                    </InputLeftElement>
+                    <Input
+                      placeholder="Juan"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      bg="#edf2f7"
+                      border="none"
+                      borderRadius="lg"
+                      fontSize="sm"
+                      _placeholder={{ color: 'gray.400' }}
+                      _focus={{ bg: 'white', border: '1px solid #002855', boxShadow: 'none' }}
+                    />
+                  </InputGroup>
+                </FormControl>
+
+                <FormControl id="lastName" isRequired>
+                  <FormLabel fontSize="xs" fontWeight="600" color="gray.600" mb={1}>
+                    Apellido
+                  </FormLabel>
+                  <InputGroup size="md">
+                    <InputLeftElement pointerEvents="none" h="100%">
+                      <Icon as={FiUser} color="gray.400" w={4} h={4} />
+                    </InputLeftElement>
+                    <Input
+                      placeholder="Pérez"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      bg="#edf2f7"
+                      border="none"
+                      borderRadius="lg"
+                      fontSize="sm"
+                      _placeholder={{ color: 'gray.400' }}
+                      _focus={{ bg: 'white', border: '1px solid #002855', boxShadow: 'none' }}
+                    />
+                  </InputGroup>
+                </FormControl>
+              </SimpleGrid>
+
               <FormControl id="email" isRequired>
                 <FormLabel fontSize="xs" fontWeight="600" color="gray.600" mb={1}>
-                  Correo Institucional
+                  Correo Institucional (@upao.edu.pe)
                 </FormLabel>
-                <InputGroup size="lg">
+                <InputGroup size="md">
                   <InputLeftElement pointerEvents="none" h="100%">
-                    <Icon as={FiMail} color="gray.400" w={5} h={5} />
+                    <Icon as={FiMail} color="gray.400" w={4} h={4} />
                   </InputLeftElement>
                   <Input
                     type="email"
@@ -158,18 +244,15 @@ const RegisterPage = () => {
                     _focus={{ bg: 'white', border: '1px solid #002855', boxShadow: 'none' }}
                   />
                 </InputGroup>
-                <FormHelperText fontSize="xs" color="gray.500" mt={1}>
-                  Usa tu correo institucional @upao.edu.pe
-                </FormHelperText>
               </FormControl>
 
               <FormControl id="password" isRequired>
                 <FormLabel fontSize="xs" fontWeight="600" color="gray.600" mb={1}>
                   Contraseña
                 </FormLabel>
-                <InputGroup size="lg">
+                <InputGroup size="md">
                   <InputLeftElement pointerEvents="none" h="100%">
-                    <Icon as={FiLock} color="gray.400" w={5} h={5} />
+                    <Icon as={FiLock} color="gray.400" w={4} h={4} />
                   </InputLeftElement>
                   <Input
                     type="password"
@@ -190,9 +273,9 @@ const RegisterPage = () => {
                 <FormLabel fontSize="xs" fontWeight="600" color="gray.600" mb={1}>
                   Confirmar Contraseña
                 </FormLabel>
-                <InputGroup size="lg">
+                <InputGroup size="md">
                   <InputLeftElement pointerEvents="none" h="100%">
-                    <Icon as={FiLock} color="gray.400" w={5} h={5} />
+                    <Icon as={FiLock} color="gray.400" w={4} h={4} />
                   </InputLeftElement>
                   <Input
                     type="password"
