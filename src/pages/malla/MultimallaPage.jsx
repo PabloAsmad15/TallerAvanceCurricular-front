@@ -49,9 +49,7 @@ const MultimallaPage = () => {
   const { addMessage } = useChatStore();
 
   // Estado de asignaturas marcadas globalmente en cualquiera de las 4 mallas
-  const [selectedCourses, setSelectedCourses] = useState([
-    'HUMA-900', 'HUMA-1179', 'ICSI-506', 'CIEN-753', 'ICSI-509', 'HUMA-899', 'CIEN-397'
-  ]);
+  const [selectedCourses, setSelectedCourses] = useState([]);
   
   const { userEmail } = useAuthStore();
   const toast = useToast();
