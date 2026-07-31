@@ -35,7 +35,7 @@ const ChatPage = () => {
     hasSentFirstEmail,
     isLoading,
     addMessage,
-    clearMessages,
+    clearChat: clearMessages,
     setHasSentFirstEmail,
     setIsLoading,
   } = useChatStore();
