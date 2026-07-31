@@ -16,15 +16,6 @@ const FIREBASE_SIGNUP_URL = FIREBASE_API_KEY
 
 const authService = {
   login: async (email, password) => {
-    if (FIREBASE_SIGNIN_URL) {
-      const response = await axios.post(FIREBASE_SIGNIN_URL, {
-        email,
-        password,
-        returnSecureToken: true,
-      });
-      return { access_token: response.data.idToken, role: 'student' };
-    }
-
     const formData = new FormData();
     formData.append('username', email);
     formData.append('password', password);
@@ -44,6 +35,19 @@ const authService = {
 
       return { access_token: token, role };
     } catch (err) {
+      if (FIREBASE_SIGNIN_URL) {
+        try {
+          const response = await axios.post(FIREBASE_SIGNIN_URL, {
+            email,
+            password,
+            returnSecureToken: true,
+          });
+          return { access_token: response.data.idToken, role: 'student' };
+        } catch (firebaseErr) {
+          throw err;
+        }
+      }
+
       throw err;
     }
   },

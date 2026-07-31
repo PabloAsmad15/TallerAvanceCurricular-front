@@ -63,7 +63,7 @@ const ChatPage = () => {
   useEffect(() => {
     if (messages.length === 0) {
       addMessage({
-        content: `¡Hola, ${userName}! Soy tu Asesor Curricular Virtual UPAO. ¿En qué te puedo ayudar hoy?`,
+        content: `¡Hola, ${userName}! Soy tu Asesor Curricular Virtual UPAO. Puedo revisar tu historial, tus cursos desaprobados y la malla para recomendarte la matrícula del próximo ciclo. Escribe “recomendación” o “próximo ciclo” y te ayudo.`,
         isBot: true,
         showEmailButton: false,
       });
